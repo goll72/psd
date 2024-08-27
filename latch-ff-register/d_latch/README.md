@@ -2,8 +2,8 @@ Latch D
 =======
 
 O latch D é um circuito que é composto essencialmente por um latch SR, porém
-com um sinal de entrada D, que é conectado diretamente ao sinal R e negado 
-para ser então conectado a S. Assim, é possível garantir que o latch nunca 
+com um sinal de entrada D, que é conectado diretamente ao sinal S e negado 
+para ser então conectado a R. Assim, é possível garantir que o latch nunca 
 entrará em um estado onde tanto S quanto R estão ativados, o que não é ideal,
 uma vez que ao sair desse estado, o latch se encontrará em um estado indeterminado.
 
