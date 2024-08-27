@@ -36,6 +36,6 @@ borda de subida do clock.
  
  ## Imagens
 
-![Netlist de um latch D](assets/netlist.png)
+![Netlist de um latch D](assets/netlist.PNG)
 
-![Simulação com visualização de forma de onda](assets/sim.png)
+![Simulação com visualização de forma de onda](assets/sim.PNG)
