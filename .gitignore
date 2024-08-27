@@ -1,0 +1,8 @@
+*
+
+!/**/
+!assets/*
+!.gitignore
+!*.vhdl
+!*.qpf
+!*.qsf
