@@ -28,7 +28,7 @@ BEGIN
 		T => i_0,
 		Q => s_1
    );
-	i_1 <= s_1 AND s_0;
+	i_1 <= s_1 AND i_0;
 	Q_1 <= s_1;
    t_2 : ENTITY work.ff_t(Structural) PORT MAP (
 		CLK => CLK,
@@ -36,7 +36,7 @@ BEGIN
 		T => i_1,
 		Q => s_2
    );
-	i_2 <= s_2 AND s_1;
+	i_2 <= s_2 AND i_1;
 	Q_2 <= s_2;
    t_3 : ENTITY work.ff_t(Structural) PORT MAP (
 		CLK => CLK,
@@ -44,7 +44,7 @@ BEGIN
 		T => i_2, 
 		Q => s_3
    );
-	i_3 <= s_3 AND s_2;
+	i_3 <= s_3 AND i_2;
 	Q_3 <= s_3;
    t_4 : ENTITY work.ff_t(Structural) PORT MAP (
 		CLK => CLK,
@@ -52,7 +52,7 @@ BEGIN
 		T => i_3, 
 		Q => s_4
    );
-	i_4 <= s_4 AND s_3;
+	i_4 <= s_4 AND i_3;
 	Q_4 <= s_4;
    t_5 : ENTITY work.ff_t(Structural) PORT MAP (
 		CLK => CLK,
@@ -60,7 +60,7 @@ BEGIN
 		T => i_4, 
 		Q => s_5
    );
-	i_5 <= s_5 AND s_4;
+	i_5 <= s_5 AND i_4;
 	Q_5 <= s_5;
    t_6 : ENTITY work.ff_t(Structural) PORT MAP (
 		CLK => CLK,
@@ -68,7 +68,7 @@ BEGIN
 		T => i_5, 
 		Q => s_6
    );
-	i_6 <= s_6 AND s_5;
+	i_6 <= s_6 AND i_5;
 	Q_6 <= s_6;
    t_7 : ENTITY work.ff_t(Structural) PORT MAP (
 		CLK => CLK,

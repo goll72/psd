@@ -12,17 +12,20 @@ END main;
 
 ARCHITECTURE Structural OF main IS
 	SIGNAL count : STD_LOGIC_VECTOR(7 DOWNTO 0);
+	SIGNAL K_a, K_b : STD_LOGIC_VECTOR(3 DOWNTO 0);
 	ATTRIBUTE KEEP : BOOLEAN;
-   ATTRIBUTE KEEP OF count : SIGNAL IS TRUE;
+   ATTRIBUTE KEEP OF count, K_a, K_b : SIGNAL IS TRUE;
 BEGIN
 	h_a : ENTITY work.hex(Procedural) PORT MAP (
 		X => count(3 DOWNTO 0),
 		H => HEX0
 	);
+	K_a <= count(3 DOWNTO 0);
 	h_b : ENTITY work.hex(Procedural) PORT MAP (
 		X => count(7 DOWNTO 4),
 		H => HEX1
 	);
+	K_b <= count(7 DOWNTO 4);
 	counter : ENTITY work.counter_8(Structural) PORT MAP (
 		CLK => CLK,
 		ENABLE => ENABLE,
