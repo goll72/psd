@@ -12,7 +12,7 @@ END ff_t;
 ARCHITECTURE Structural OF ff_t IS
     SIGNAL D_in, s : STD_LOGIC;
 BEGIN
-    D_in <= (NOT CLR) AND ((T AND (NOT s)) OR ((NOT T) AND s));
+    D_in <= CLR AND ((T AND (NOT s)) OR ((NOT T) AND s));
     D_internal : ENTITY work.ff_d(Structural) PORT MAP(
        CLK => CLK,
        D => D_in,
