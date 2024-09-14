@@ -1,80 +1,73 @@
 -- A synchronous 8-bit counter implemented using 8 type T flip-flops
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
+library ieee;
+use ieee.std_logic_1164.all;
 
-LIBRARY work;
+library work;
 
-ENTITY counter_8 IS
-   PORT (CLK, ENABLE, CLR :  IN  STD_LOGIC;
-         Q_0, Q_1, Q_2, Q_3, Q_4, Q_5, Q_6, Q_7 : OUT  STD_LOGIC);
-END counter_8;
+entity counter_8 is
+   port (clk, enable, clr : in  std_logic;
+                         q : out std_logic_vector(7 downto 0));
+end entity;
 
-ARCHITECTURE Structural OF counter_8 IS
-	SIGNAL i_0, i_1, i_2, i_3, i_4, i_5, i_6 : STD_LOGIC;
-	SIGNAL s_0, s_1, s_2, s_3, s_4, s_5, s_6, s_7 : STD_LOGIC;
+architecture structural of counter_8 is
+    signal i : std_logic_vector(6 downto 0);
+    SIGNAL s : std_logic_vector(7 downto 0);
 BEGIN
-   t_0 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => ENABLE,
-		Q => s_0
-   );
-	i_0 <= s_0 AND ENABLE;
-	Q_0 <= s_0;
-   t_1 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_0,
-		Q => s_1
-   );
-	i_1 <= s_1 AND i_0;
-	Q_1 <= s_1;
-   t_2 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_1,
-		Q => s_2
-   );
-	i_2 <= s_2 AND i_1;
-	Q_2 <= s_2;
-   t_3 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_2, 
-		Q => s_3
-   );
-	i_3 <= s_3 AND i_2;
-	Q_3 <= s_3;
-   t_4 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_3, 
-		Q => s_4
-   );
-	i_4 <= s_4 AND i_3;
-	Q_4 <= s_4;
-   t_5 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_4, 
-		Q => s_5
-   );
-	i_5 <= s_5 AND i_4;
-	Q_5 <= s_5;
-   t_6 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_5, 
-		Q => s_6
-   );
-	i_6 <= s_6 AND i_5;
-	Q_6 <= s_6;
-   t_7 : ENTITY work.ff_t(Structural) PORT MAP (
-		CLK => CLK,
-		CLR => CLR,
-		T => i_6,
-		Q => s_7
-   );
-	Q_7 <= s_7;
-END Structural;
+    t_0 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => enable,
+        q => s(0)
+    );
+    i(0) <= s(0) AND ENABLE;
+    t_1 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(0),
+        q => s(1)
+    );
+    i(1) <= s(1) and i(0);
+    t_2 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(1),
+        q => s(2)
+    );
+    i(2) <= s(2) and i(1);
+    t_3 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(2),
+        q => s(3)
+    );
+    i(3) <= s(3) and i(2);
+    t_4 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(3),
+        q => s(4)
+    );
+    i(4) <= s(4) and i(3);
+    t_5 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(4),
+        q => s(5)
+    );
+    i(5) <= s(5) and i(4);
+    t_6 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(5),
+        q => s(6)
+    );
+    i(6) <= s(6) and i(5);
+    t_7 : entity work.ff_t(structural) port map (
+        clk => clk,
+        clr => clr,
+        t => i(6),
+        q => s(7)
+    );
+    q <= s;
+end architecture;

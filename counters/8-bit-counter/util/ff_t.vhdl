@@ -1,22 +1,23 @@
 -- A flip-flop implemented using two gated D latches
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
 
-LIBRARY work;
+library ieee;
+use ieee.std_logic_1164.all;
 
-ENTITY ff_t IS
-    PORT (CLK, CLR, T : IN    STD_LOGIC;
-                    Q : OUT    STD_LOGIC);
-END ff_t;
+library work;
 
-ARCHITECTURE Structural OF ff_t IS
-    SIGNAL D_in, s : STD_LOGIC;
-BEGIN
-    D_in <= CLR AND ((T AND (NOT s)) OR ((NOT T) AND s));
-    D_internal : ENTITY work.ff_d(Structural) PORT MAP(
-       CLK => CLK,
-       D => D_in,
-       Q => s
+entity ff_t is
+    port (clk, clr, t : in  std_logic;
+                    q : out std_logic);
+end entity;
+
+architecture structural of ff_t is
+    signal data_in, s : std_logic;
+begin
+    data_in <= clr and (t xor s);
+    d_internal : entity work.ff_d(structural) port map (
+        clk => clk,
+        d => data_in,
+        q => s
     );
-	 Q <= s;
-END Structural;
+    q <= s;
+end architecture;
