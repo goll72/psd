@@ -19,7 +19,7 @@ else
 	RMTREE = rm -rf
 	MKDIR = mkdir -p
 	TRUNCATE = truncate -s 0 
-	link = ln -f $(1) $(2)
+	link = ln -srf $(1) $(2)
 	toupper = $(shell echo $(1) | tr '[:lower:]' '[:upper:]')
 	touch = touch $(1)
 endif
