@@ -38,11 +38,11 @@ work/_index: $(OUT)
 # NOTE: nvc may fail and not update the output files, in that case we must guarantee 
 # the input file is still newer by manually touching it
 work/%.link: %.vhdl
-	@$(MKDIR) $(dir $@)
+	@$(MKDIR) "$(dir $@)"
 	
-	@$(TRUNCATE) work/WORK.$(call toupper,$(notdir $*))
-	@$(call link,work/WORK.$(call toupper,$(notdir $*)),$@)
+	@$(TRUNCATE) "work/WORK.$(call toupper,$(notdir $*))"
+	@$(call link,"work/WORK.$(call toupper,$(notdir $*))","$@")
 
-	@$(call touch,$?)
+	@$(call touch,"$?")
 	
 	$(NVC) -a $?

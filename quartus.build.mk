@@ -14,4 +14,4 @@ clean:
 	$(RM) c5_pin_model_dump.txt *.qws *.qdf *.rpt
 
 output_files/$(QUARTUS_PROJECT).sof: $(SRC)
-	quartus_sh --flow=compile $(QUARTUS_PROJECT)
+	quartus_sh --flow compile $(QUARTUS_PROJECT)
