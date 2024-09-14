@@ -1,42 +1,30 @@
--- A synchronous 8-bit counter + 7 segment display
+-- Counter + 7 segment display
 
-LIBRARY ieee;
-USE ieee.std_logic_1164.all;
+library ieee;
+use ieee.std_logic_1164.all;
 
-LIBRARY work;
+library work;
 
-ENTITY main IS
-   PORT (CLK, ENABLE, CLR :  IN  STD_LOGIC;
-         HEX0, HEX1       : OUT  STD_LOGIC_VECTOR(0 TO 6));
-END main;
+entity main is
+    PORT (clk, enable, clr : in  std_logic;
+          hex0, hex1       : out std_logic_vector(0 to 6));
+end entity;
 
-ARCHITECTURE Structural OF main IS
-	SIGNAL count : STD_LOGIC_VECTOR(7 DOWNTO 0);
-	SIGNAL K_a, K_b : STD_LOGIC_VECTOR(3 DOWNTO 0);
-	ATTRIBUTE KEEP : BOOLEAN;
-   ATTRIBUTE KEEP OF count, K_a, K_b : SIGNAL IS TRUE;
-BEGIN
-	h_a : ENTITY work.hex(Procedural) PORT MAP (
-		X => count(3 DOWNTO 0),
-		H => HEX0
-	);
-	K_a <= count(3 DOWNTO 0);
-	h_b : ENTITY work.hex(Procedural) PORT MAP (
-		X => count(7 DOWNTO 4),
-		H => HEX1
-	);
-	K_b <= count(7 DOWNTO 4);
-	counter : ENTITY work.counter_8(Structural) PORT MAP (
-		CLK => CLK,
-		ENABLE => ENABLE,
-		CLR => CLR,
-		Q_0 => count(0),
-		Q_1 => count(1),
-		Q_2 => count(2),
-		Q_3 => count(3),
-		Q_4 => count(4),
-		Q_5 => count(5),
-		Q_6 => count(6),
-		Q_7 => count(7)
-	);
-END Structural;
+architecture structural of main is
+    signal count : std_logic_vector(7 downto 0);
+begin
+    h_a : entity work.hex(behavioral) port map (
+        X => count(3 downto 0),
+        H => hex0
+    );
+    h_b : entity work.hex(behavioral) port map (
+        x => count(7 downto 4),
+        h => hex1
+    );
+    counter : entity work.counter_8(structural) port map (
+        clk => clk,
+        enable => enable,
+        clr => clr,
+        q => count
+    );
+end architecture;
