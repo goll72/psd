@@ -87,8 +87,10 @@ set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
 set_global_assignment -name VHDL_FILE main.vhdl
+set_global_assignment -name VHDL_FILE main_4.vhdl
 set_global_assignment -name VHDL_FILE util/hex.vhdl
 set_global_assignment -name VHDL_FILE counter_8.vhdl
+set_global_assignment -name VHDL_FILE counter_4.vhdl
 set_global_assignment -name VHDL_FILE util/latch_d.vhdl
 set_global_assignment -name VHDL_FILE util/ff_t.vhdl
 set_global_assignment -name VHDL_FILE util/ff_d.vhdl
