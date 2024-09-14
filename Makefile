@@ -1,3 +1,5 @@
+ENV = ...
+
 include common.build.mk
 
 ifneq ($(P),)
