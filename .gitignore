@@ -7,3 +7,5 @@
 !*.qpf
 !*.qsf
 !README.md
+!**/Makefile
+!*.build.mk
