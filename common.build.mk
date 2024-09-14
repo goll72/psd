@@ -3,6 +3,7 @@ $(error Defina ENV para um de: modelsim, nvc, quartus)
 endif
 
 ifeq ($(OS),Windows_NT)
+	CP = copy
 	RM = del
 	RMTREE = rd /s /q
 	MKDIR = md
@@ -13,6 +14,7 @@ ifeq ($(OS),Windows_NT)
 
 	SHELL = cmd.exe
 else
+	CP = cp
 	RM = rm -f
 	RMTREE = rm -rf
 	MKDIR = mkdir -p
