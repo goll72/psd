@@ -11,16 +11,16 @@ VSIM = vsim
 VLIB = vlib
 
 all: $(WORK)/_lib.qdb
-	
+
+run: $(WORK)/_lib.qdb
+	cd $(dir $(WORK)) && $(VSIM) $(TOPLEVEL)
+
+clean:
+	$(RMTREE) "$(WORK)"
+
 $(WORK):
 	-@$(MKDIR) "$(dir $@)"
 	$(VLIB) "$@"
 
 $(WORK)/_lib.qdb: $(SRC) | $(WORK)
 	$(VCOM) $(DEFVFLAGS) $?
-	
-run:
-	cd $(dir $(WORK)) && $(VSIM) $(TOPLEVEL)
-
-clean:
-	$(RMTREE) "$(WORK)"
