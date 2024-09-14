@@ -10,6 +10,8 @@ ifeq ($(OS),Windows_NT)
 	link = mklink /H $(2) $(1)
 	toupper = $(1)
 	touch = copy /b $(1) +,,
+
+	SHELL = cmd.exe
 else
 	RM = rm -f
 	RMTREE = rm -rf
