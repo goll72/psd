@@ -6,8 +6,8 @@ library work;
 
 package display_attrs is
     constant N_DISPLAYS : integer := 4;
-    type segmentwise_t is array (6 downto 0) of std_logic_vector(N_DISPLAYS - 1 downto 0);
-    type display_array_t is array (N_DISPLAYS - 1 downto 0) of std_logic_vector(6 downto 0);
+    type segmentwise_t is array (0 to 6) of std_logic_vector(N_DISPLAYS - 1 downto 0);
+    type display_array_t is array (N_DISPLAYS - 1 downto 0) of std_logic_vector(0 to 6);
 end package;
 
 library ieee;
@@ -26,7 +26,10 @@ end entity;
 architecture structural of main is
     constant DISPLAY_INIT : segmentwise_t :=
         -- ' ', 'd', 'E', '0'
-        -- Transposed: ("1111111", "1000010", "0110000", "0000001");
+        -- Transposed: ("1111111", 
+        --              "1000010", 
+        --              "0110000", 
+        --              "0000001");
         ("1100", "1010", "1010", "1000", "1000", "1100", "1001");
     signal t : segmentwise_t;
 begin
