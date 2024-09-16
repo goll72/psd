@@ -12,8 +12,8 @@ end entity;
 
 architecture structural of counter_8 is
     signal i : std_logic_vector(6 downto 0);
-    SIGNAL s : std_logic_vector(7 downto 0);
-BEGIN
+    signal s : std_logic_vector(7 downto 0);
+begin
     t_0 : entity work.ff_t(structural) port map (
         clk => clk,
         clr => clr,
