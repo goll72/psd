@@ -42,6 +42,8 @@ begin
         enable <= '1';
         wait for 5 * CLK_PERIOD;
 
+        wait for 300 * CLK_PERIOD;
+
         stop;
     end process;
 end architecture;

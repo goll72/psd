@@ -1,4 +1,4 @@
--- A synchronous 8-bit counter implemented using 8 type T flip-flops
+-- A synchronous 4-bit counter implemented using 8 type T flip-flops
 
 library ieee;
 use ieee.std_logic_1164.all;
@@ -10,10 +10,10 @@ entity counter_4 is
                          q : out std_logic_vector(3 downto 0));
 end entity;
 
-architecture structural of counter_8 is
+architecture structural of counter_4 is
     signal i : std_logic_vector(2 downto 0);
-    SIGNAL s : std_logic_vector(3 downto 0);
-BEGIN
+    signal s : std_logic_vector(3 downto 0);
+begin
     t_0 : entity work.ff_t(structural) port map (
         clk => clk,
         clr => clr,
