@@ -6,7 +6,8 @@ library work;
 
 package display_attrs is
     constant N_DISPLAYS : integer := 4;
-    type display_array_t is array (N_DISPLAYS - 1 downto 0, 6 downto 0) of std_logic;
+    type segmentwise_t is array (6 downto 0) of std_logic_vector(N_DISPLAYS - 1 downto 0);
+    type display_array_t is array (N_DISPLAYS - 1 downto 0) of std_logic_vector(6 downto 0);
 end package;
 
 library ieee;
@@ -23,10 +24,11 @@ entity main is
 end entity;
 
 architecture structural of main is
-    constant DISPLAY_INIT : display_array_t :=
+    constant DISPLAY_INIT : segmentwise_t :=
         -- ' ', 'd', 'E', '0'
-        ("1111111", "1000010", "0110000", "0000001");
-    signal s : display_array_t;
+        -- Transposed: ("1111111", "1000010", "0110000", "0000001");
+        ("1100", "1010", "1010", "1000", "1000", "1100", "1001");
+    signal t : segmentwise_t;
 begin
     shift_regs : for i in 0 to 6
     generate
@@ -37,9 +39,12 @@ begin
             port map (
                 clk => clk,
                 load => not clr,
-                data => DISPLAY_INIT(N_DISPLAYS - 1 downto 0, i),
-                q => s(N_DISPLAYS - 1 downto 0, i)
+                data => DISPLAY_INIT(i),
+                q => t(i)
             );
     end generate;
-    hex <= s;
+    hex_signals : for i in 0 to N_DISPLAYS - 1
+    generate
+        hex(i) <= (t(0)(i), t(1)(i), t(2)(i), t(3)(i), t(4)(i), t(5)(i), t(6)(i));
+    end generate;
 end architecture;
