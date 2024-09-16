@@ -12,35 +12,34 @@ entity shift_reg is
 end entity;
 
 architecture behavioral of shift_reg is
+    signal s : std_logic_vector(N - 1 downto 0);
     signal k : std_logic;
 begin
     load_or_shift : process(clk) is
     begin
         if rising_edge(clk) then
             if load = '1' then
-                q <= data;
+                s <= data;
             else
-                k <= q(N - 1);
-                q(N - 1 downto 1) <= q(N - 2 downto 0);
-                q(0) <= k;
+                k <= s(N - 1);
+                s(N - 1 downto 1) <= s(N - 2 downto 0);
+                s(0) <= k;
             end if;
         end if;
     end process;
+    q <= s;
 end architecture;
 
 architecture structural of shift_reg is
+    signal s : std_logic_vector(N - 1 downto 0);
 begin
-    -- first_ff : entity work.ff_d(structural) port map (
-    --     clk => clk,
-    --     d => (load and data(0)) or (not load and d(N - 1)),
-    --     q => q(0)
-    -- );
     ff_d_chain : for i in 0 to N - 1
     generate
         ff : entity work.ff_d(structural) port map (
             clk => clk,
-            d => (load and data(i)) or (not load and q((i - 1) mod N)),
-            q => q(i)
+            d => (load and data(i)) or (not load and s((i - 1) mod N)),
+            q => s(i)
         );
     end generate;
+    q <= s;
 end architecture;
