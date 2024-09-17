@@ -31,8 +31,8 @@ borda de subida do clock.
  --|-----|----------
  x |  0  |  Q(t)
  x |  1  |  Q(t)
- 0 | $ \uparrow $ | 0
- 1 | $ \uparrow $ | 1
+ 0 | $\uparrow$ | 0
+ 1 | $\uparrow$ | 1
  
  ## Imagens
 
