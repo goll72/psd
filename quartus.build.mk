@@ -13,5 +13,5 @@ clean:
 	$(RMTREE) db incremental_db output_files
 	$(RM) c5_pin_model_dump.txt *.qws *.qdf *.rpt
 
-output_files/$(QUARTUS_PROJECT).sof: $(SRC)
+output_files/$(QUARTUS_PROJECT).sof: $(SRC) $(QUARTUS_PROJECT).qpf $(QUARTUS_PROJECT).qsf
 	quartus_sh --flow compile $(QUARTUS_PROJECT)
