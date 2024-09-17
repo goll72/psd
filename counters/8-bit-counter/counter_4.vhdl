@@ -16,13 +16,15 @@ architecture structural of counter_4 is
 begin
     t_0 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
-        t => enable,
+        t => enable and clr,
         q => s(0)
     );
     i(0) <= s(0) and enable;
     t_1 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(0),
         q => s(1)
@@ -30,6 +32,7 @@ begin
     i(1) <= s(1) and i(0);
     t_2 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(1),
         q => s(2)
@@ -37,6 +40,7 @@ begin
     i(2) <= s(2) and i(1);
     t_3 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(2),
         q => s(3)

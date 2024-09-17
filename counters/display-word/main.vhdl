@@ -35,7 +35,6 @@ architecture structural of main is
     signal t : segmentwise_t;
 
     signal count : std_logic_vector(25 downto 0);
-    signal clr_d : std_logic;
 begin
     counter : entity work.counter_large(behavioral) port map (
         clk => clk,

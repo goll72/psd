@@ -17,7 +17,7 @@ begin
    r <= not d;
    r_g <= r nand clk;
    s_g <= s nand clk;
-   q_a <= not(r_g and q_b and preset);
-   q_b <= not(s_g and q_a and clr);
+   q_a <= not (r_g and q_b and preset);
+   q_b <= not (s_g and q_a and clr);
    q <= q_a;
 end architecture;

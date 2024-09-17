@@ -16,6 +16,7 @@ architecture structural of counter_8 is
 begin
     t_0 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => enable,
         q => s(0)
@@ -23,6 +24,7 @@ begin
     i(0) <= s(0) and enable;
     t_1 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(0),
         q => s(1)
@@ -30,6 +32,7 @@ begin
     i(1) <= s(1) and i(0);
     t_2 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(1),
         q => s(2)
@@ -37,6 +40,7 @@ begin
     i(2) <= s(2) and i(1);
     t_3 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(2),
         q => s(3)
@@ -44,6 +48,7 @@ begin
     i(3) <= s(3) and i(2);
     t_4 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(3),
         q => s(4)
@@ -51,6 +56,7 @@ begin
     i(4) <= s(4) and i(3);
     t_5 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(4),
         q => s(5)
@@ -58,6 +64,7 @@ begin
     i(5) <= s(5) and i(4);
     t_6 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(5),
         q => s(6)
@@ -65,6 +72,7 @@ begin
     i(6) <= s(6) and i(5);
     t_7 : entity work.ff_t(structural) port map (
         clk => clk,
+        preset => '1',
         clr => clr,
         t => i(6),
         q => s(7)
