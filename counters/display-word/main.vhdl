@@ -43,11 +43,6 @@ begin
         enable => '1',
         q => count
     );
-    --delay_signal : entity work.ff_d(structural) port map (
-    --    clk => clk,
-    --    d => clr,
-    --    q => clr_d
-    --);
     shift_regs : for i in 0 to 6
     generate
         reg : entity work.shift_reg(structural) 
