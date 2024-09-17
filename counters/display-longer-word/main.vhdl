@@ -5,7 +5,7 @@ use ieee.std_logic_1164.all;
 library work;
 
 package display_attrs is
-    constant N_DISPLAYS : integer := 4;
+    constant N_DISPLAYS : integer := 6;
     type segmentwise_t is array (0 to 6) of std_logic_vector(N_DISPLAYS - 1 downto 0);
     type display_array_t is array (N_DISPLAYS - 1 downto 0) of std_logic_vector(0 to 6);
 end package;
@@ -26,12 +26,14 @@ end entity;
 
 architecture structural of main is
     constant DISPLAY_INIT : segmentwise_t :=
-        -- ' ', 'd', 'E', '0'
-        -- Transposed: ("1111111", 
+        -- ' ', ' ', ' ', 'd', 'E', '0'
+        -- Transposed: ("1111111",
+        --              "1111111",
+        --              "1111111", 
         --              "1000010", 
         --              "0110000", 
         --              "0000001");
-        ("1100", "1010", "1010", "1000", "1000", "1100", "1001");
+        ("111100", "111010", "111010", "111000", "111000", "111100", "111001");
     signal t : segmentwise_t;
 
     signal count : std_logic_vector(25 downto 0);
@@ -43,11 +45,6 @@ begin
         enable => '1',
         q => count
     );
-    --delay_signal : entity work.ff_d(structural) port map (
-    --    clk => clk,
-    --    d => clr,
-    --    q => clr_d
-    --);
     shift_regs : for i in 0 to 6
     generate
         reg : entity work.shift_reg(structural) 
