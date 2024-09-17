@@ -40,7 +40,10 @@ begin
         enable <= '0';
         wait for 5 * CLK_PERIOD;
         enable <= '1';
-        wait for 5 * CLK_PERIOD;
+        wait for 5.2 * CLK_PERIOD;
+        clr <= '0';
+        wait for 0.6 * CLK_PERIOD;
+        clr <= '1';
 
         wait for 300 * CLK_PERIOD;
 

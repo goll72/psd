@@ -1,13 +1,14 @@
--- A flip-flop implemented using two gated D latches
+-- A T flip-flop implemented using a D flip-flop
 
 library ieee;
+
 use ieee.std_logic_1164.all;
 
 library work;
 
 entity ff_t is
-    port (clk, clr, t : in  std_logic;
-                    q : out std_logic);
+    port (clk, preset, clr, t : in  std_logic;
+                            q : out std_logic);
 end entity;
 
 architecture structural of ff_t is
@@ -17,6 +18,8 @@ begin
     d_internal : entity work.ff_d(structural) port map (
         clk => clk,
         d => data_in,
+        preset => preset,
+        clr => clr,
         q => s
     );
     q <= s;
