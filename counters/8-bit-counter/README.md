@@ -18,4 +18,4 @@ O contador de 8bits utiliza 8 flip-flops e mais 7 portas lógicas, portanto a qu
 ### Visualizador do Quartus
 ![contador_4bits](https://github.com/user-attachments/assets/607ae153-d575-4d4d-a8a1-1a5e968b4e3d)
 
-Apesar de a posição dos elementos ser diferente, com uma imagem mostrando os flip-flops na horizontal e outro na vertical, pode-se notar que na prática os dois circuitos são iguais, sendo a única diferença a porta NOT na entrada clear nos flips-flops.
+Apesar de a posição dos elementos ser diferente, com uma imagem mostrando os flip-flops na horizontal e outro na vertical, pode-se notar que na prática os dois circuitos são iguais.
