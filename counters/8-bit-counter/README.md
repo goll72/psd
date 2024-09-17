@@ -19,3 +19,7 @@ O contador de 8bits utiliza 8 flip-flops e mais 7 portas lógicas, portanto a qu
 ![contador_4bits](https://github.com/user-attachments/assets/607ae153-d575-4d4d-a8a1-1a5e968b4e3d)
 
 Apesar de a posição dos elementos ser diferente, com uma imagem mostrando os flip-flops na horizontal e outro na vertical, pode-se notar que na prática os dois circuitos são iguais.
+
+##Explicação
+
+Adotamos uma logica de implementar três arquivos vhdl, sendo um responsável pela logica dos flip flops tipo T, outro responsável por colocar no hexadecimal, e uma main que instância ambos e deixa mais organizado
