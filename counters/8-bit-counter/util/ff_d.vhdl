@@ -17,8 +17,8 @@ begin
    d_m : entity work.latch_d(structural) port map (
       clk => not clk,
       d => d,
-      preset => '1',
-      clr => '1',
+      preset => clr,
+      clr => preset,
       q => q_m
    );
    d_s : entity work.latch_d(structural) port map (
