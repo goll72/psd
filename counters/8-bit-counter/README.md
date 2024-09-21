@@ -1,29 +1,37 @@
 8-bit-counter
 =============
 
-## Estrutura do contador de 8bits
+Foi desenvolvido um contador de 8 bits utilizando oito flip-flops tipo T.
 
-O contador de 8 bits foi feito utilizando 8 flip-flops tipo T.
+## Quantidade de elementos lógicos utilizados
 
-## Quantidade de LEs utilizados
+Seguindo a [definição de LEs dada pela Intel](https://www.intel.com/content/www/us/en/programmable/quartushelp/17.0/reference/glossary/def_logelem.htm),
+podemos analisar a saída do Technology Map Viewer do Intel Quartus Prime para concluir que:
 
-<!-- XXX -->
+Um latch D, da forma que implementamos, usa 6 elementos lógicos. Um flip-flop tipo D usa dois latches D
+e um flip-flop tipo T usa um flip-flop tipo D. Portanto, cada flip-flop tipo T usa 12 elementos lógicos.
 
-Quantidade de LEs em um latch D: 10 LEs.
+Além dos oito flip-flops tipo T, usamos um conjunto de sinais intermediários com a lógica necessária
+para a entrada de cada flip-flop tipo T. Esse conjunto foi implementado usando um elemento lógico.
 
-Cada flip-flop_T usa 1 latch D e mais 2 LEs, portanto a quantidade total por flip-flop é: 12 LEs.
-O contador de 8bits utiliza 8 flip-flops e mais 7 portas lógicas, portanto a quantidade de LEs é: (8 X 12) + 7 = 103 LEs.
+Portanto, o contador de 8 bits usa 97 elementos lógicos.
 
-## Diferenças entre a visualização do Quartus e da imagem do exercício:
+## Comparação entre o RTL viewer e o circuito dado
 
-### Imagem do exercício
-![Captura de Tela (7)](https://github.com/user-attachments/assets/8c9d1a03-10fa-4c4e-851b-b685676b58fb)
 
-### Visualizador do Quartus
-![contador_4bits](https://github.com/user-attachments/assets/607ae153-d575-4d4d-a8a1-1a5e968b4e3d)
+| ![Circuito dado na parte I](assets/circuito_ex.PNG) |
+|:--:|
+| *Circuito dado na parte I* |
 
-Apesar de a posição dos elementos ser diferente, com uma imagem mostrando os flip-flops na horizontal e outro na vertical, nota-se que, na prática, os dois circuitos são iguais.
+| ![Circuito gerado pelo RTL viewer](https://github.com/user-attachments/assets/607ae153-d575-4d4d-a8a1-1a5e968b4e3d) |
+|:--:|
+| *Circuito gerado pelo RTL viewer* |
 
-## Explicação
+Nota-se que os dois circuitos são efetivamente idênticos.
 
-Adotamos uma logica de implementar três arquivos vhdl, sendo um responsável pela logica dos flip flops tipo T, outro responsável por colocar no hexadecimal, e uma main que instância ambos e deixa mais organizado
+## Organização
+
+Cada arquivo VHDL declara uma entidade correspondente; o `main.vhdl` instancia o contador
+e os controladores dos displays de sete segmentos (`hex.vhdl`).
+
+`main_4.vhdl` contém o código referente ao contador de 4 bits.
