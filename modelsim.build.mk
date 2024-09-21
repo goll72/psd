@@ -23,4 +23,4 @@ $(WORK):
 	$(VLIB) "$@"
 
 $(WORK)/_lib.qdb: $(SRC) | $(WORK)
-	$(VCOM) $(DEFVFLAGS) $?
+	$(VCOM) $(DEFVFLAGS) $(firstword $?) $(call up-from,$(firstword $?),$(SRC))
