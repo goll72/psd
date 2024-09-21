@@ -1,28 +1,31 @@
-# SR Latch
-  O circuito Latch SR é um circuito simples capaz de armazenar um bit de memória, é formado por duas portas lógicas NOR, conectando a saída de uma com a entrada da outra.
+sr-latch
+========
 
-  ![1692895856717](https://github.com/user-attachments/assets/5b896453-8b0c-49f9-9822-bfb3b568fa03)
+O circuito Latch SR é um circuito simples capaz de armazenar um bit de memória, 
+é formado por duas portas lógicas NOR (ou NAND), conectando a saída de uma com a entrada da outra.
 
+![1692895856717](https://github.com/user-attachments/assets/5b896453-8b0c-49f9-9822-bfb3b568fa03)
   
 ## Estrutura
-  A entrada é composta pelas entradas S(set), R(reset) e um sistema de controle(clock), sendo a primeira responsável por definir o valor que irá ser armazenado, enquanto a entrada R é responsável por resetar 
-o Latch, a saída de primeira porta NOR é conectada a entrada da segunda e vice-versa.
+
+A entrada é composta pelos sinais $S$ (set), $R$ (reset) e clock. Quando habilitado, o sinal $S$
+faz o latch armazenar nível lógico $1$, enquanto o $R$ faz o latch armazenar nível lógico $0$.
+No Latch, a saída da primeira porta NOR é conectada à entrada da segunda e vice-versa.
 
 ## Funcionamento
-  O funcionamento do SR Latch é simples, no caso de S(1) e R(0), as saidas serão Q(1) e !Q(0), pois o valor armazenado foi 1, e se a entrada for o oposto, a saída também será oposta, além disso,
-a entrada S(1) e R(1) é uma condição proibida, o que gera uma saída indefinida.
 
-# Gated D latch
-  Assim como a Latch SR, o Gated D latch também é um circuito feito para armazenar memória sendo esse uma variação do primeiro, a diferença é que ele evita a condição proibida do Latch SR 
-(onde as duas entradas são ativadas ao mesmo tempo), o circuito Gated D latch utiliza apenas uma entrada(D), além do sistema de controle(clock), sendo essa o valor a ser armazenado.
+O funcionamento do Latch SR é simples, no caso $S = 1$ e $R = 0$, as saidas serão $Q = 1$ e 
+$\overline{Q} = 0$ (o valor armazenado é $1$); invertendo os sinais de entrada, a saída também será
+invertida. O caso $S = 1$ e $R = 1$ deve ser evitado, pois leva o circuito a um estado indefinido.
+
+# Latch D
+
+Assim como a Latch SR, o latch D também é um circuito feito para armazenar informação (um bit),
+sendo esse uma variação do primeiro que impede as duas entradas de serem habilitadas ao mesmo tempo.
+Usa apenas uma entrada ($D$), além do clock, sendo essa entrada o valor a ser armazenado.
 
 ![gated-D-latch](https://github.com/user-attachments/assets/8b8372eb-cf12-4da9-b43e-ac247b89bd6b)
 
-
-## Estrutura
-  Como dito antes, há uma única entrada (D), que representa o valor a ser armazenado e o sistema de controle que determina se o valor será armazenado ou não. As saídas são chamadas de Q e !Q que representam
-respectivamente o valor a ser armazenado e o inverso do mesmo. O circuito é composto por 4 portas NAND, sendo bem similar ao Latch SR.
-
-## Funcionamento
-  O Gated D latch é mais simples de ser utilizado quando comparado ao SR Latch, pois possui apenas 1 entrada, funcionando da seguinte maneira, quando o sistema de controle está liberado, o valor armazenado é D,
-caso não esteja liberado, o valor não é armazenado.
+Quando o latch possui um sinal de clock, esse sinal impede que qualquer valor de entrada seja armazenado
+enquanto tiver nível lógico $0$, por isso denominamos esse tipo de latch "gated". De outra forma,
+podemos dizer que esse tipo de latch depende do clock e opera por nível (nível lógico $1$).
