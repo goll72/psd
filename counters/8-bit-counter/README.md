@@ -3,7 +3,11 @@
 
 ## Estrutura do contador de 8bits
 
-O contador de 8 bits foi feito utilizando 8 flip-flops do tipo T, dessa forma podemos contar a quantidade total de elementos lógicos (LEs) utilizados para implementar o circuito:
+O contador de 8 bits foi feito utilizando 8 flip-flops tipo T.
+
+## Quantidade de LEs utilizados
+
+<!-- XXX -->
 
 Quantidade de LEs em um latch D: 10 LEs.
 
@@ -18,7 +22,7 @@ O contador de 8bits utiliza 8 flip-flops e mais 7 portas lógicas, portanto a qu
 ### Visualizador do Quartus
 ![contador_4bits](https://github.com/user-attachments/assets/607ae153-d575-4d4d-a8a1-1a5e968b4e3d)
 
-Apesar de a posição dos elementos ser diferente, com uma imagem mostrando os flip-flops na horizontal e outro na vertical, pode-se notar que na prática os dois circuitos são iguais.
+Apesar de a posição dos elementos ser diferente, com uma imagem mostrando os flip-flops na horizontal e outro na vertical, nota-se que, na prática, os dois circuitos são iguais.
 
 ## Explicação
 
