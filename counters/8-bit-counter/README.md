@@ -19,11 +19,11 @@ Portanto, o contador de 8 bits usa 97 elementos lógicos.
 ## Comparação entre o RTL viewer e o circuito dado
 
 
-| ![Circuito dado na parte I](assets/circuito_ex.PNG) |
+| ![Circuito dado na parte I](assets/circuito_ex.png) |
 |:--:|
 | *Circuito dado na parte I* |
 
-| ![Circuito gerado pelo RTL viewer](https://github.com/user-attachments/assets/607ae153-d575-4d4d-a8a1-1a5e968b4e3d) |
+| ![Circuito gerado pelo RTL viewer](assets/contador_4bits.png) |
 |:--:|
 | *Circuito gerado pelo RTL viewer* |
 
