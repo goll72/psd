@@ -1,6 +1,18 @@
-# Part IV - Display Word
+display-word
+============
 
-A tarefa consiste em implementar um circuito, que rotacione as letras em um conjunto de 4 display's. Rotacionando da direita para a esquerda 
-Para a placa adotada a palavra foi: " dE0"
-Foi utilizando o contador da Part 3, para que cada rotação demore entorno de 1 segundo, além de um conjunto de registradores de deslocamento, por fim mandamos para o display hexadecimal
+A parte IV consiste em implementar um circuito que rotacione, da direita para a esquerda,
+em intervalos de aproximadamente um segundo, uma palavra exibida em um conjunto de 4 
+displays de sete segmentos. 
 
+A palavra correspondente à placa FPGA adotada é: " dE0".
+
+Utilizando o contador implementado na [parte III](../flash), criamos um delay para habilitar
+um conjunto de registradores de deslocamento, onde cada registrador de deslocamento corresponde
+a um dos seis segmentos de cada display, e cada registrador de deslocamento contém aquele dado
+segmento de todos os displays. Percebe-se um deslocamento realizado em um dado registrador 
+corresponde a uma rotação no segmento correspondente. Habilitando todos os registradores de 
+deslocamento ao mesmo tempo, temos a rotação de uma palavra por uma unidade, como desejado.
+
+*Obs. os registradores de deslocamento usados têm load assíncrono, para permitir que o
+circuito seja "resetado" para um estado inicial ao habilitar esse sinal, usando apenas um sinal.*

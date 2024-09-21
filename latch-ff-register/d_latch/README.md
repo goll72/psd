@@ -12,11 +12,11 @@ quando o clock estiver em nível lógico 1.
 
 ## Tabela-verdade
 
- D | CLK | Q(t + 1)
----|-----|---------
- x |  0  | Q(t)
- 0 |  1  | 0
- 1 |  1  | 1
+ D | CLK | $Q(t + 1)$
+---|-----|------------
+ x |  0  |   $Q(t)$
+ 0 |  1  |      0
+ 1 |  1  |      1
  
 O latch mantém seu estado anterior se o nível lógico de CLK (clock) for 0, 
 caso contrário Q será determinado de acordo com D.

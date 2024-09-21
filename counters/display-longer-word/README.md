@@ -1,3 +1,6 @@
-# Part V - Dislay long Word
+display-longer-word
+===================
 
-O exercicio da part V, tem a mesma logica e ideia da part IV, a unica diferença é utilizar todos os diplay da placa, sendo realizados em seis display
+O exercicio da parte V utiliza o mesmo princípio implementado na [parte IV](../display-word), 
+a única diferença sendo que devemos utilizar todos os displays da placa FPGA, sendo implementado
+para a placa FPGA utilizada usando 6 displays. 
