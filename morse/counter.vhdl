@@ -12,16 +12,16 @@ entity counter is
 end entity;
 
 architecture behavioral of counter is
-    signal k : unsigned(N - 1 downto 0);
 begin
     increment : process(clk, clr) is
+        variable k : unsigned(N - 1 downto 0);
     begin
         if clr = '0' then
-            k <= (others => '0');
+            k := (others => '0');
         elsif rising_edge(clk) and enable = '1' then
-            k <= k + 1;
+            k := k + 1;
         end if;
-
+        
         q <= std_logic_vector(k);
     end process;
 end architecture;
