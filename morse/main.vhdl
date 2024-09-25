@@ -15,8 +15,7 @@ entity main is
         -- Specifies the letter to be displayed, "000" is A, "001" is B, ..., "111" is H
         alpha_code       :  in std_logic_vector(2 downto 0);
         -- Morse code output
-        morse_code       : out std_logic;
-        a, b             : out std_logic_vector(3 downto 0)
+        morse_code       : out std_logic
     );
 end entity;
 
