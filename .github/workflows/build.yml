@@ -13,7 +13,7 @@ jobs:
           sha256sum quartus-install.py | grep -q dc8b3309ac1873706f44e76090812aad7ae1b85a007f53751f5fe41b8b8c12a7
       - name: Install Quartus
         run: |
-          python ./quartus-install.py -j $(nproc) 23.3 /opt/intelFPGA c5
+          python ./quartus-install.py -j $(nproc) 20.1lite /opt/intelFPGA c5
   build-sof:
     name: Build SOF files for projects
     needs: install-quartus
