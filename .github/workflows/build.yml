@@ -18,13 +18,13 @@ jobs:
     name: Build SOF files for projects
     needs: install-quartus
     runs-on: ubuntu-latest
-    env:
-      PATH: /bin:/usr/bin:/opt/intelFPGA/quartus/bin
     steps:
       - name: Checkout
         uses: actions/checkout@v4
       - name: Compile projects
         run: |
+          export PATH=$PATH:/opt/intelFPGA/quartus/bin
+
           for i in */*.qpf */*/*.qpf; do
             make -C "$(dirname "$i")" ENV=quartus || exit 1
           done
