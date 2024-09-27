@@ -1,5 +1,7 @@
 *
 
+!.github/workflows/**
+
 !/**/
 !**/assets/*
 !.gitignore
