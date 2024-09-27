@@ -1,0 +1,32 @@
+name: Build project(s)
+
+on: push
+
+jobs:
+  install-quartus:
+    name: Install Quartus
+    runs-on: ubuntu-latest
+    steps:
+      - name: Fetch Quartus Installer
+        run: |
+          curl -L https://github.com/CTSRD-CHERI/quartus-install/raw/513ef6a2909c4b19eded3181a1c668fce7979dd9/quartus-install.py -o quartus-install.py
+          sha256sum quartus-install.py | grep -q dc8b3309ac1873706f44e76090812aad7ae1b85a007f53751f5fe41b8b8c12a7
+      - name: Install Quartus
+        run: |
+          python ./quartus-install.py -j $(nproc) 23.3 /opt/intelFPGA c5
+  build-sof:
+    name: Build SOF files for projects
+    needs: install-quartus
+    runs-on: ubuntu-latest
+    env:
+      PATH: /bin:/usr/bin:/opt/intelFPGA/bin
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Compile projects
+        run: |
+          for i in */*.qpf */*/*.qpf; do
+            make -C "$(dirname "$i")" ENV=quartus || exit 1
+          done
+      - name: Release
+        uses: softprops/action-gh-release@v2
