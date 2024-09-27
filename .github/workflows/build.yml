@@ -20,7 +20,7 @@ jobs:
         uses: actions/checkout@v4
       - name: Compile projects
         run: |
-          for i in */*.qpf */*/*.qpf; do
+          for i in */Makefile */*/Makefile; do
             make -C "$(dirname "$i")" ENV=quartus || exit 1
           done
       - name: Release
