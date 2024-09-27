@@ -26,9 +26,12 @@ jobs:
           for i in */Makefile */*/Makefile; do
             make -C "$(dirname "$i")" ENV=quartus || exit 1
           done
+      - name: Bundle build artifacts
+        run: |
+          git ls-tree --full-tree -r --name-only HEAD > ../repofiles
+          zip -r sof.zip . -x@../repofiles
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            */output_files/*
-            */*/output_files/*
+            ../sof.zip
