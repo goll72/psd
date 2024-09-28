@@ -3,7 +3,7 @@ package morse_attrs is
     constant COUNTER_CLK_BITS : integer := 3;
     -- synthesis translate_on
     -- synthesis read_comments_as_hdl on
-    -- constant COUNTER_CLK_BITS : integer := 26;
+    -- constant COUNTER_CLK_BITS : integer := 25;
     -- synthesis read_comments_as_hdl off
     constant MORSE_MAX_LEN : integer := 11;
     constant MORSE_MAX_LEN_BITS : integer := 4;
