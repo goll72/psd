@@ -8,6 +8,4 @@ Os *switches* *SW3−0* foram utilizados para fornecer a entrada *DataIn*, dado 
 Os *switches* *SW8−4* foram utilizados para fornecer a entrada *Adress*, endereço onde o dado será armazenado.<br/>
 O *switch* *SW9* foi utilizado para fornecer a entrada *Adress*, que define se o dado será escrito ou lido.<br/>
 O botão *KEY0* foi utilizado como *Clock*.<br/>
-Os *displays HEX5 − 4* mostram o valor do endereço (entrada *Adress*).<br/>
-O *display HEX2* mostra o valor do dado que será armazenado (entrada *DataIn*).<br/>
-O *display HEX0* mostra o dado que foi lido.<br/> 
+O dado é exibido por um conjunto de 4 *LEDS*.
