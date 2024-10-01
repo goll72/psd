@@ -36,3 +36,7 @@ Desenvolvido durante as aulas de 20/09/2024 e 29/09/2024.
 ### [counters](./counters)
 
 Desenvolvido durante as aulas de 10/09/2024 e 17/09/2024. 
+
+### [morse](./morse)
+
+Desenvolvido durante a aula de 24/09/2024.
