@@ -19,13 +19,13 @@
 #
 # Quartus Prime
 # Version 21.1.0 Build 842 10/21/2021 SJ Lite Edition
-# Date created = 00:00:00    January  1, 1970
+# Date created = %DATE%
 #
 # -------------------------------------------------------------------------- #
 
 QUARTUS_VERSION = "21.1"
-DATE =          "00:00:00    January  1, 1970"
+DATE =          "%DATE%"
 
 # Revisions
 
-PROJECT_REVISION = ""
+PROJECT_REVISION = "%PROJECT%"
