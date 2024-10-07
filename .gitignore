@@ -11,3 +11,5 @@
 !README.md
 !**/Makefile
 !*.build.mk
+!setup.bat
+!setup.sh
