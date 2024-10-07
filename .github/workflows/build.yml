@@ -29,9 +29,9 @@ jobs:
       - name: Bundle build artifacts
         run: |
           git ls-tree --full-tree -r --name-only HEAD > ../repofiles
-          zip -r sof.zip . -x.git -x@../repofiles
+          zip -r out.zip . -x.git -x.github -x@../repofiles
       - name: Release
         uses: softprops/action-gh-release@v2
         with:
           files: |
-            sof.zip
+            out.zip
