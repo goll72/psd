@@ -23,6 +23,8 @@ up-from = $(strip $(wordlist $(or $(call index-of,$1,$(-never-matching) $(-never
 
 
 ifeq ($(OS),Windows_NT)
+	PYTHON = C:\windows\py.exe
+
 	RM = del
 	RMTREE = rd /s /q
 	MKDIR = md
@@ -31,9 +33,13 @@ ifeq ($(OS),Windows_NT)
 	link = mklink /H $(2) $(1)
 	toupper = $(1)
 	touch = copy /b $(1) +,,
+	curl = bitsadmin /transfer psd-stuff /download /priority normal $(1) $(2)
+	unzip = powershell -Command "Expand-Archive -Path $(1) -DestinationPath $(2)"
 
 	SHELL = cmd.exe
 else
+	PYTHON = python3
+	
 	RM = rm -f
 	RMTREE = rm -rf
 	MKDIR = mkdir -p
@@ -42,4 +48,6 @@ else
 	link = ln -srf $(1) $(2)
 	toupper = $(shell echo $(1) | tr '[:lower:]' '[:upper:]')
 	touch = touch $(1)
+	curl = curl -L $(1) -o $(2)
+	unzip = unzip $(1) -d $(2)
 endif
