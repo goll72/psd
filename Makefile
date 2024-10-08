@@ -4,7 +4,6 @@ include common.build.mk
 
 ifneq ($(P),)
 init:
-	$(MKDIR) "$(P)"
 	git worktree add sample sample
 	$(PYTHON) ./sample/init.py "$(P)"
 	git worktree remove sample
