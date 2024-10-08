@@ -11,7 +11,10 @@ project_path = Path(sys.argv[1])
 
 project_name = project_path.name
 
-project_path.mkdir()
+try:
+    project_path.mkdir()
+except:
+    pass
 
 def copy_template_file(f, g):
     text = f.read()
