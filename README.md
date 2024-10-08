@@ -40,3 +40,7 @@ Desenvolvido durante as aulas de 10/09/2024 e 17/09/2024.
 ### [morse](./morse)
 
 Desenvolvido durante a aula de 24/09/2024.
+
+### [memory-blocks](./memory-blocks)
+
+Desenvolvido durante a aula de 01/10/2024.
