@@ -34,7 +34,6 @@ begin
             end if;
             
             q <= mem(addr_index);
-            -- end if;
         end if;
     end process;
 end;
