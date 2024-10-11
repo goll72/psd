@@ -23,9 +23,7 @@ architecture structural of main is
     signal current_pulse_seq : std_logic_vector(MORSE_MAX_LEN - 1 downto 0);
 
     signal remaining_len : std_logic_vector(MORSE_MAX_LEN_BITS - 1 downto 0);
-
     signal morse_clk_count : std_logic_vector(COUNTER_CLK_BITS - 1 downto 0);
-    
     signal morse_clk : std_logic;
 begin
     lut : entity work.morse_lut(behavioral) port map (
@@ -36,7 +34,7 @@ begin
 
     fsm : entity work.morse_fsm(behavioral) port map (
         clk => morse_clk,
-        w => current_pulse_seq(0),
+        w => current_pulse_seq(MORSE_MAX_LEN - 1),
         count => remaining_len,
         reset => reset,
         q => morse_code,
@@ -50,7 +48,7 @@ begin
         port map (
             clk => morse_clk,
             updown => '0',
-            load => enable,
+            load => not enable,
             enable => enable_counter_reg,
             data => morse_len,
             q => remaining_len
@@ -63,7 +61,7 @@ begin
         port map (
             clk => clk,
             updown => '1',
-            load => reset,
+            load => not reset,
             enable => '1',
             data => (others => '0'),
             q => morse_clk_count
@@ -71,14 +69,14 @@ begin
 
     morse_clk <= morse_clk_count(COUNTER_CLK_BITS - 1);
 
-    pulse_reg : entity work.shift_reg(structural) 
+    pulse_reg : entity work.shift_reg(behavioral) 
         generic map (
             N => MORSE_MAX_LEN
         )
         port map (
-            clk => morse_clk,
+            clk => not morse_clk,
             enable => enable_counter_reg,
-            load => enable,
+            load => not enable,
             data => morse_pulses,
             q => current_pulse_seq
         );

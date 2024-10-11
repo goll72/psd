@@ -16,7 +16,7 @@ end entity;
 
 architecture behavioral of counter is
 begin
-    increment : process(clk, load) is
+    increment : process(clk, load, enable, updown) is
         variable k : unsigned(N - 1 downto 0);
     begin
         if load = '1' then
