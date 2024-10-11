@@ -22,18 +22,6 @@ begin
         variable current : state_t;
     begin
         if rising_edge(clk) then
-            if current = A then
-                q <= '0';
-            else
-                q <= '1';
-            end if;
-
-            if current = B or current = E then
-                next_pulse <= '1';
-            else
-                next_pulse <= '0';
-            end if;
-            
             case current is
                 when A =>
                     if or_reduce(count) = '0' then
@@ -56,6 +44,18 @@ begin
             if reset = '0' then
                 current := A;
             end if;
-        end if;
+
+            if current = A then
+                q <= '0';
+            else
+                q <= '1';
+            end if;
+
+            if current = B or current = E then
+                next_pulse <= '1';
+            else
+                next_pulse <= '0';
+            end if;
+         end if;
     end process;
 end architecture;

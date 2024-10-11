@@ -33,7 +33,11 @@ begin
         enable <= '0';
         alpha_code <= "001";
 
-        wait for 30 * CLK_PERIOD;
+        wait for 2 * CLK_PERIOD;
+
+        enable <= '1';
+
+        wait for 90 * CLK_PERIOD;
 
         std.env.stop;
     end process;
