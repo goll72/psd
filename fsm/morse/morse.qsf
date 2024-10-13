@@ -75,8 +75,6 @@ set_global_assignment -name VHDL_FILE morse_fsm.vhdl
 set_global_assignment -name VHDL_FILE morse_attrs.vhdl
 set_global_assignment -name VHDL_FILE morse_lut.vhdl
 set_global_assignment -name VHDL_FILE util/shift_reg.vhdl
-set_global_assignment -name VHDL_FILE util/latch_d.vhdl
-set_global_assignment -name VHDL_FILE util/ff_d.vhdl
 set_global_assignment -name VHDL_FILE counter.vhdl
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
