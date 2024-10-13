@@ -39,6 +39,15 @@ begin
 
         wait for 90 * CLK_PERIOD;
 
+        enable <= '0';
+        alpha_code <= "010";
+
+        wait for 7 * CLK_PERIOD;
+
+        enable <= '1';
+
+        wait for 120 * CLK_PERIOD;
+
         std.env.stop;
     end process;
 end architecture;
