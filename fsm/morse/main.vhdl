@@ -18,11 +18,12 @@ end entity;
 architecture structural of main is
     signal morse_pulses : std_logic_vector(MORSE_MAX_LEN - 1 downto 0);
     signal morse_len : std_logic_vector(MORSE_MAX_LEN_BITS - 1 downto 0);
-    signal enable_counter_reg : std_logic;
+    signal next_pulse : std_logic;
 
     signal current_pulse_seq : std_logic_vector(MORSE_MAX_LEN - 1 downto 0);
 
     signal remaining_len : std_logic_vector(MORSE_MAX_LEN_BITS - 1 downto 0);
+    
     signal morse_clk_count : std_logic_vector(COUNTER_CLK_BITS - 1 downto 0);
     signal morse_clk : std_logic;
 begin
@@ -34,11 +35,12 @@ begin
 
     fsm : entity work.morse_fsm(behavioral) port map (
         clk => morse_clk,
+        enable => enable,
+        reset => reset,
         w => current_pulse_seq(MORSE_MAX_LEN - 1),
         count => remaining_len,
-        reset => reset,
         q => morse_code,
-        next_pulse => enable_counter_reg
+        next_pulse => next_pulse
     );
 
     counter_morse_len : entity work.counter(behavioral)
@@ -49,7 +51,7 @@ begin
             clk => morse_clk,
             updown => '0',
             load => not enable,
-            enable => enable_counter_reg,
+            enable => next_pulse,
             data => morse_len,
             q => remaining_len
         );
@@ -61,7 +63,7 @@ begin
         port map (
             clk => clk,
             updown => '1',
-            load => not reset,
+            load => '0',
             enable => '1',
             data => (others => '0'),
             q => morse_clk_count
@@ -75,7 +77,7 @@ begin
         )
         port map (
             clk => not morse_clk,
-            enable => enable_counter_reg,
+            enable => next_pulse,
             load => not enable,
             data => morse_pulses,
             q => current_pulse_seq
