@@ -15,7 +15,6 @@ begin
     state_transition : process(w, clk, reset) is
         variable current_state : std_logic_vector(8 downto 0);
     begin
-        
         if rising_edge(clk) then
             case current_state is
                 when "000000001" =>
