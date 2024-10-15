@@ -76,7 +76,7 @@ begin
             N => MORSE_MAX_LEN
         )
         port map (
-            clk => not morse_clk,
+            clk => morse_clk,
             enable => next_pulse,
             load => not enable,
             data => morse_pulses,
