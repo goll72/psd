@@ -27,6 +27,9 @@ Onde `<env>` é um de `modelsim`, `nvc` ou `quartus`.
  - `make run` pode ser utilizado para iniciar um ambiente de simulação
  ou, no ambiente `quartus`, programar o dispositivo FPGA.
 
+No ambiente `quartus`, o alvo `netlist` (`make netlist`) é disponibilizado
+para executar o Intel Quartus Prime Netlist Viewer.
+
 ## Projetos
 
 ### [latch-ff-register](./latch-ff-register)
@@ -44,3 +47,7 @@ Desenvolvido durante a aula de 24/09/2024.
 ### [memory-blocks](./memory-blocks)
 
 Desenvolvido durante a aula de 01/10/2024.
+
+### [fsm](./fsm)
+
+Desenvolvido durante as aulas de 08/10/2024 e 15/10/2024.
