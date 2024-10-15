@@ -13,3 +13,5 @@
 !*.build.mk
 !setup.bat
 !setup.sh
+
+!**/*.mif

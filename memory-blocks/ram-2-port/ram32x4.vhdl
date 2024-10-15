@@ -43,12 +43,12 @@ USE altera_mf.altera_mf_components.all;
 ENTITY ram32x4 IS
 	PORT
 	(
-		clock		: IN STD_LOGIC  := '1';
-		data		: IN STD_LOGIC_VECTOR (3 DOWNTO 0);
-		rdaddress		: IN STD_LOGIC_VECTOR (4 DOWNTO 0);
-		wraddress		: IN STD_LOGIC_VECTOR (4 DOWNTO 0);
-		wren		: IN STD_LOGIC  := '0';
-		q		: OUT STD_LOGIC_VECTOR (3 DOWNTO 0)
+		clock		: IN  STD_LOGIC  := '1';
+		data		: IN  STD_LOGIC_VECTOR (3 DOWNTO 0);
+		rdaddress	: IN  STD_LOGIC_VECTOR (4 DOWNTO 0);
+		wraddress	: IN  STD_LOGIC_VECTOR (4 DOWNTO 0);
+		wren		: IN  STD_LOGIC  := '0';
+		q		    : OUT STD_LOGIC_VECTOR (3 DOWNTO 0)
 	);
 END ram32x4;
 
