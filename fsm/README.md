@@ -3,10 +3,10 @@ fsm
 
 Exercícios envolvendo Máquinas de Estado de Moore.
 
-## [consecutive](./consecutive)
+## Parte I: Consecutive
 
-Circuito para detectar sequências consecutivas de quatro uns e quatro zeros.
+Na [parte I](./consecutive), foi implementado um circuito para detectar sequências consecutivas de quatro uns e quatro zeros.
 
-## [morse](./morse)
+## Parte IV: Morse
 
-Circuito para converter uma letra entre A e H para sua representação em código morse.
+Na [parte IV](./morse), foi implementado um Circuito para converter uma letra entre A e H para sua representação em código morse.
