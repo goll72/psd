@@ -6,7 +6,7 @@ de exibir nos displays o endereço de entrada, o dado lido nesse endereço e o d
 
 ## Demonstração na placa FPGA
 
-Para demonstrar o funcionamento da , foi vinculado entradas e saídas na placa FPGA da seguinte maneira:
+Para demonstrar o funcionamento na placa FPGA, foi vinculado entradas e saídas da seguinte maneira:
 
  - Os *switches* *SW3−0* foram utilizados para fornecer a entrada *DataIn*, dado a ser armazenado.
  - Os *switches* *SW8−4* foram utilizados para fornecer a entrada *Address*, endereço onde o dado será armazenado.
