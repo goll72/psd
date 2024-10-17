@@ -1,5 +1,5 @@
 ifeq ($(ENV),)
-$(error Defina ENV para um de: modelsim, nvc, quartus)
+$(error Defina ENV para um de: ghdl, modelsim, nvc, quartus)
 endif
 
 

@@ -2,7 +2,7 @@ ifeq ($(OS),Windows_NT)
 	PATH := $(PATH):C:/intelFPGA/19.1/modelsim_ase/win32aloem
 endif
 
-WORK = simulation/modelsim/work
+WORK = work/modelsim
 
 DEFVFLAGS = $(VFLAGS) -2008 -work $(WORK)
 
@@ -23,4 +23,4 @@ $(WORK):
 	$(VLIB) "$@"
 
 $(WORK)/_lib.qdb: $(SRC) | $(WORK)
-	$(VCOM) $(DEFVFLAGS) $(firstword $?) $(call up-from,$(firstword $?),$(SRC))
+	$(VCOM) $(DEFVFLAGS) $(call up-from,$(firstword $?),$(SRC))

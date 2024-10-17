@@ -7,6 +7,7 @@ disciplina de Prática em Sistemas Digitais.
 Os projetos podem ser "compilados" (no jargão VHDL, analisados e elaborados)
 para simulação nos seguintes ambientes:
 
+ - GHDL
  - ModelSim
  - NVC
 
@@ -21,7 +22,7 @@ manualmente, ou com uso de makefile:
 $ make ENV=<env>
 ``` 
 
-Onde `<env>` é um de `modelsim`, `nvc` ou `quartus`.
+Onde `<env>` é um de `ghdl`, `modelsim`, `nvc` ou `quartus`.
 
  - `make clean` pode ser utilizado para remover artefatos de compilação
  - `make run` pode ser utilizado para iniciar um ambiente de simulação

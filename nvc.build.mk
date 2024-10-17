@@ -6,22 +6,24 @@ endif
 
 NVC = nvc
 
-NVCFLAGS =
-NVCELAB = $(NVCFLAGS) -j
-NVCRUN = $(NVCFLAGS) -w
+WORK = work/nvc
 
-OUT = $(patsubst %.vhdl,work/%.link,$(SRC))
+DEFNVCFLAGS = --work=work:$(WORK) $(NVCFLAGS)
+NVCELAB = -j
+NVCRUN = -w
 
-all: work/_index
+OUT = $(patsubst %.vhdl,$(WORK)/%.link,$(SRC))
 
-run: work/_index
-	$(NVC) -r $(TOPLEVEL) $(NVCRUN)
+all: $(WORK)/_index
+
+run: $(WORK)/_index
+	$(NVC) $(DEFNVCFLAGS) -r $(TOPLEVEL) $(NVCRUN)
 
 clean:
-	$(RMTREE) work
+	$(RMTREE) $(WORK)
 	
-work/_index: $(OUT)
-	$(NVC) -e $(TOPLEVEL) $(NVCELAB) 
+$(WORK)/_index: $(OUT)
+	$(NVC) $(DEFNVCFLAGS) -e $(TOPLEVEL) $(NVCELAB) 
 
 # Makes a link called work/link.% (with the file's actual case) that links to 
 # work/WORK.% (upper case), that way it works on both Windows and UNIX 
@@ -42,14 +44,14 @@ work/_index: $(OUT)
 #
 # NOTE: nvc may fail and not update the output files, in that case we must
 # guarantee the input file is still newer by manually touching it
-work/%.link: %.vhdl
-	@$(MKDIR) "$(dir $@)"
+$(WORK)/%.link: %.vhdl
+	-@$(MKDIR) "$(dir $@)"
 	
-	@$(TRUNCATE) "work/WORK.$(call toupper,$(notdir $*))"
-	@$(call link,"work/WORK.$(call toupper,$(notdir $*))","$@")
+	@$(TRUNCATE) "$(WORK)/WORK.$(call toupper,$(notdir $*))"
+	@$(call link,"$(WORK)/WORK.$(call toupper,$(notdir $*))","$@")
 
 	@$(call touch,"$?")
 	
-	$(NVC) -a $?
+	$(NVC) $(DEFNVCFLAGS) -a $?
 	
 	@$(call touch,"$@")
