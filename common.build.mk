@@ -6,6 +6,8 @@ endif
 # Taken from gmtt - GNU Make Table Toolkit (https://github.com/markpiffer/gmtt)
 #
 # Copyright (c) 2017-2024 Mark Piffer
+space := $(strip) $(strip)#
+
 -separator := ¤# character 164, used in various functions to compose/decompose strings
 -never-matching := ¥# character 165, this is used as a list element that should never appear as a real element
 

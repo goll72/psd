@@ -16,5 +16,5 @@ $(WORK):
 	$(MKDIR) "$@"
 
 $(WORK)/work-obj08.cf: $(SRC) | $(WORK)
-	$(GHDL) analyze $(DEFGHDLFLAGS) --workdir=$(WORK) $(call up-from,$(firstword $?),$(SRC))
+	$(GHDL) analyze $(DEFGHDLFLAGS) --workdir=$(WORK) $(firstword $?) $(call up-from,$(firstword $?),$(SRC))
 	$(call touch,"$@")
