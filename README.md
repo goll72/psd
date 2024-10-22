@@ -15,7 +15,7 @@ Adicionalmente, os projetos podem ser compilados usando o Intel Quartus Prime
 a fim de gerar um arquivo `.sof` que pode ser programado em dispositivos SoC
 FPGA Cyclone.
 
-Nos três ambientes citados, a compilação e execução do projeto pode ser feita 
+Nos quatro ambientes citados, a compilação e execução do projeto pode ser feita 
 manualmente, ou com uso de makefile:
 
 ```
