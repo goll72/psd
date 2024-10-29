@@ -1,6 +1,6 @@
 ENV = ...
 
-include common.build.mk
+include mk/common.build.mk
 
 ifneq ($(P),)
 init:
