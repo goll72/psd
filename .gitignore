@@ -14,6 +14,7 @@
 !setup.bat
 !setup.sh
 
+!**/*.py
 !**/*.mif
 
 !/LICENSE
