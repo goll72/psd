@@ -121,6 +121,10 @@ def main():
                 case "not" | "jmp" | "jeq" | "jgr" | "in" | "out", a, b:
                     print_message(in_file, line_number, line, "Error: extraneous operand for instruction that takes one operand", matches.span(4))
                     sys.exit(2)
+                    
+                case _:
+                    print_message(in_file, line_number, line, f"Error: Invalid instruction {instr}", matches.span(1))
+                    sys.exit(2)
 
     for label in used_labels:
         if label not in resolved_labels:
