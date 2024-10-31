@@ -179,12 +179,10 @@ int main(int argc, char **argv)
 
                 break;
             case OP_LOAD:
-                regs[REG_I] = memory[pc++];
-                regs[rs >> 2] = memory[regs[REG_I]];
+                regs[rs >> 2] = memory[regs[rs & 0x3]];
                 break;
             case OP_STORE:
-                regs[REG_I] = memory[pc++];
-                memory[regs[REG_I]] = regs[rs >> 2];
+                memory[regs[rs & 0x3]] = regs[rs >> 2];
                 break;
             case OP_MOV:
                 regs[rs >> 2] = regs[rs & 0x3];
