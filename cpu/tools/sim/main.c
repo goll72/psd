@@ -49,17 +49,20 @@ int main(int argc, char **argv)
     int opt;
 
     int dump_freq = -1;
+
+    bool wait = true;
     bool stop_sim = false;
 
-    while ((opt = getopt(argc, argv, "hd:s")) != -1) {
+    while ((opt = getopt(argc, argv, "hd:sn")) != -1) {
         switch (opt) {
             case 'h':
             case '?':
                 fprintf(stderr,
-                    "Usage: %s [ -h | -d N | -f FORMAT ] BIN\n"
+                    "Usage: %s [ -h | -d N | -s | -n ] BIN\n"
                     "    -h         Shows this help menu\n"
                     "    -d N       Dumps simulation state every N instructions\n"
                     "    -s         Stops the simulation when EOF is reached\n"
+                    "    -n         Disables waiting on the `wait` instruction\n"
                     "\n"
                     "    BIN        A binary file containing executable machine code\n",
                     argv[0]);
@@ -78,6 +81,9 @@ int main(int argc, char **argv)
             }
             case 's':
                 stop_sim = true;
+                break;
+            case 'n':
+                wait = false;
                 break;
         }
     }
@@ -104,7 +110,8 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    signal(SIGINT, handle_sigint);
+    if (wait)
+        signal(SIGINT, handle_sigint);
 
     uint8_t pc = 0;
 
@@ -117,9 +124,6 @@ int main(int argc, char **argv)
     int ic = 0;
 
     while (true) {
-        if (stop_sim && pc == n_read - 1)
-            break;
-
         uint8_t instruction = memory[pc++];
 
         ir = instruction >> 4;
@@ -189,7 +193,7 @@ int main(int argc, char **argv)
                 uint8_t input = 0;
                 uint8_t mask = 0x80;
 
-                printf("$ ");
+                printf(" $ ");
                 fflush(stdout);
 
                 while (mask) {
@@ -216,17 +220,18 @@ int main(int argc, char **argv)
 
                 break;
             case OP_WAIT:
-#ifndef NO_WAIT
-                interrupt = 0;
+                if (wait) {
+                    interrupt = 0;
 
-                printf("@ ");
-                fflush(stdout);
+                    printf(" @ ");
+                    fflush(stdout);
 
-                while (!interrupt)
-                    ;
+                    while (!interrupt)
+                        ;
 
-                interrupt = 0;
-#endif
+                    interrupt = 0;
+                }
+
                 break;
             case OP_NOP: /* */
                 break;
@@ -250,5 +255,8 @@ int main(int argc, char **argv)
         }
 
         ic++;
+
+        if (stop_sim && pc == (n_read % 256))
+            break;
     }
 }
