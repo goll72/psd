@@ -17,7 +17,7 @@ def print_message(filename: str, line_number: int, line: str, message: str, span
     print(f"{filename}:{line_number + 1}: {message}", file=sys.stderr)
     
     if line:
-        print(f" | {line.strip("\n")}")
+        print(f" | {line.strip('\n')}")
 
     if span is not None:
         start, end = span
