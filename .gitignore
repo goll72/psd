@@ -15,9 +15,6 @@
 !setup.sh
 
 !**/*.py
-!*.c
-!*.h
-
-!**/*.mif
+!**/*.[csh]
 
 !/LICENSE

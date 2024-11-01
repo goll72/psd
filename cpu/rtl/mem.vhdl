@@ -7,8 +7,8 @@ library work;
 
 entity mem is
     generic (
-        ADDR_BITS : integer := 5;
-        WORD_BITS : integer := 4
+        ADDR_BITS : natural;
+        WORD_BITS : natural
     );
     port (
         clk   :    in std_logic;
@@ -22,7 +22,7 @@ entity mem is
     type mem_array_t is array(0 to MAX_ADDR) of std_logic_vector(WORD_BITS - 1 downto 0);
 end entity;
 
-architecture syn of mem is
+architecture rtl of mem is
     signal mem : mem_array_t;
 begin
     read_or_write : process(clk, write, addr, data) is

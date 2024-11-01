@@ -2,5 +2,5 @@
 TOPLEVEL =
 SRC = main.vhdl
 
-include ../../common.build.mk
-include ../../$(ENV).build.mk
+include ../mk/common.build.mk
+include ../mk/$(ENV).build.mk
