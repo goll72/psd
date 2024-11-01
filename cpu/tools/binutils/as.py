@@ -15,9 +15,11 @@ from util import FORMATS
 
 def print_message(filename: str, line_number: int, line: str, message: str, span: tuple[int, int] | None = None):
     print(f"{filename}:{line_number + 1}: {message}", file=sys.stderr)
+
+    newline = "\n"
     
     if line:
-        print(f" | {line.strip('\n')}")
+        print(f" | {line.strip(newline)}")
 
     if span is not None:
         start, end = span
