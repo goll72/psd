@@ -1,0 +1,24 @@
+INSTRUCTIONS = {
+    "and": 0x00,
+    "or": 0x10,
+    "not": 0x20,
+    "add": 0x30,
+    "sub": 0x40,
+    "cmp": 0x50,
+    "jmp": 0x60,
+    "jeq": 0x70,
+    "jgr": 0x80,
+    "load": 0x90,
+    "store": 0xa0,
+    "mov": 0xb0,
+    "in": 0xc0,
+    "out": 0xd0,
+    "wait": 0xe0,
+    "nop": 0xf0
+}
+
+REGS = {
+    "a": 0x0,
+    "b": 0x1,
+    "r": 0x2
+}
