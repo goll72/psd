@@ -12,6 +12,7 @@ def main():
 
     parser.add_argument("input", metavar="FILE", type=argparse.FileType("rb"), help="input file")
     parser.add_argument("-f", "--format", choices=list(FORMATS), metavar="FORMAT")
+    parser.add_argument("-s", "--spaces", type=int, metavar="N", help="add N blank lines after every line")
 
     args = parser.parse_args()
 
@@ -64,5 +65,6 @@ def main():
             case "and" | "or" | "add" | "sub" | "cmp" | "load" | "store" | "mov":
                 print(f"{instruction} {ops[0]}, {ops[1]}")
 
+        print("\n" * args.spaces, end="")
 if __name__ == "__main__":
     main()

@@ -21,5 +21,6 @@ simulador fechará. A implementação dessa instrução pode ser
 desabilitada usando a opção `-n`.
 
 Um caractere `$` é impresso para indicar que o simulador está
-aguardando uma entrada (instrução `in`), e `@` é impresso para
-indicar aguardo de uma interrupção (instrução `wait`).
+aguardando uma entrada (instrução `in`), `@` é impresso para
+indicar aguardo de uma interrupção (instrução `wait`) e `>` é
+impresso para denotar uma saída.

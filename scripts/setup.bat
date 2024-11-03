@@ -1,5 +1,5 @@
 :: Development environment setup script (for when they factory reset the lab PCs once again)
-:: Installs Windows Terminal, helix and vhdl_ls
+:: Installs Windows Terminal, GNU make, helix and vhdl_ls
 
 @echo Run from CMD^!^!
 

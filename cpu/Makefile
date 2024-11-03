@@ -4,3 +4,6 @@ SRC = main.vhdl
 
 include ../mk/common.build.mk
 include ../mk/$(ENV).build.mk
+
+%.bin %.mif: %.s
+	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?

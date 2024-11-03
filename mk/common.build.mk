@@ -24,8 +24,14 @@ index-of = $(if $(filter $1,$2),$(words $(call up-to,$1,$2)))
 up-from = $(strip $(wordlist $(or $(call index-of,$1,$(-never-matching) $(-never-matching) $2),2147483647),2147483647,$2))
 
 
+PROJECT_ROOT := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))
+
 ifeq ($(OS),Windows_NT)
-	PYTHON = C:\windows\py.exe
+	ifeq ($(wildcard $(PROJECT_ROOT)\bin),)
+		PYTHON = C:\windows\py.exe
+	else
+		PYTHON = $(PROJECT_ROOT)\bin\python.exe
+	endif
 
 	RM = del
 	RMTREE = rd /s /q

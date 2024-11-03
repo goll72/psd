@@ -1,15 +1,29 @@
+ENV=_
+
+include ../../../mk/common.build.mk
+
 DEFCFLAGS = $(CFLAGS) -std=c99 -pedantic -Wall -Wextra 
 
 ifeq ($(OS),Windows_NT)
-all: sim.exe
-
-sim.exe: 
+OUT = sim.exe
 else
-all: sim
+OUT = sim
+endif
 
-sim: main.c asm.h bitop.h getopt.h
+all: $(OUT)
+
+ifeq ($(OS),Windows_NT)
+sim.exe:
+	$(call curl,https://github.com/goll72/psd/releases/download/sim/sim.exe,sim.exe)
+else
+$(OUT): main.c asm.h bitop.h getopt.h
 	$(CC) $(DEFCFLAGS) main.c -o $@
+endif
 
 clean:
-	rm -f sim
-endif
+	rm -f $(OUT)
+
+build-windows:
+	$(MAKE) all CC=x86_64-w64-mingw32-gcc OUT=sim.exe
+	gh release create sim --notes "Simulador da CPU/ISA para Windows" sim.exe || \
+	gh release upload --clobber sim sim.exe

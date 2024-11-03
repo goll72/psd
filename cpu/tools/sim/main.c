@@ -52,8 +52,9 @@ int main(int argc, char **argv)
 
     bool wait = true;
     bool stop_sim = false;
+    bool dump_mem = false;
 
-    while ((opt = getopt(argc, argv, "hd:sn")) != -1) {
+    while ((opt = getopt(argc, argv, "hd:snM")) != -1) {
         switch (opt) {
             case 'h':
             case '?':
@@ -63,6 +64,7 @@ int main(int argc, char **argv)
                     "    -d N       Dumps simulation state every N instructions\n"
                     "    -s         Stops the simulation when EOF is reached\n"
                     "    -n         Disables waiting on the `wait` instruction\n"
+                    "    -M         Dumps memory when exiting\n"
                     "\n"
                     "    BIN        A binary file containing executable machine code\n",
                     argv[0]);
@@ -84,6 +86,9 @@ int main(int argc, char **argv)
                 break;
             case 'n':
                 wait = false;
+                break;
+            case 'M':
+                dump_mem = true;
                 break;
         }
     }
@@ -201,6 +206,7 @@ int main(int argc, char **argv)
                     switch (tmp) {
                         case '1':
                             input |= mask;
+                            /* fall through */
                         case '0':
                             mask >>= 1;
                         default:
@@ -213,8 +219,9 @@ int main(int argc, char **argv)
                 break;
             }
             case OP_OUT:
+                printf(" > ");
                 print_bin(regs[rs >> 2], 8);
-                printf("\n");
+                S("\n");
 
                 break;
             case OP_WAIT:
@@ -256,5 +263,18 @@ int main(int argc, char **argv)
 
         if (stop_sim && pc == (n_read % 256))
             break;
+    }
+
+    if (dump_mem) {
+        for (int i = 0; i < 16; i++) {
+            for (int j = 0; j < 16; j++) {
+                printf("%02x", memory[16 * i + j]);
+
+                if (j != 15)
+                    S("  ");
+            }
+
+            S("\n"); 
+        }
     }
 }
