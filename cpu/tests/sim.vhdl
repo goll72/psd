@@ -10,14 +10,14 @@ use work.attrs.all;
 -- Runs a demo and dumps the state of registers and memory
 -- so that the output can be compared with the output 
 -- from the C simulation of the same demo
-entity demo_runner is
+entity sim is
     generic (
         DEMO_INIT_FILE : string;
         DEMO_IN : string
     );
 end entity;
 
-architecture behavioral of demo_runner is
+architecture behavioral of sim is
     constant CLK_PERIOD : time := 100 ns;
 
     signal clk : std_logic := '0';

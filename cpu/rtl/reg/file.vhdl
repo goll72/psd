@@ -55,5 +55,5 @@ begin
         end if;
     end process;
 
-    reg_write <= std_logic_vector(to_unsigned(1, reg_write'length)) sll to_integer(unsigned(data_sel));
+    reg_write <= std_logic_vector(to_unsigned(1, reg_write'length) sll to_integer(unsigned(data_sel)));
 end architecture;

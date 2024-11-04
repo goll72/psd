@@ -34,4 +34,4 @@ DEMOS = demos/add.bin demos/mul.bin demos/fibonacci.bin
 test: $(patsubst %.bin,%.ok,$(DEMOS)) 
 
 clean::
-	cd demos; $(RM) *.bin *.mif *.simdump *.out *.ok
+	cd demos && $(RM) *.bin *.mif *.simdump *.out *.ok

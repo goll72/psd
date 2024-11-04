@@ -37,7 +37,7 @@
 
 set_global_assignment -name FAMILY "Cyclone V"
 set_global_assignment -name DEVICE 5CEBA4F23C7
-set_global_assignment -name TOP_LEVEL_ENTITY main
+set_global_assignment -name TOP_LEVEL_ENTITY cpu
 set_global_assignment -name ORIGINAL_QUARTUS_VERSION 13
 set_global_assignment -name PROJECT_CREATION_TIME_DATE "MON MAY  5 11:54:18 2014"
 set_global_assignment -name LAST_QUARTUS_VERSION "21.1.0 Lite Edition"
@@ -70,10 +70,21 @@ set_global_assignment -name MIN_CORE_JUNCTION_TEMP 0
 set_global_assignment -name MAX_CORE_JUNCTION_TEMP 85
 set_global_assignment -name POWER_PRESET_COOLING_SOLUTION "23 MM HEAT SINK WITH 200 LFPM AIRFLOW"
 set_global_assignment -name POWER_BOARD_THERMAL_MODEL "NONE (CONSERVATIVE)"
-set_global_assignment -name VHDL_FILE cpu.vhdl
+
+set_global_assignment -name VHDL_FILE rtl/attrs.vhdl 
+set_global_assignment -name VHDL_FILE rtl/asm.vhdl
+set_global_assignment -name VHDL_FILE rtl/alu/adder.vhdl
+set_global_assignment -name VHDL_FILE rtl/alu/alu.vhdl
+set_global_assignment -name VHDL_FILE rtl/reg/reg.vhdl
+set_global_assignment -name VHDL_FILE rtl/reg/file.vhdl
+set_global_assignment -name VHDL_FILE rtl/control.vhdl
+set_global_assignment -name VHDL_FILE rtl/mem.vhdl
+set_global_assignment -name VHDL_FILE rtl/cpu.vhdl
+
 set_global_assignment -name PARTITION_NETLIST_TYPE SOURCE -section_id Top
 set_global_assignment -name PARTITION_FITTER_PRESERVATION_LEVEL PLACEMENT_AND_ROUTING -section_id Top
 set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
+
 # set_location_assignment PIN_U7 -to KEY[0]
 # set_location_assignment PIN_W9 -to KEY[1]
 # set_location_assignment PIN_M7 -to KEY[2]
@@ -145,4 +156,5 @@ set_global_assignment -name PARTITION_COLOR 16764057 -section_id Top
 # set_location_assignment PIN_H13 -to CLOCK[1]
 # set_location_assignment PIN_E10 -to CLOCK[2]
 # set_location_assignment PIN_V15 -to CLOCK[3]
+
 set_instance_assignment -name PARTITION_HIERARCHY root_partition -to | -section_id Top

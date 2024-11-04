@@ -9,6 +9,7 @@ NVC = nvc
 WORK = work/nvc
 
 DEFNVCFLAGS = --work=work:$(WORK) $(NVCFLAGS)
+NVCANAL = --psl
 NVCELAB = -j
 NVCRUN = --wave=$(WORK)/$(TOPLEVEL).vcd
 
@@ -21,7 +22,7 @@ run: $(WORK)/_index
 	$(NVC) $(DEFNVCFLAGS) -r $(TOPLEVEL) $(NVCRUN)
 
 clean::
-	$(RMTREE) "$(WORK)"
+	-$(RMTREE) "$(WORK)"
 
 $(WORK)/_index: $(OUT)
 
@@ -52,6 +53,6 @@ $(WORK)/%.link: %.vhdl
 
 	@$(call touch,"$?")
 	
-	$(NVC) $(DEFNVCFLAGS) -a $?
+	$(NVC) $(DEFNVCFLAGS) -a $? $(NVCANAL)
 	
 	@$(call touch,"$@")

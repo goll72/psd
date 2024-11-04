@@ -10,7 +10,7 @@ run: output_files/$(QUARTUS_PROJECT).sof
 	quartus_pgm -m jtag -o "p;output_files/$(QUARTUS_PROJECT).sof"
 
 clean::
-	$(RMTREE) db incremental_db output_files
+	-$(RMTREE) db incremental_db output_files
 	$(RM) c5_pin_model_dump.txt *.qws *.qdf *.rpt
 
 netlist:

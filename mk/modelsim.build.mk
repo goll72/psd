@@ -16,7 +16,7 @@ run: $(WORK)/_lib.qdb
 	cd $(dir $(WORK)) && $(VSIM) $(GENERICS) $(TOPLEVEL)
 
 clean::
-	$(RMTREE) "$(WORK)"
+	-$(RMTREE) "$(WORK)"
 
 $(WORK):
 	-@$(MKDIR) "$(dir $@)"

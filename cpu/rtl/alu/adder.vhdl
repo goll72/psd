@@ -29,7 +29,7 @@ begin
         t(i) <= a(i) xor b(i);
         
         q(i) <= t(i) xor c(i);
-        c(i + 1) <= a(i) and b(i) or t(i) and c(i);
+        c(i + 1) <= (a(i) and b(i)) or (t(i) and c(i));
     end generate;
 
     c_out <= c(c'high);

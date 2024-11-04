@@ -55,15 +55,16 @@ begin
         );
 
     control_unit : entity work.control(behavioral) port map (
-        clk => clk, 
-        rst => rst, 
+        clk => clk,
+        rst => rst,
+        int => int,
 
         pc => pc,
         ir => ir,
         rs => rs,
 
-        alu_save_reg => alu_save_reg,
-        data_save_reg => data_save_reg,
+        alu_to_reg_write => alu_save_reg,
+        data_to_reg_write => data_save_reg,
     
         mem_read => mem_read,
         mem_write => mem_write,

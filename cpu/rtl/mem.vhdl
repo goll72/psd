@@ -68,7 +68,7 @@ end architecture;
 --
 -- architecture rtl of mem is
 -- begin
---     ram : entity altsyncram(syn)
+--     ram : altsyncram
 --         generic map (
 --             OPERATION_MODE => "SINGLE_PORT",
 --             RAM_BLOCK_TYPE => "M10K",

@@ -11,6 +11,7 @@ entity control is
     port (
         clk : in std_logic;
         rst : in std_logic;
+        int : in std_logic;
 
         -- program counter
         pc  : inout std_logic_vector(7 downto 0);
@@ -19,11 +20,18 @@ entity control is
         -- register selection register
         rs  : inout std_logic_vector(3 downto 0);
 
+        mem_enable : out std_logic;
         mem_read, mem_write : out std_logic;
 
-        alu_save_reg, data_save_reg : out std_logic;
+        io_in_enable, io_out_enable : out std_logic;
 
-        reg_data_sel : out std_logic_vector(2 downto 0);
+        alu_to_reg_write, data_to_reg_write : out std_logic;
+
+        reg_a_to_data_write : out std_logic;
+        reg_b_to_addr_write : out std_logic;
+        reg_b_to_reg_write : out std_logic;
+
+        reg_data_sel : out std_logic_vector(1 downto 0);
 
         addr_bus : inout std_logic_vector(7 downto 0);
         data_bus : inout std_logic_vector(7 downto 0)
@@ -31,68 +39,104 @@ entity control is
 end entity;
 
 architecture behavioral of control is
-    type state_t is (FETCH, DECODE, FETCH_IMM, EXECUTE);
+    type state_t is (FETCH, DECODE, FETCH_IMM, EXECUTE, POLL);
 
     signal current : state_t := FETCH;
 begin
-    fsm : process(all) is
+    fsm : process(clk, rst) is
         variable rs_v : std_logic_vector(3 downto 0);
     begin
-        case current is
-            when FETCH =>
-                mem_read <= '1'; 
-                addr_bus <= pc;
+        if rising_edge(clk) then
+            mem_enable <= '0';
+            mem_read <= '0';
+            mem_write <= '0';
 
-                pc <= std_logic_vector(unsigned(pc) + 1);
-                
-                current <= DECODE;
-            when DECODE =>
-                mem_read <= '0';
-                
-                ir <= data_bus(7 downto 4);
+            alu_to_reg_write <= '0';
+            data_to_reg_write <= '0';
 
-                rs_v := data_bus(3 downto 0);
-                rs <= rs_v;
+            reg_a_to_data_write <= '0';
+            reg_b_to_addr_write <= '0';
             
-                if rs_v(0) = '1' and rs_v(1) = '1' then
-                    current <= FETCH_IMM;
-                else
+            case current is
+                when FETCH =>
+                    mem_enable <= '1';
+                    mem_read <= '1';
+                    addr_bus <= pc;
+
+                    -- ...
+                    pc <= std_logic_vector(unsigned(pc) + 1);
+                
+                    current <= DECODE;
+                when DECODE =>
+                    mem_read <= '0';
+                
+                    ir <= data_bus(7 downto 4);
+
+                    rs_v := data_bus(3 downto 0);
+                    rs <= rs_v;
+            
+                    if rs_v(0) = '1' and rs_v(1) = '1' then
+                        current <= FETCH_IMM;
+                    else
+                        current <= EXECUTE;
+                    end if;            
+                when FETCH_IMM =>
+                    mem_read <= '1';
+                    addr_bus <= pc;
+
+                    -- ...
+                    pc <= std_logic_vector(unsigned(pc) + 1);
+
                     current <= EXECUTE;
-                end if;            
-            when FETCH_IMM =>
-                mem_read <= '1';
-                addr_bus <= pc;
-
-                pc <= std_logic_vector(unsigned(pc) + 1);
-
-                current <= EXECUTE;
-            when EXECUTE =>
-                -- Instructions that use the ALU, result must be stored in R
-                if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
-                    alu_save_reg <= '1';
-                    reg_data_sel <= REG_R;
-                end if;
+                when EXECUTE =>
+                    -- Instructions that use the ALU, result must be stored in R
+                    if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
+                        alu_to_reg_write <= '1';
+                        reg_data_sel <= REG_R;
+                    end if;
                 
-                case ir is
-                    when OP_LOAD =>
-                        --mem_enable <= '1';
-                        mem_read <= '1';
+                    case ir is
+                        when OP_LOAD =>
+                            mem_enable <= '1';
+                            mem_read <= '1';
 
-                        --addr_write_reg_b <= '1';
+                            reg_b_to_addr_write <= '1';
                         
-                        data_save_reg <= '1';
-                        reg_data_sel <= ir(3 downto 2);
-                when OP_STORE =>
-                        when OP_
-                    
+                            data_to_reg_write <= '1';
+                            reg_data_sel <= ir(3 downto 2);
+                        when OP_STORE =>
+                            mem_enable <= '1';
+                            mem_write <= '1';
+
+                            reg_a_to_data_write <= '1';
+                            reg_b_to_addr_write <= '1';
+                        when OP_MOV =>
+                            reg_b_to_reg_write <= '1';
+                            reg_data_sel <= ir(3 downto 2);
+                        when OP_IN =>
+                            io_in_enable <= '1';
+
+                            data_to_reg_write <= '1';
+                            reg_data_sel <= ir(3 downto 2);
+                        when OP_OUT =>
+                            io_out_enable <= '1';
+                            
+                            reg_a_to_data_write <= '1';
+                        when OP_WAIT =>
+                            current <= POLL;
                         when OP_NOP =>
-                        mem_read <= '0';
-                    when others => 
-                        -- XXX
-                end case;
+                        
+                        when others =>
+
+                    end case;
                 
-                current <= FETCH;
-        end case;
+                    current <= FETCH;
+                when POLL =>
+                    if int = '1' then
+                        current <= FETCH;
+                    end if;
+            end case;
+        end if;
 
         if rst = '1' then
             mem_read <= '0';
