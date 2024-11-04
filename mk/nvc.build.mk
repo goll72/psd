@@ -10,20 +10,20 @@ WORK = work/nvc
 
 DEFNVCFLAGS = --work=work:$(WORK) $(NVCFLAGS)
 NVCELAB = -j
-NVCRUN = -w
+NVCRUN = --wave=$(WORK)/$(TOPLEVEL).vcd
 
 OUT = $(patsubst %.vhdl,$(WORK)/%.link,$(SRC))
 
 all: $(WORK)/_index
 
 run: $(WORK)/_index
+	$(NVC) $(DEFNVCFLAGS) -e $(TOPLEVEL) $(NVCELAB) $(GENERICS)
 	$(NVC) $(DEFNVCFLAGS) -r $(TOPLEVEL) $(NVCRUN)
 
-clean:
-	$(RMTREE) $(WORK)
-	
+clean::
+	$(RMTREE) "$(WORK)"
+
 $(WORK)/_index: $(OUT)
-	$(NVC) $(DEFNVCFLAGS) -e $(TOPLEVEL) $(NVCELAB) 
 
 # Makes a link called work/link.% (with the file's actual case) that links to 
 # work/WORK.% (upper case), that way it works on both Windows and UNIX 

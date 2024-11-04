@@ -23,6 +23,8 @@ entity control is
 
         alu_save_reg, data_save_reg : out std_logic;
 
+        reg_data_sel : out std_logic_vector(2 downto 0);
+
         addr_bus : inout std_logic_vector(7 downto 0);
         data_bus : inout std_logic_vector(7 downto 0)
     );
@@ -34,6 +36,7 @@ architecture behavioral of control is
     signal current : state_t := FETCH;
 begin
     fsm : process(all) is
+        variable rs_v : std_logic_vector(3 downto 0);
     begin
         case current is
             when FETCH =>
@@ -47,12 +50,11 @@ begin
                 mem_read <= '0';
                 
                 ir <= data_bus(7 downto 4);
-                rs <= data_bus(3 downto 0);
 
-                -- aa
-                wait on rs;
+                rs_v := data_bus(3 downto 0);
+                rs <= rs_v;
             
-                if rs(0) = '1' and rs(1) = '1' then
+                if rs_v(0) = '1' and rs_v(1) = '1' then
                     current <= FETCH_IMM;
                 else
                     current <= EXECUTE;
@@ -65,20 +67,28 @@ begin
 
                 current <= EXECUTE;
             when EXECUTE =>
-                -- Instructions that use the ALU
+                -- Instructions that use the ALU, result must be stored in R
                 if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
                     alu_save_reg <= '1';
+                    reg_data_sel <= REG_R;
                 end if;
                 
                 case ir is
                     when OP_LOAD =>
+                        --mem_enable <= '1';
                         mem_read <= '1';
-                        -- XXX: read from I register
-                        -- addr_bus <= 
 
+                        --addr_write_reg_b <= '1';
                         
-                    when OP_NOP =>
+                        data_save_reg <= '1';
+                        reg_data_sel <= ir(3 downto 2);
+                when OP_STORE =>
+                        when OP_
+                    
+                        when OP_NOP =>
                         mem_read <= '0';
+                    when others => 
+                        -- XXX
                 end case;
                 
                 current <= FETCH;

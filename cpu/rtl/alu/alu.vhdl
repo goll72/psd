@@ -51,6 +51,8 @@ begin
                 adder_c_in <= '1';
 
                 q <= adder_out;
+            when others =>
+                q <= (others => '0');
         end case;              
     end process;
 end architecture;

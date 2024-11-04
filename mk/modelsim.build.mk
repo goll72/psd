@@ -13,9 +13,9 @@ VLIB = vlib
 all: $(WORK)/_lib.qdb
 
 run: $(WORK)/_lib.qdb
-	cd $(dir $(WORK)) && $(VSIM) $(TOPLEVEL)
+	cd $(dir $(WORK)) && $(VSIM) $(GENERICS) $(TOPLEVEL)
 
-clean:
+clean::
 	$(RMTREE) "$(WORK)"
 
 $(WORK):

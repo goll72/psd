@@ -7,9 +7,9 @@ GHDL = ghdl
 all: $(WORK)/work-obj08.cf
 
 run: $(WORK)/work-obj08.cf
-	cd "$(WORK)"; $(GHDL) elab-run $(DEFGHDLFLAGS) --workdir=. $(TOPLEVEL)
+	cd "$(WORK)"; $(GHDL) elab-run $(DEFGHDLFLAGS) --workdir=. $(TOPLEVEL) -- --vcd=$(WORK)/$(TOPLEVEL).vcd $(GENERICS)
 
-clean:
+clean::
 	$(RMTREE) $(WORK)
 
 $(WORK):

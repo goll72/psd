@@ -24,7 +24,7 @@ architecture behavioral of adder is
 begin
     c(0) <= c_in;
     
-    for i in 0 to N_BITS - 1 generate
+    carry_adder : for i in 0 to N_BITS - 1 generate
     begin
         t(i) <= a(i) xor b(i);
         

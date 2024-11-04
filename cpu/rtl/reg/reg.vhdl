@@ -19,7 +19,7 @@ end entity;
 
 architecture behavioral of reg is
 begin
-    load : process(clk) is
+    load_or_reset : process(clk, rst) is
     begin
         if rising_edge(clk) then
             if write = '1' then
