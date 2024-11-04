@@ -13,6 +13,8 @@ entity control is
         rst : in std_logic;
         int : in std_logic;
 
+        zero, sign : in std_logic;
+
         -- program counter
         pc  : inout std_logic_vector(7 downto 0);
         -- instruction register
@@ -27,14 +29,17 @@ entity control is
 
         alu_to_reg_write, data_to_reg_write : out std_logic;
 
+        increment_pc : out std_logic;
+        pc_to_addr_write : out std_logic;
+        reg_b_to_pc_write : out std_logic;
+
         reg_a_to_data_write : out std_logic;
         reg_b_to_addr_write : out std_logic;
         reg_b_to_reg_write : out std_logic;
 
         reg_data_sel : out std_logic_vector(1 downto 0);
 
-        addr_bus : inout std_logic_vector(7 downto 0);
-        data_bus : inout std_logic_vector(7 downto 0)
+        data_bus : in std_logic_vector(7 downto 0)
     );
 end entity;
 
@@ -54,22 +59,24 @@ begin
             alu_to_reg_write <= '0';
             data_to_reg_write <= '0';
 
+            increment_pc <= '0';
+            pc_to_addr_write <= '0';
+            reg_b_to_pc_write <= '0';
+
             reg_a_to_data_write <= '0';
             reg_b_to_addr_write <= '0';
+            reg_b_to_reg_write <= '0';
             
             case current is
                 when FETCH =>
                     mem_enable <= '1';
                     mem_read <= '1';
-                    addr_bus <= pc;
 
-                    -- ...
-                    pc <= std_logic_vector(unsigned(pc) + 1);
-                
+                    increment_pc <= '1';
+                    pc_to_addr_write <= '1';
+
                     current <= DECODE;
                 when DECODE =>
-                    mem_read <= '0';
-                
                     ir <= data_bus(7 downto 4);
 
                     rs_v := data_bus(3 downto 0);
@@ -82,10 +89,9 @@ begin
                     end if;            
                 when FETCH_IMM =>
                     mem_read <= '1';
-                    addr_bus <= pc;
 
-                    -- ...
-                    pc <= std_logic_vector(unsigned(pc) + 1);
+                    increment_pc <= '1';
+                    pc_to_addr_write <= '1';
 
                     current <= EXECUTE;
                 when EXECUTE =>
@@ -96,6 +102,16 @@ begin
                     end if;
                 
                     case ir is
+                        when OP_JMP =>
+                            reg_b_to_pc_write <= '1';
+                        when OP_JEQ =>
+                            if zero = '1' then
+                                reg_b_to_pc_write <= '1';
+                            end if;
+                        when OP_JGR =>
+                            if sign = '1' then
+                                reg_b_to_pc_write <= '1';
+                            end if;
                         when OP_LOAD =>
                             mem_enable <= '1';
                             mem_read <= '1';
@@ -139,9 +155,21 @@ begin
         end if;
 
         if rst = '1' then
+            mem_enable <= '0';
             mem_read <= '0';
             mem_write <= '0';
 
+            alu_to_reg_write <= '0';
+            data_to_reg_write <= '0';
+
+            increment_pc <= '0';
+            pc_to_addr_write <= '0';
+            reg_b_to_pc_write <= '0';
+
+            reg_a_to_data_write <= '0';
+            reg_b_to_addr_write <= '0';
+            reg_b_to_reg_write <= '0';
+            
             current <= FETCH;
         end if;
     end process;

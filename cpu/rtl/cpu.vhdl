@@ -24,6 +24,9 @@ end entity;
 
 architecture structural of cpu is
     signal pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
+    signal pc_in : std_logic_vector(CPU_N_BITS - 1 downto 0);
+    signal next_pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
+    
     signal ir, rs : std_logic_vector(3 downto 0);
     
     signal zero, sign, carry, overflow : std_logic;
@@ -35,9 +38,36 @@ architecture structural of cpu is
 
     signal alu_out : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
-    signal alu_save_reg, data_save_reg : std_logic;
+    signal alu_to_reg_write, data_to_reg_write : std_logic;
+    
+    signal increment_pc : std_logic;
+    signal pc_to_addr_write : std_logic;
+    signal reg_b_to_pc_write : std_logic;
+
+    signal reg_a_to_data_write : std_logic;
+    signal reg_b_to_addr_write : std_logic;
+    signal reg_b_to_reg_write : std_logic;
 begin
-    regs : entity work.reg_file(rtl) 
+    pc_adder : entity work.adder(behavioral)
+        generic map (CPU_N_BITS)
+        port map (
+            a => pc,
+            b => (CPU_N_BITS - 1 downto 1 => '0', 0 => '1'),
+            c_in => '0',
+            q => next_pc
+        );
+        
+    pc_reg : entity work.reg(behavioral)
+        generic map (CPU_N_BITS)
+        port map (
+            clk => clk,
+            rst => rst,
+            write => increment_pc or reg_b_to_pc_write,
+            input => pc_in,
+            q => pc
+        );
+
+    regs : entity work.reg_file(rtl)
         generic map (CPU_N_BITS)
         port map (
             clk => clk,
@@ -45,10 +75,10 @@ begin
 
             a_sel => rs(3 downto 2),
             b_sel => rs(1 downto 0),
-            data_sel => reg_file_data_sel, 
+            data_sel => reg_file_data_sel,
             data_in => reg_file_data_in,
 
-            write => alu_save_reg or data_save_reg,
+            write => alu_to_reg_write or data_to_reg_write,
         
             out_a => a,
             out_b => b
@@ -59,16 +89,29 @@ begin
         rst => rst,
         int => int,
 
+        zero => zero,
+        sign => sign,
+
         pc => pc,
         ir => ir,
         rs => rs,
 
-        alu_to_reg_write => alu_save_reg,
-        data_to_reg_write => data_save_reg,
-    
+        alu_to_reg_write => alu_to_reg_write,
+        data_to_reg_write => data_to_reg_write,
+
+        increment_pc => increment_pc,
+        pc_to_addr_write => pc_to_addr_write,
+        reg_b_to_pc_write => reg_b_to_pc_write,
+
+        reg_a_to_data_write => reg_a_to_data_write,
+        reg_b_to_addr_write => reg_b_to_addr_write,
+        reg_b_to_reg_write => reg_b_to_reg_write,
+
+        mem_enable => mem_enable,
         mem_read => mem_read,
         mem_write => mem_write,
-        addr_bus => addr_bus
+
+        data_bus => data_bus
     );
 
     alu : entity work.alu(behavioral)
@@ -80,15 +123,25 @@ begin
             q => alu_out
         );
 
-    reg_file_data_in <= alu_out when alu_save_reg = '1' else 
-                        data_bus when data_save_reg = '1' else 
+    reg_file_data_in <= alu_out when alu_to_reg_write = '1' else 
+                        data_bus when data_to_reg_write = '1' else
+                        b when reg_b_to_reg_write = '1' else 
                         (others => 'Z');
+
+    pc_in <= next_pc when increment_pc = '1' else
+             b when reg_b_to_pc_write = '1' else
+             (others => 'Z');
+
+    addr_bus <= b when reg_b_to_addr_write = '1' else
+                pc when pc_to_addr_write = '1' else
+                (others => 'Z');
+
+    data_bus <= a when reg_a_to_data_write = '1' else
+                (others => 'Z');
 
     reset : process(rst) is
     begin
         if rst = '1' then
-            pc <= (others => '0');
-
             zero <= '0';
             sign <= '0';
             carry <= '0';

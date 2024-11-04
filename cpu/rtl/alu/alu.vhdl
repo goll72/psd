@@ -32,8 +32,14 @@ begin
             q => adder_out
         );
 
-    do_op : process(a, b) is
+    do_op : process(op, a, b, adder_out) is
     begin
+        -- NOTE: this is needed, otherwise adder_in/adder_c_in will become latches clocked by ir/op!!
+        -- It doesn't matter, as we only use the output of the adder in the cases where we override 
+        -- these signals. We could just drive the signals out of the process but I think this is more readable.
+        adder_in <= (others => '0');
+        adder_c_in <= '0';
+        
         case op is
             when OP_AND =>
                 q <= a and b;
