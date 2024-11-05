@@ -207,7 +207,7 @@ int main(int argc, char **argv)
 
                 while (mask) {
                     char tmp;
-                    fscanf(stdout, "%c", &tmp);
+                    fscanf(stdin, "%c", &tmp);
 
                     switch (tmp) {
                         case '1':
