@@ -11,7 +11,8 @@ SRC = rtl/attrs.vhdl rtl/asm.vhdl \
 include ../mk/common.build.mk
 include ../mk/$(ENV).build.mk
 
-SIMROOT = tools/sim
+CWD := $(realpath .)
+SIMROOT = $(CWD)/tools/sim
 
 include $(SIMROOT)/defs.mk
 
@@ -39,9 +40,9 @@ DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 %.ok: %.sim.dump %.out
 	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=$*.in -gDEMO_OUT=$*.demo.out -gDEMO_DUMP=$*.demo.dump" run
-	$(call touch "$*.ok")
-	git diff $*.out $*.demo.out || $(RM) "$*.ok"
-	git diff $*.sim.dump $*.demo.dump || $(RM) "$*.ok"
+	$(call touch,"$@")
+	git diff $*.out $*.demo.out || $(RM) "$@"
+	git diff $*.sim.dump $*.demo.dump || $(RM) "$@"
 
 test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
 	  $(patsubst %.in,%.ok,$(DEMO_IN_FILES))
@@ -49,6 +50,12 @@ test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
 DEMO_GEN_EXT = .sim.dump .out .demo.dump .demo.out
 DEMO_GEN_FILES = $(foreach suff,$(DEMO_GEN_EXT),demos/$(demo).dir/*$(suff))
 
+ifeq ($(OS),Windows_NT)
 clean::
-	$(RM) demos/*.bin demos/*.mif
-	@$(RM) $(foreach demo,$(DEMOS),$(DEMO_GEN_FILES))
+	-cd demos && $(RM) *.bin *.mif
+	-@for /F "usebackq delims=" %A in (`dir /b/s *.sim.dump *.out *.demo.dump *.demo.out`) do del %A
+else
+clean::
+	-cd demos && $(RM) *.bin *.mif
+	-$(RM) demos/*/*.sim.dump demos/*/*.out demos/*/*.demo.dump demos/*/*.out
+endif

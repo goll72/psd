@@ -41,7 +41,7 @@ ifeq ($(OS),Windows_NT)
 	link = mklink /H $(2) $(1)
 	toupper = $(1)
 	touch = copy /b $(1) +,,
-	curl = bitsadmin /transfer psd-stuff /download /priority normal $(1) $(2)
+	curl = powershell -Command "curl $(1) -o $(2)"
 	unzip = powershell -Command "Expand-Archive -Path $(1) -DestinationPath $(2)"
 
 	SHELL = cmd.exe

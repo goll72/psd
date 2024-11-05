@@ -21,28 +21,28 @@ static void handle_sigint(int signo)
     interrupt = 1;
 }
 
-static void print_bin(int value, int n_bits)
+static void print_bin(FILE *f, int value, int n_bits)
 {
     int mask = 1 << (n_bits - 1);
 
     for (int i = 0; i < n_bits; i++) {
         if (value & mask)
-            putchar('1');
+            fputc('1', f);
         else
-            putchar('0');
+            fputc('0', f);
 
         mask >>= 1;
     }
 }
 
-#define PR(x, l, ...)    \
+#define PR(f, x, l, ...)    \
     do {                 \
-        printf(#x " ");  \
-        print_bin(x, l); \
+        fprintf(f, #x " ");  \
+        print_bin(f, x, l); \
         __VA_ARGS__;     \
     } while (0)
 
-#define S(x) printf(x)
+#define S(f, x) fprintf(f, x)
 
 int main(int argc, char **argv)
 {
@@ -53,18 +53,20 @@ int main(int argc, char **argv)
     bool wait = true;
     bool stop_sim = false;
     bool dump_mem = false;
+    bool interactive = true;
 
-    while ((opt = getopt(argc, argv, "hd:snM")) != -1) {
+    while ((opt = getopt(argc, argv, "hd:snMN")) != -1) {
         switch (opt) {
             case 'h':
             case '?':
                 fprintf(stderr,
-                    "Usage: %s [ -h | -d N | -s | -n ] BIN\n"
+                    "Usage: %s [ -h | -d N | -s | -n | -N ] BIN\n"
                     "    -h         Shows this help menu\n"
                     "    -d N       Dumps simulation state every N instructions\n"
                     "    -s         Stops the simulation when EOF is reached\n"
                     "    -n         Disables waiting on the `wait` instruction\n"
                     "    -M         Dumps memory when exiting\n"
+                    "    -N         Non-interactive mode, disables printing of prompts\n"
                     "\n"
                     "    BIN        A binary file containing executable machine code\n",
                     argv[0]);
@@ -90,6 +92,8 @@ int main(int argc, char **argv)
             case 'M':
                 dump_mem = true;
                 break;
+            case 'N':
+                interactive = false;
         }
     }
 
@@ -196,12 +200,14 @@ int main(int argc, char **argv)
                 uint8_t input = 0;
                 uint8_t mask = 0x80;
 
-                printf(" $ ");
-                fflush(stdout);
+                if (interactive) {
+                    fprintf(stdout, " $ ");
+                    fflush(stdout);
+                }
 
                 while (mask) {
                     char tmp;
-                    scanf("%c", &tmp);
+                    fscanf(stdout, "%c", &tmp);
 
                     switch (tmp) {
                         case '1':
@@ -219,17 +225,21 @@ int main(int argc, char **argv)
                 break;
             }
             case OP_OUT:
-                printf(" > ");
-                print_bin(regs[rs >> 2], 8);
-                S("\n");
+                if (interactive)
+                    fprintf(stdout, " > ");
+                
+                print_bin(stdout, regs[rs >> 2], 8);
+                S(stdout, "\n");
 
                 break;
             case OP_WAIT:
                 if (wait) {
                     interrupt = 0;
 
-                    printf(" @ ");
-                    fflush(stdout);
+                    if (interactive) {
+                        fprintf(stdout, " @ ");
+                        fflush(stdout);
+                    }
 
                     while (!interrupt)
                         ;
@@ -243,19 +253,19 @@ int main(int argc, char **argv)
         }
 
         if (dump_freq > 0 && ic % dump_freq == 0) {
-            PR(pc, 8, S("\t"));
-            PR(ir, 4, S("\t"));
-            PR(rs, 4, S("\t"));
-            PR(zero, 1, S("\t"));
-            PR(sign, 1, S("\t"));
-            PR(carry, 1, S("\t"));
-            PR(overflow, 1, S("\n"));
+            PR(stderr, pc, 8, S(stderr, "\t"));
+            PR(stderr, ir, 4, S(stderr, "\t"));
+            PR(stderr, rs, 4, S(stderr, "\t"));
+            PR(stderr, zero, 1, S(stderr, "\t"));
+            PR(stderr, sign, 1, S(stderr, "\t"));
+            PR(stderr, carry, 1, S(stderr, "\t"));
+            PR(stderr, overflow, 1, S(stderr, "\n"));
 
             for (int i = 0; i < REG_MAX; i++) {
-                printf("%s ", REG_NAMES[i]);
-                print_bin(regs[i], 8);
+                fprintf(stderr, "%s ", REG_NAMES[i]);
+                print_bin(stderr, regs[i], 8);
 
-                S("\n");
+                S(stderr, "\n");
             }
         }
 
@@ -268,13 +278,13 @@ int main(int argc, char **argv)
     if (dump_mem) {
         for (int i = 0; i < 16; i++) {
             for (int j = 0; j < 16; j++) {
-                printf("%02x", memory[16 * i + j]);
+                fprintf(stderr, "%02x", memory[16 * i + j]);
 
                 if (j != 15)
-                    S("  ");
+                    S(stderr, "  ");
             }
 
-            S("\n"); 
+            S(stderr, "\n");
         }
     }
 }
