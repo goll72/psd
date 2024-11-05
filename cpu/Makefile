@@ -11,27 +11,41 @@ SRC = rtl/attrs.vhdl rtl/asm.vhdl \
 include ../mk/common.build.mk
 include ../mk/$(ENV).build.mk
 
+SIMROOT = tools/sim
+
+include $(SIMROOT)/defs.mk
+
 ifeq ($(OS),Windows_NT)
-	SIM = ./tools/sim/sim.exe
+	SIM = $(SIMROOT)/sim.exe
 else
-	SIM = ./tools/sim/sim
+	SIM = $(SIMROOT)/sim
 endif
 
-$(SIM):
-	$(MAKE) -C tools/sim
+$(SIM): $(SIMDEPS)
+	$(MAKE) -C $(SIMROOT)
 
 %.bin %.mif: %.s
 	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?
 
-DEMOS = demos/add.bin demos/mul.bin demos/fibonacci.bin
+DEMOS = add mul fibonacci
 
-%.simdump %.out: %.bin %.in $(SIM)
-	$(SIM) -s -n -d 1 -M $*.bin < $*.in > $*.out 2> $*.simdump
+DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
-%.ok: %.simdump %.out
-	$(MAKE) -C . TOPLEVEL=demo_runner GENERICS="-gDEMO_INIT_FILE=$*.bin -gDEMO_SIMDUMP=$*.simdump -gDEMO_IN=$*.in" run
+%.sim.dump %.out: %.in $(SIM)
+	$(SIM) -s -n -d 1 -M $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
 
-test: $(patsubst %.bin,%.ok,$(DEMOS)) 
+%.ok: %.sim.dump %.out
+	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=$*.in -gDEMO_OUT=$*.demo.out -gDEMO_DUMP=$*.demo.dump" run
+	$(call touch "$*.ok")
+	git diff $*.out $*.demo.out || $(RM) "$*.ok"
+	git diff $*.sim.dump $*.demo.dump || $(RM) "$*.ok"
+
+test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
+	  $(patsubst %.in,%.ok,$(DEMO_IN_FILES))
+
+DEMO_GEN_EXT = .sim.dump .out .demo.dump .demo.out
+DEMO_GEN_FILES = $(foreach suff,$(DEMO_GEN_EXT),demos/$(demo).dir/*$(suff))
 
 clean::
-	cd demos && $(RM) *.bin *.mif *.simdump *.out *.ok
+	$(RM) demos/*.bin demos/*.mif
+	@$(RM) $(foreach demo,$(DEMOS),$(DEMO_GEN_FILES))

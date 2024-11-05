@@ -1,7 +1,9 @@
 in a
 store a, 0xff
 in b
-store 0, 0xfe ; 2º valor da multiplicação
+
+mov r, 0
+store r, 0xfe ; 2º valor da multiplicação
 
 loop_start:
         cmp a, 0

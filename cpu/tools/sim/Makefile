@@ -12,11 +12,13 @@ endif
 
 all: $(OUT)
 
+include ./defs.mk
+
 ifeq ($(OS),Windows_NT)
 sim.exe:
-	$(call curl,https://github.com/goll72/psd/releases/download/sim/sim.exe,sim.exe)
+	$(call curl,https://github.com/goll72/psd/releases/download/sim/sim.exe,$(SIMROOT)/sim.exe)
 else
-$(OUT): main.c asm.h bitop.h getopt.h
+$(OUT): $(SIMDEPS)
 	$(CC) $(DEFCFLAGS) main.c -o $@
 endif
 

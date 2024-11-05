@@ -11,11 +11,12 @@
 !README.md
 !**/Makefile
 !*.build.mk
-!setup.bat
-!setup.sh
+!scripts/*.bat
+!scripts/*.sh
 
 !**/*.py
 !**/*.[csh]
+!**/*.in
 
 !/LICENSE
 
