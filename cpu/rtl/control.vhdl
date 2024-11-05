@@ -15,8 +15,6 @@ entity control is
 
         zero, sign : in std_logic;
 
-        -- program counter
-        pc  : inout std_logic_vector(7 downto 0);
         -- instruction register
         ir  : inout std_logic_vector(3 downto 0);
         -- register selection register
@@ -119,7 +117,7 @@ begin
                             reg_b_to_addr_write <= '1';
                         
                             data_to_reg_write <= '1';
-                            reg_data_sel <= ir(3 downto 2);
+                            reg_data_sel <= rs(3 downto 2);
                         when OP_STORE =>
                             mem_enable <= '1';
                             mem_write <= '1';
@@ -128,12 +126,12 @@ begin
                             reg_b_to_addr_write <= '1';
                         when OP_MOV =>
                             reg_b_to_reg_write <= '1';
-                            reg_data_sel <= ir(3 downto 2);
+                            reg_data_sel <= rs(3 downto 2);
                         when OP_IN =>
                             io_in_enable <= '1';
 
                             data_to_reg_write <= '1';
-                            reg_data_sel <= ir(3 downto 2);
+                            reg_data_sel <= rs(3 downto 2);
                         when OP_OUT =>
                             io_out_enable <= '1';
                             

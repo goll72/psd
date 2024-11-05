@@ -68,7 +68,6 @@ begin
         );
 
     regs : entity work.reg_file(rtl)
-        generic map (CPU_N_BITS)
         port map (
             clk => clk,
             rst => rst,
@@ -92,7 +91,6 @@ begin
         zero => zero,
         sign => sign,
 
-        pc => pc,
         ir => ir,
         rs => rs,
 
@@ -146,6 +144,8 @@ begin
             sign <= '0';
             carry <= '0';
             overflow <= '0';
+
+            data_bus <= (others => 'Z');
         end if;
     end process;
 end architecture;

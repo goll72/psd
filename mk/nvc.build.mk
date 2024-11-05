@@ -18,8 +18,8 @@ OUT = $(patsubst %.vhdl,$(WORK)/%.link,$(SRC))
 all: $(WORK)/_index
 
 run: $(WORK)/_index
-	$(NVC) $(DEFNVCFLAGS) -e $(TOPLEVEL) $(NVCELAB) $(GENERICS)
-	$(NVC) $(DEFNVCFLAGS) -r $(TOPLEVEL) $(NVCRUN)
+	cd "$(WORK)" && $(NVC) --work=work:. $(NVCFLAGS) -e $(TOPLEVEL) $(NVCELAB) $(GENERICS)
+	cd "$(WORK)" && $(NVC) --work=work:. $(NVCFLAGS) -r $(TOPLEVEL) $(NVCRUN)
 
 clean::
 	-$(RMTREE) "$(WORK)"

@@ -39,7 +39,7 @@ DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 	$(SIM) -s -n -d 1 -M $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
 
 %.ok: %.sim.dump %.out
-	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=$*.in -gDEMO_OUT=$*.demo.out -gDEMO_DUMP=$*.demo.dump" run
+	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.demo.out -gDEMO_DUMP=../../$*.demo.dump" run
 	$(call touch,"$@")
 	git diff $*.out $*.demo.out || $(RM) "$@"
 	git diff $*.sim.dump $*.demo.dump || $(RM) "$@"

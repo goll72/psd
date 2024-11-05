@@ -5,10 +5,10 @@ use ieee.numeric_std.all;
 
 library work;
 
+use work.attrs.all;
+
 entity mem is
     generic (
-        ADDR_BITS : natural;
-        WORD_BITS : natural;
         -- File used to initialize the memory.
         -- For the standard VHDL implementation, a .bin file is needed.
         -- For the implementation using altsyncram, a .mif file is needed.
@@ -18,12 +18,9 @@ entity mem is
         clk   :    in std_logic;
         read  :    in std_logic;
         write :    in std_logic;
-        addr  :    in std_logic_vector(ADDR_BITS - 1 downto 0);
-        data  : inout std_logic_vector(WORD_BITS - 1 downto 0)
+        addr  :    in std_logic_vector(MEM_ADDR_BITS - 1 downto 0);
+        data  : inout std_logic_vector(MEM_WORD_BITS - 1 downto 0)
     );
-    
-    constant MAX_ADDR : integer := 2 ** ADDR_BITS - 1;
-    type mem_array_t is array(0 to MAX_ADDR) of std_logic_vector(WORD_BITS - 1 downto 0);
 end entity;
 
 -- synthesis translate_off
@@ -34,20 +31,28 @@ begin
         type char_file_t is file of character;
         
         file f : char_file_t open read_mode is INIT_FILE;
-            variable i : natural := 0;
+        variable i : natural;
         variable c : character;
+
+        alias rst is << signal ^.rst : std_logic >>;
     begin
+        wait until rst = '1';
+
+        i := 0;
+        
         while not endfile(f) loop
             read(f, c);
 
-            mem(i) <= std_logic_vector(to_unsigned(integer(character'pos(c)), WORD_BITS));
+            mem(i) <= std_logic_vector(to_unsigned(integer(character'pos(c)), MEM_WORD_BITS));
             i := i + 1;
         end loop;
     end process;
     
     read_or_write : process(clk, write, addr, data) is
-        variable addr_index : integer := to_integer(unsigned(addr));
+        variable addr_index : integer;
     begin
+        addr_index := to_integer(unsigned(addr));
+        
         if rising_edge(clk) then
             if write = '1' then
                 mem(addr_index) <= data;
@@ -72,8 +77,8 @@ end architecture;
 --         generic map (
 --             OPERATION_MODE => "SINGLE_PORT",
 --             RAM_BLOCK_TYPE => "M10K",
---             WIDTHAD_A => ADDR_BITS,
---             WIDTH_A => WORD_BITS,
+--             WIDTHAD_A => MEM_ADDR_BITS,
+--             WIDTH_A => MEM_WORD_BITS,
 --             INIT_FILE => INIT_FILE
 --         )
 --         port map (

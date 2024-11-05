@@ -13,7 +13,7 @@ VLIB = vlib
 all: $(WORK)/_lib.qdb
 
 run: $(WORK)/_lib.qdb
-	cd $(dir $(WORK)) && $(VSIM) -work $(notdir $(WORK)) $(GENERICS) $(TOPLEVEL)
+	cd "$(WORK)" && $(VSIM) -work . $(GENERICS) $(TOPLEVEL)
 
 clean::
 	-$(RMTREE) "$(WORK)"
