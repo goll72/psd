@@ -25,29 +25,31 @@ end entity;
 
 -- synthesis translate_off
 architecture rtl of mem is
-    signal mem : mem_array_t := (others => (others => '0'));
-begin
-    init_mem : process is
+    impure function init_mem(init_file : string) return mem_array_t is
         type char_file_t is file of character;
-        
-        file f : char_file_t open read_mode is INIT_FILE;
+
+        file f : char_file_t open read_mode is init_file;
         variable i : natural;
         variable c : character;
 
-        alias rst is << signal ^.rst : std_logic >>;
-    begin
-        wait until rst = '1';
+        variable value : unsigned(MEM_WORD_BITS - 1 downto 0);
 
-        i := 0;
-        
+        variable mem : mem_array_t := (others => (others => '0'));
+    begin
         while not endfile(f) loop
             read(f, c);
 
-            mem(i) <= std_logic_vector(to_unsigned(integer(character'pos(c)), MEM_WORD_BITS));
+            value := to_unsigned(integer(character'pos(c)), value'length);
+            
+            mem(i) := std_logic_vector(value);
             i := i + 1;
         end loop;
-    end process;
+
+        return mem;
+    end function;
     
+    signal mem : mem_array_t := init_mem(INIT_FILE);
+begin
     read_or_write : process(clk, write, addr, data) is
         variable addr_index : integer;
     begin

@@ -95,8 +95,6 @@ begin
         int <= '0';
         rst <= '1';
 
-        data_bus <= (others => '0');
-        
         wait for 2 * CLK_PERIOD;
 
         rst <= '0';

@@ -153,6 +153,9 @@ begin
         end if;
 
         if rst = '1' then
+            ir <= (others => '0');
+            rs <= (others => '0');
+            
             mem_enable <= '0';
             mem_read <= '0';
             mem_write <= '0';

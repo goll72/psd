@@ -53,9 +53,9 @@ DEMO_GEN_FILES = $(foreach suff,$(DEMO_GEN_EXT),demos/$(demo).dir/*$(suff))
 ifeq ($(OS),Windows_NT)
 clean::
 	-cd demos && $(RM) *.bin *.mif
-	-@for /F "usebackq delims=" %A in (`dir /b/s *.sim.dump *.out *.demo.dump *.demo.out`) do del %A
+	-@for /F "usebackq delims=" %A in (`dir /b/s *.sim.dump *.out *.demo.dump *.demo.out *.ok`) do del %A
 else
 clean::
 	-cd demos && $(RM) *.bin *.mif
-	-$(RM) demos/*/*.sim.dump demos/*/*.out demos/*/*.demo.dump demos/*/*.out
+	-$(RM) demos/*/*.sim.dump demos/*/*.out demos/*/*.demo.dump demos/*/*.out demos/*/*.ok
 endif

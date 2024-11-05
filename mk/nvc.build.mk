@@ -11,7 +11,7 @@ WORK = work/nvc
 DEFNVCFLAGS = --work=work:$(WORK) $(NVCFLAGS)
 NVCANAL = --psl
 NVCELAB = -j
-NVCRUN = --wave=$(WORK)/$(TOPLEVEL).vcd
+NVCRUN = --wave=$(TOPLEVEL).vcd
 
 OUT = $(patsubst %.vhdl,$(WORK)/%.link,$(SRC))
 
