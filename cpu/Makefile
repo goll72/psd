@@ -16,10 +16,13 @@ SIMROOT = tools/sim
 include $(SIMROOT)/defs.mk
 
 ifeq ($(OS),Windows_NT)
-	SIM = $(SIMROOT)/sim.exe
+	SIM = sim.exe
 else
-	SIM = $(SIMROOT)/sim
+	SIM = sim
 endif
+
+vpath $(SIM) $(SIMROOT)
+PATH := $(PATH):$(SIMROOT)
 
 $(SIM): $(SIMDEPS)
 	$(MAKE) -C $(SIMROOT)
