@@ -9,6 +9,8 @@ init:
 	git worktree remove sample
 endif
 
+all:
+
 download-out:
 	$(call curl,https://github.com/goll72/psd/releases/download/v2/out.zip,out.zip)
 	$(call unzip,out.zip,.)
