@@ -12,7 +12,7 @@ def main():
 
     parser.add_argument("input", metavar="FILE", type=argparse.FileType("rb"), help="input file")
     parser.add_argument("-f", "--format", choices=list(FORMATS), metavar="FORMAT")
-    parser.add_argument("-s", "--spaces", type=int, metavar="N", help="add N blank lines after every line")
+    parser.add_argument("-s", "--spaces", type=int, metavar="N", help="add N blank lines after every line", default=0)
 
     args = parser.parse_args()
 

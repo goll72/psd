@@ -1,6 +1,7 @@
 library ieee;
 
 use ieee.std_logic_1164.all;
+use ieee.numeric_std.all;
 
 library work;
 
@@ -38,6 +39,8 @@ architecture structural of cpu is
 
     signal alu_out : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
+    signal data_to_ir_write : std_logic;
+
     signal alu_to_reg_write, data_to_reg_write : std_logic;
     
     signal increment_pc : std_logic;
@@ -52,7 +55,7 @@ begin
         generic map (CPU_N_BITS)
         port map (
             a => pc,
-            b => (CPU_N_BITS - 1 downto 1 => '0', 0 => '1'),
+            b => std_logic_vector(to_unsigned(1, CPU_N_BITS)),
             c_in => '0',
             q => next_pc
         );
@@ -69,7 +72,7 @@ begin
 
     regs : entity work.reg_file(rtl)
         port map (
-            clk => clk,
+            clk => not clk,
             rst => rst,
 
             a_sel => rs(3 downto 2),
@@ -94,6 +97,8 @@ begin
         ir => ir,
         rs => rs,
 
+        data_to_ir_write => data_to_ir_write,
+
         alu_to_reg_write => alu_to_reg_write,
         data_to_reg_write => data_to_reg_write,
 
@@ -104,6 +109,9 @@ begin
         reg_a_to_data_write => reg_a_to_data_write,
         reg_b_to_addr_write => reg_b_to_addr_write,
         reg_b_to_reg_write => reg_b_to_reg_write,
+
+        io_in_enable => io_in_enable,
+        io_out_enable => io_out_enable,
 
         mem_enable => mem_enable,
         mem_read => mem_read,
@@ -136,6 +144,9 @@ begin
 
     data_bus <= a when reg_a_to_data_write = '1' else
                 (others => 'Z');
+
+    ir <= data_bus(7 downto 4) when data_to_ir_write = '1' else ir;
+    rs <= data_bus(3 downto 0) when data_to_ir_write = '1' else rs;
 
     reset : process(rst) is
     begin

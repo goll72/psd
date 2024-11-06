@@ -44,6 +44,8 @@ DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 	git diff $*.out $*.demo.out || $(RM) "$@"
 	git diff $*.sim.dump $*.demo.dump || $(RM) "$@"
 
+.PRECIOUS: %.dump %.out
+
 test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
 	  $(patsubst %.in,%.ok,$(DEMO_IN_FILES))
 

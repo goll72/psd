@@ -95,6 +95,8 @@ begin
         int <= '0';
         rst <= '1';
 
+        data_bus <= (others => 'Z');
+
         wait for 2 * CLK_PERIOD;
 
         rst <= '0';
@@ -122,7 +124,7 @@ begin
 
             -- PC changed, dump register contents
             if pc /= last_pc then
-                write(text_buf, "pc " & to_string(pc) & "\t" & "ir " & to_string(ir) & "\t" & "rs " & to_string(rs) & "\t" & "zero " & to_string(zero) & "\t" & "sign " & to_string(sign) & "\t" & "carry " & to_string(carry) & "\t" & "overflow " & to_string(overflow));
+                write(text_buf, "pc " & to_string(pc) & HT & "ir " & to_string(ir) & HT & "rs " & to_string(rs) & HT & "zero " & to_string(zero) & HT & "sign " & to_string(sign) & HT & "carry " & to_string(carry) & HT & "overflow " & to_string(overflow));
                 writeline(dump_file, text_buf);
 
                 write(text_buf, "a " & to_string(regs(to_integer(unsigned(REG_A)))));

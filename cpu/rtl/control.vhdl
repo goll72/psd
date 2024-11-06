@@ -25,6 +25,8 @@ entity control is
 
         io_in_enable, io_out_enable : out std_logic;
 
+        data_to_ir_write : out std_logic;
+
         alu_to_reg_write, data_to_reg_write : out std_logic;
 
         increment_pc : out std_logic;
@@ -54,6 +56,8 @@ begin
             mem_read <= '0';
             mem_write <= '0';
 
+            data_to_ir_write <= '0';
+
             alu_to_reg_write <= '0';
             data_to_reg_write <= '0';
 
@@ -69,6 +73,8 @@ begin
                 when FETCH =>
                     mem_enable <= '1';
                     mem_read <= '1';
+
+                    data_to_ir_write <= '1';
 
                     increment_pc <= '1';
                     pc_to_addr_write <= '1';
