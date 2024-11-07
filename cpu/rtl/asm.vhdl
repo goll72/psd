@@ -4,9 +4,11 @@ use ieee.std_logic_1164.all;
 
 library work;
 
+use work.attrs.all;
+
 package asm is
-    subtype opcode_t is std_logic_vector(3 downto 0);
-    subtype regcode_t is std_logic_vector(1 downto 0);
+    subtype opcode_t is std_logic_vector(IR_RANGE);
+    subtype regcode_t is std_logic_vector(CPU_N_REG_BITS - 1 downto 0);
 
     constant OP_AND : opcode_t := "0000";
     constant OP_OR : opcode_t := "0001";

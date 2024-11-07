@@ -50,18 +50,20 @@ architecture rtl of mem is
     
     signal mem : mem_array_t := init_mem(INIT_FILE);
 begin
-    read_or_write : process(clk, write, addr, data) is
+    read_or_write : process(clk, read, write, addr, data) is
         variable addr_index : integer;
     begin
         addr_index := to_integer(unsigned(addr));
         
-        if rising_edge(clk) then
+        if rising_edge(clk) then    
             if write = '1' then
                 mem(addr_index) <= data;
             end if;
-
+            
             if read = '1' then
                 data <= mem(addr_index);
+            else
+                data <= (others => 'Z');
             end if;
         end if;
     end process;
@@ -74,6 +76,7 @@ end architecture;
 -- use altera_mf.altera_mf_components.all;
 --
 -- architecture rtl of mem is
+--     signal tmp : std_logic_vector(MEM_WORD_BITS - 1 downto 0);
 -- begin
 --     ram : altsyncram
 --         generic map (
@@ -86,9 +89,25 @@ end architecture;
 --         port map (
 --             address_a => addr,
 --             clock0 => clk,
---             data_a => data,
+--             data_a => tmp,
 --             wren_a => write,
---             q_a => data
+--             q_a => tmp
 --         );
+--
+--     -- This process doesn't need to be clocked (the memory has a clock signal)
+--     read_or_write : process(read, write, data) is
+--     begin
+--         if write = '1' then
+--             tmp <= data;
+--         else
+--             tmp <= (others => 'Z');
+--         end if;
+--
+--         if read = '1' then
+--             data <= tmp;
+--         else
+--             data <= (others => 'Z');
+--         end if;
+--     end process;
 -- end architecture;
 -- synthesis read_comments_as_hdl off

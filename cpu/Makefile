@@ -1,6 +1,6 @@
 TESTS = 
 
-SRC = rtl/attrs.vhdl rtl/asm.vhdl \
+SRC = rtl/attrs.vhdl rtl/asm.vhdl rtl/util.vhdl \
       rtl/alu/adder.vhdl rtl/alu/alu.vhdl \
       rtl/reg/reg.vhdl rtl/reg/file.vhdl \
       rtl/control.vhdl \
@@ -36,15 +36,15 @@ DEMOS = add mul fibonacci
 DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 %.sim.dump %.out: %.in $(SIM)
-	$(SIM) -s -n -d 1 -M $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
+	$(SIM) -s -n -d 1 -M -N $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
 
 %.ok: %.sim.dump %.out
 	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.demo.out -gDEMO_DUMP=../../$*.demo.dump" run
 	$(call touch,"$@")
-	git diff $*.out $*.demo.out || $(RM) "$@"
-	git diff $*.sim.dump $*.demo.dump || $(RM) "$@"
+	git diff --no-index $*.out $*.demo.out || $(RM) "$@"
+	git diff --no-index $*.sim.dump $*.demo.dump || $(RM) "$@"
 
-.PRECIOUS: %.dump %.out
+.PRECIOUS: %.sim.dump %.demo.dump %.out %.demo.out
 
 test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
 	  $(patsubst %.in,%.ok,$(DEMO_IN_FILES))

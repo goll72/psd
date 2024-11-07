@@ -6,6 +6,7 @@ use ieee.numeric_std.all;
 library work;
 
 use work.asm.all;
+use work.attrs.all;
 
 entity control is
     port (
@@ -16,168 +17,132 @@ entity control is
         zero, sign : in std_logic;
 
         -- instruction register
-        ir  : inout std_logic_vector(3 downto 0);
+        ir  : in std_logic_vector(IR_RANGE);
         -- register selection register
-        rs  : inout std_logic_vector(3 downto 0);
+        rs  : in std_logic_vector(RS_RANGE);
 
-        mem_enable : out std_logic;
-        mem_read, mem_write : out std_logic;
+        control : out control_t;
 
-        io_in_enable, io_out_enable : out std_logic;
-
-        data_to_ir_write : out std_logic;
-
-        alu_to_reg_write, data_to_reg_write : out std_logic;
-
-        increment_pc : out std_logic;
-        pc_to_addr_write : out std_logic;
-        reg_b_to_pc_write : out std_logic;
-
-        reg_a_to_data_write : out std_logic;
-        reg_b_to_addr_write : out std_logic;
-        reg_b_to_reg_write : out std_logic;
-
-        reg_data_sel : out std_logic_vector(1 downto 0);
-
-        data_bus : in std_logic_vector(7 downto 0)
+        reg_data_sel : out std_logic_vector(CPU_N_REG_BITS - 1 downto 0)
     );
 end entity;
 
 architecture behavioral of control is
-    type state_t is (FETCH, DECODE, FETCH_IMM, EXECUTE, POLL);
+    procedure setup_signals_for_fetch is
+    begin
+        control(CTL_MEM_EN) <= '1';
+        control(CTL_MEM_RD) <= '1';
 
-    signal current : state_t := FETCH;
+        control(CTL_PC_TO_ADDR) <= '1';
+    end procedure;
+
+    procedure setup_signals_for_execute is
+    begin
+        -- Instructions that use the ALU, result must be stored in R
+        if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
+            control(CTL_ALU_TO_REG) <= '1';
+            reg_data_sel <= REG_R;
+        end if;
+
+        case ir is
+            when OP_JMP =>
+                control(CTL_REG_B_TO_PC) <= '1';
+            when OP_JEQ =>
+                if zero = '1' then
+                    control(CTL_REG_B_TO_PC) <= '1';
+                end if;
+            when OP_JGR =>
+                if sign = '1' then
+                    control(CTL_REG_B_TO_PC) <= '1';
+                end if;
+            when OP_LOAD =>
+                control(CTL_MEM_EN) <= '1';
+                control(CTL_MEM_RD) <= '1';
+
+                control(CTL_REG_B_TO_ADDR) <= '1';
+
+                control(CTL_DATA_TO_REG) <= '1';
+                reg_data_sel <= rs(RS_A_SEL_RANGE);
+            when OP_STORE =>
+                control(CTL_MEM_EN) <= '1';
+                control(CTL_MEM_WR) <= '1';
+
+                control(CTL_REG_A_TO_DATA) <= '1';
+                control(CTL_REG_B_TO_ADDR) <= '1';
+            when OP_MOV =>
+                control(CTL_REG_B_TO_REG) <= '1';
+                reg_data_sel <= rs(RS_A_SEL_RANGE);
+            when OP_IN =>
+                control(CTL_IO_IN_EN) <= '1';
+
+                control(CTL_DATA_TO_REG) <= '1';
+                reg_data_sel <= rs(RS_A_SEL_RANGE);
+            when OP_OUT =>
+                control(CTL_IO_OUT_EN) <= '1';
+
+                control(CTL_REG_A_TO_DATA) <= '1';
+            when OP_NOP =>
+
+            when others =>
+
+        end case;
+    end procedure;
+
+    signal current : control_fsm_state_t := RESET;
 begin
     fsm : process(clk, rst) is
-        variable rs_v : std_logic_vector(3 downto 0);
     begin
         if rising_edge(clk) then
-            mem_enable <= '0';
-            mem_read <= '0';
-            mem_write <= '0';
-
-            data_to_ir_write <= '0';
-
-            alu_to_reg_write <= '0';
-            data_to_reg_write <= '0';
-
-            increment_pc <= '0';
-            pc_to_addr_write <= '0';
-            reg_b_to_pc_write <= '0';
-
-            reg_a_to_data_write <= '0';
-            reg_b_to_addr_write <= '0';
-            reg_b_to_reg_write <= '0';
+            control <= (others => '0');
+            reg_data_sel <= (others => '0');
             
             case current is
+                when RESET =>
+                    setup_signals_for_fetch;
+                    current <= FETCH;
                 when FETCH =>
-                    mem_enable <= '1';
-                    mem_read <= '1';
+                    control(CTL_DATA_TO_IR) <= '1';
+                    control(CTL_INCREMENT_PC) <= '1';
 
-                    data_to_ir_write <= '1';
-
-                    increment_pc <= '1';
-                    pc_to_addr_write <= '1';
-
-                    current <= DECODE;
-                when DECODE =>
-                    ir <= data_bus(7 downto 4);
-
-                    rs_v := data_bus(3 downto 0);
-                    rs <= rs_v;
-            
-                    if rs_v(0) = '1' and rs_v(1) = '1' then
+                    current <= STORE;
+                when STORE =>
+                    if rs(0) = '1' and rs(1) = '1' then
+                        setup_signals_for_fetch;
                         current <= FETCH_IMM;
                     else
+                        setup_signals_for_execute;
                         current <= EXECUTE;
-                    end if;            
+                    end if;
                 when FETCH_IMM =>
-                    mem_read <= '1';
+                    control(CTL_DATA_TO_REG) <= '1';
+                    reg_data_sel <= REG_I;
 
-                    increment_pc <= '1';
-                    pc_to_addr_write <= '1';
+                    control(CTL_INCREMENT_PC) <= '1';
 
+                    current <= STORE_IMM;
+                when STORE_IMM =>
+                    setup_signals_for_execute;
                     current <= EXECUTE;
                 when EXECUTE =>
-                    -- Instructions that use the ALU, result must be stored in R
-                    if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
-                        alu_to_reg_write <= '1';
-                        reg_data_sel <= REG_R;
+                    if ir = OP_WAIT then
+                        current <= POLL;
+                    else
+                        setup_signals_for_fetch;
+                        current <= FETCH;
                     end if;
-                
-                    case ir is
-                        when OP_JMP =>
-                            reg_b_to_pc_write <= '1';
-                        when OP_JEQ =>
-                            if zero = '1' then
-                                reg_b_to_pc_write <= '1';
-                            end if;
-                        when OP_JGR =>
-                            if sign = '1' then
-                                reg_b_to_pc_write <= '1';
-                            end if;
-                        when OP_LOAD =>
-                            mem_enable <= '1';
-                            mem_read <= '1';
-
-                            reg_b_to_addr_write <= '1';
-                        
-                            data_to_reg_write <= '1';
-                            reg_data_sel <= rs(3 downto 2);
-                        when OP_STORE =>
-                            mem_enable <= '1';
-                            mem_write <= '1';
-
-                            reg_a_to_data_write <= '1';
-                            reg_b_to_addr_write <= '1';
-                        when OP_MOV =>
-                            reg_b_to_reg_write <= '1';
-                            reg_data_sel <= rs(3 downto 2);
-                        when OP_IN =>
-                            io_in_enable <= '1';
-
-                            data_to_reg_write <= '1';
-                            reg_data_sel <= rs(3 downto 2);
-                        when OP_OUT =>
-                            io_out_enable <= '1';
-                            
-                            reg_a_to_data_write <= '1';
-                        when OP_WAIT =>
-                            current <= POLL;
-                        when OP_NOP =>
-                        
-                        when others =>
-
-                    end case;
-                
-                    current <= FETCH;
                 when POLL =>
                     if int = '1' then
+                        setup_signals_for_fetch;
                         current <= FETCH;
                     end if;
             end case;
         end if;
 
         if rst = '1' then
-            ir <= (others => '0');
-            rs <= (others => '0');
+            control <= (others => '0');
+            reg_data_sel <= (others => '0');
             
-            mem_enable <= '0';
-            mem_read <= '0';
-            mem_write <= '0';
-
-            alu_to_reg_write <= '0';
-            data_to_reg_write <= '0';
-
-            increment_pc <= '0';
-            pc_to_addr_write <= '0';
-            reg_b_to_pc_write <= '0';
-
-            reg_a_to_data_write <= '0';
-            reg_b_to_addr_write <= '0';
-            reg_b_to_reg_write <= '0';
-            
-            current <= FETCH;
+            current <= RESET;
         end if;
     end process;
 end architecture;

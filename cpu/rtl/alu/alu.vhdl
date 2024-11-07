@@ -6,15 +6,18 @@ use ieee.numeric_std.all;
 library work;
 
 use work.asm.all;
+use work.attrs.all;
 
 entity alu is
     generic (
         N_BITS : natural
     );
     port (
-        op    :  in std_logic_vector(3 downto 0);
-        a, b  :  in std_logic_vector(N_BITS - 1 downto 0);
-        q     : out std_logic_vector(N_BITS - 1 downto 0)
+        op       :  in std_logic_vector(IR_RANGE);
+        a, b     :  in std_logic_vector(N_BITS - 1 downto 0);
+        q        : out std_logic_vector(N_BITS - 1 downto 0);
+        carry    : out std_logic;
+        overflow : out std_logic
     );
 end entity;
 
@@ -29,7 +32,9 @@ begin
             a => a,
             b => adder_in,
             c_in => adder_c_in,
-            q => adder_out
+            c_out => carry,
+            q => adder_out,
+            overflow => overflow
         );
 
     do_op : process(op, a, b, adder_out) is

@@ -15,6 +15,39 @@ package attrs is
     constant MEM_ADDR_BITS : natural := CPU_N_BITS;
     constant MEM_WORD_BITS : natural := CPU_N_BITS;
 
-    constant MEM_MAX_ADDR : integer := 2 ** MEM_ADDR_BITS - 1;
+    constant MEM_MAX_ADDR : natural := 2 ** MEM_ADDR_BITS - 1;
     type mem_array_t is array(0 to MEM_MAX_ADDR) of std_logic_vector(MEM_WORD_BITS - 1 downto 0);
+
+    type control_value_t is (
+        CTL_MEM_EN,
+        CTL_MEM_RD,
+        CTL_MEM_WR,
+        CTL_IO_IN_EN,
+        CTL_IO_OUT_EN,
+
+        CTL_DATA_TO_IR,
+
+        CTL_ALU_TO_REG,
+        CTL_DATA_TO_REG,
+
+        CTL_INCREMENT_PC,
+        CTL_PC_TO_ADDR,
+        CTL_REG_B_TO_PC,
+
+        CTL_REG_A_TO_DATA,
+        CTL_REG_B_TO_ADDR,
+        CTL_REG_B_TO_REG
+    );
+
+    type control_t is array (control_value_t) of std_logic;
+    type control_fsm_state_t is (RESET, FETCH, STORE, FETCH_IMM, STORE_IMM, EXECUTE, POLL);
+
+    subtype IR_RANGE is natural range 3 downto 0;
+    subtype DATA_IR_RANGE is natural range 7 downto 4;
+
+    subtype RS_RANGE is natural range 3 downto 0;
+    subtype DATA_RS_RANGE is natural range 3 downto 0;
+
+    subtype RS_A_SEL_RANGE is natural range 3 downto 2;
+    subtype RS_B_SEL_RANGE is natural range 1 downto 0;
 end package;

@@ -26,7 +26,7 @@ end entity;
 
 architecture rtl of reg_file is
     signal reg_contents : reg_file_t; 
-    signal reg_write : std_logic_vector(0 to CPU_N_REGS - 1);
+    signal reg_write : std_logic_vector(CPU_N_REGS - 1 downto 0);
 begin
     reg_set : for i in 0 to CPU_N_REGS - 1 
     generate
@@ -53,6 +53,6 @@ begin
             out_b <= reg_contents(b_index);
         end if;
     end process;
-
+    
     reg_write <= std_logic_vector(to_unsigned(1, reg_write'length) sll to_integer(unsigned(data_sel)));
 end architecture;

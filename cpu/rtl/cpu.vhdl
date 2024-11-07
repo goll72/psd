@@ -27,29 +27,20 @@ architecture structural of cpu is
     signal pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
     signal pc_in : std_logic_vector(CPU_N_BITS - 1 downto 0);
     signal next_pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
-    
-    signal ir, rs : std_logic_vector(3 downto 0);
+
+    signal ir : std_logic_vector(IR_RANGE);
+    signal rs : std_logic_vector(RS_RANGE);
     
     signal zero, sign, carry, overflow : std_logic;
 
-    signal reg_file_data_sel : std_logic_vector(1 downto 0);
+    signal reg_file_data_sel : std_logic_vector(CPU_N_REG_BITS - 1 downto 0);
     signal reg_file_data_in : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
     signal a, b : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
     signal alu_out : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
-    signal data_to_ir_write : std_logic;
-
-    signal alu_to_reg_write, data_to_reg_write : std_logic;
-    
-    signal increment_pc : std_logic;
-    signal pc_to_addr_write : std_logic;
-    signal reg_b_to_pc_write : std_logic;
-
-    signal reg_a_to_data_write : std_logic;
-    signal reg_b_to_addr_write : std_logic;
-    signal reg_b_to_reg_write : std_logic;
+    signal control : control_t;
 begin
     pc_adder : entity work.adder(behavioral)
         generic map (CPU_N_BITS)
@@ -65,9 +56,29 @@ begin
         port map (
             clk => clk,
             rst => rst,
-            write => increment_pc or reg_b_to_pc_write,
+            write => control(CTL_INCREMENT_PC) or control(CTL_REG_B_TO_PC),
             input => pc_in,
             q => pc
+        );
+
+    ir_reg : entity work.reg(behavioral)
+        generic map (ir'length)
+        port map (
+            clk => clk,
+            rst => rst,
+            write => control(CTL_DATA_TO_IR),
+            input => data_bus(DATA_IR_RANGE),
+            q => ir
+        );
+
+    rs_reg : entity work.reg(behavioral)
+        generic map (rs'length)
+        port map (
+            clk => clk,
+            rst => rst,
+            write => control(CTL_DATA_TO_IR),
+            input => data_bus(DATA_RS_RANGE),
+            q => rs
         );
 
     regs : entity work.reg_file(rtl)
@@ -75,19 +86,19 @@ begin
             clk => not clk,
             rst => rst,
 
-            a_sel => rs(3 downto 2),
-            b_sel => rs(1 downto 0),
+            a_sel => rs(RS_A_SEL_RANGE),
+            b_sel => rs(RS_B_SEL_RANGE),
             data_sel => reg_file_data_sel,
             data_in => reg_file_data_in,
 
-            write => alu_to_reg_write or data_to_reg_write,
+            write => control(CTL_ALU_TO_REG) or control(CTL_DATA_TO_REG),
         
             out_a => a,
             out_b => b
         );
 
     control_unit : entity work.control(behavioral) port map (
-        clk => clk,
+        clk => not clk,
         rst => rst,
         int => int,
 
@@ -97,27 +108,9 @@ begin
         ir => ir,
         rs => rs,
 
-        data_to_ir_write => data_to_ir_write,
+        control => control,
 
-        alu_to_reg_write => alu_to_reg_write,
-        data_to_reg_write => data_to_reg_write,
-
-        increment_pc => increment_pc,
-        pc_to_addr_write => pc_to_addr_write,
-        reg_b_to_pc_write => reg_b_to_pc_write,
-
-        reg_a_to_data_write => reg_a_to_data_write,
-        reg_b_to_addr_write => reg_b_to_addr_write,
-        reg_b_to_reg_write => reg_b_to_reg_write,
-
-        io_in_enable => io_in_enable,
-        io_out_enable => io_out_enable,
-
-        mem_enable => mem_enable,
-        mem_read => mem_read,
-        mem_write => mem_write,
-
-        data_bus => data_bus
+        reg_data_sel => reg_file_data_sel
     );
 
     alu : entity work.alu(behavioral)
@@ -126,27 +119,34 @@ begin
             op => ir,
             a => a,
             b => b,
-            q => alu_out
+            q => alu_out,
+
+            carry => carry,
+            overflow => overflow
         );
 
-    reg_file_data_in <= alu_out when alu_to_reg_write = '1' else 
-                        data_bus when data_to_reg_write = '1' else
-                        b when reg_b_to_reg_write = '1' else 
+    reg_file_data_in <= alu_out when control(CTL_ALU_TO_REG) = '1' else 
+                        data_bus when control(CTL_DATA_TO_REG) = '1' else
+                        b when control(CTL_REG_B_TO_REG) = '1' else 
                         (others => 'Z');
 
-    pc_in <= next_pc when increment_pc = '1' else
-             b when reg_b_to_pc_write = '1' else
+    pc_in <= next_pc when control(CTL_INCREMENT_PC) = '1' else
+             b when control(CTL_REG_B_TO_PC) = '1' else
              (others => 'Z');
 
-    addr_bus <= b when reg_b_to_addr_write = '1' else
-                pc when pc_to_addr_write = '1' else
+    addr_bus <= b when control(CTL_REG_B_TO_ADDR) = '1' else
+                pc when control(CTL_PC_TO_ADDR) = '1' else
                 (others => 'Z');
 
-    data_bus <= a when reg_a_to_data_write = '1' else
+    data_bus <= a when control(CTL_REG_A_TO_DATA) = '1' else
                 (others => 'Z');
 
-    ir <= data_bus(7 downto 4) when data_to_ir_write = '1' else ir;
-    rs <= data_bus(3 downto 0) when data_to_ir_write = '1' else rs;
+    mem_enable <= control(CTL_MEM_EN);
+    mem_read <= control(CTL_MEM_RD);
+    mem_write <= control(CTL_MEM_WR);
+
+    io_in_enable <= control(CTL_IO_IN_EN);
+    io_out_enable <= control(CTL_IO_OUT_EN);
 
     reset : process(rst) is
     begin
@@ -155,8 +155,6 @@ begin
             sign <= '0';
             carry <= '0';
             overflow <= '0';
-
-            data_bus <= (others => 'Z');
         end if;
     end process;
 end architecture;

@@ -10,6 +10,8 @@ library work;
 use work.asm.all;
 use work.attrs.all;
 
+use work.util.all;
+
 -- Runs a demo and dumps the state of registers and memory
 -- so that the output can be compared with the output 
 -- from the C simulation of the same demo
@@ -80,8 +82,8 @@ begin
 
         alias pc is << signal cpu.pc : std_logic_vector(CPU_N_BITS - 1 downto 0) >>;
 
-        alias ir is << signal cpu.ir : std_logic_vector(3 downto 0) >>;
-        alias rs is << signal cpu.rs : std_logic_vector(3 downto 0) >>;
+        alias ir is << signal cpu.ir : std_logic_vector(IR_RANGE) >>;
+        alias rs is << signal cpu.rs : std_logic_vector(RS_RANGE) >>;
         
         alias regs is << signal cpu.regs.reg_contents : reg_file_t >>;
 
@@ -91,6 +93,8 @@ begin
         alias overflow is << signal cpu.overflow : std_logic >>;
 
         alias mem is << signal memory.mem : mem_array_t >>;
+
+        alias fsm_cur_state is << signal cpu.control_unit.current : control_fsm_state_t >>;
     begin
         int <= '0';
         rst <= '1';
@@ -105,6 +109,8 @@ begin
 
         while true loop
             wait until rising_edge(clk);
+
+            data_bus <= (others => 'Z');
 
             -- I/O in request --- read from input file
             if io_in_enable = '1' then
@@ -123,30 +129,21 @@ begin
             end if;
 
             -- PC changed, dump register contents
-            if pc /= last_pc then
-                write(text_buf, "pc " & to_string(pc) & HT & "ir " & to_string(ir) & HT & "rs " & to_string(rs) & HT & "zero " & to_string(zero) & HT & "sign " & to_string(sign) & HT & "carry " & to_string(carry) & HT & "overflow " & to_string(overflow));
-                writeline(dump_file, text_buf);
+            if pc /= last_pc and fsm_cur_state = FETCH then
+                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, carry, sign, overflow);
 
-                write(text_buf, "a " & to_string(regs(to_integer(unsigned(REG_A)))));
-                writeline(dump_file, text_buf);
-
-                write(text_buf, "b " & to_string(regs(to_integer(unsigned(REG_B)))));
-                writeline(dump_file, text_buf);
-
-                write(text_buf, "r " & to_string(regs(to_integer(unsigned(REG_R)))));
-                writeline(dump_file, text_buf);
-
-                write(text_buf, "i " & to_string(regs(to_integer(unsigned(REG_I)))));
-                writeline(dump_file, text_buf);
+                last_pc := pc;
             end if;
 
             if ir = OP_WAIT then
+                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, carry, sign, overflow);
+
                 for i in 0 to 15 loop
                     for j in 0 to 15 loop
-                        write(text_buf, to_hex_string(mem(i * 16 + j)));
+                        write(text_buf, to_lower(to_hstring(mem(i * 16 + j))));
 
                         if j /= 15 then
-                            write(text_buf, string'(" "));
+                            write(text_buf, string'("  "));
                         end if;
                     end loop;
 
