@@ -36,10 +36,10 @@ static void print_bin(FILE *f, int value, int n_bits)
 }
 
 #define PR(f, x, l, ...)    \
-    do {                 \
-        fprintf(f, #x " ");  \
+    do {                    \
+        fprintf(f, #x " "); \
         print_bin(f, x, l); \
-        __VA_ARGS__;     \
+        __VA_ARGS__;        \
     } while (0)
 
 #define S(f, x) fprintf(f, x)
@@ -227,7 +227,7 @@ int main(int argc, char **argv)
             case OP_OUT:
                 if (interactive)
                     fprintf(stdout, " > ");
-                
+
                 print_bin(stdout, regs[rs >> 2], 8);
                 S(stdout, "\n");
 
