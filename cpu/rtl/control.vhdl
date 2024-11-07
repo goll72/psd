@@ -28,7 +28,7 @@ entity control is
 end entity;
 
 architecture behavioral of control is
-    procedure setup_signals_for_fetch is
+    procedure setup_signals_for_fetch(signal control : out control_t) is
     begin
         control(CTL_MEM_EN) <= '1';
         control(CTL_MEM_RD) <= '1';
@@ -36,7 +36,10 @@ architecture behavioral of control is
         control(CTL_PC_TO_ADDR) <= '1';
     end procedure;
 
-    procedure setup_signals_for_execute is
+    procedure setup_signals_for_execute(
+            signal control : out control_t;
+            signal reg_data_sel : out std_logic_vector(CPU_N_REG_BITS - 1 downto 0)
+        ) is
     begin
         -- Instructions that use the ALU, result must be stored in R
         if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
@@ -98,7 +101,7 @@ begin
             
             case current is
                 when RESET =>
-                    setup_signals_for_fetch;
+                    setup_signals_for_fetch(control);
                     current <= FETCH;
                 when FETCH =>
                     control(CTL_DATA_TO_IR) <= '1';
@@ -107,10 +110,10 @@ begin
                     current <= STORE;
                 when STORE =>
                     if rs(0) = '1' and rs(1) = '1' then
-                        setup_signals_for_fetch;
+                        setup_signals_for_fetch(control);
                         current <= FETCH_IMM;
                     else
-                        setup_signals_for_execute;
+                        setup_signals_for_execute(control, reg_data_sel);
                         current <= EXECUTE;
                     end if;
                 when FETCH_IMM =>
@@ -121,18 +124,18 @@ begin
 
                     current <= STORE_IMM;
                 when STORE_IMM =>
-                    setup_signals_for_execute;
+                    setup_signals_for_execute(control, reg_data_sel);
                     current <= EXECUTE;
                 when EXECUTE =>
                     if ir = OP_WAIT then
                         current <= POLL;
                     else
-                        setup_signals_for_fetch;
+                        setup_signals_for_fetch(control);
                         current <= FETCH;
                     end if;
                 when POLL =>
                     if int = '1' then
-                        setup_signals_for_fetch;
+                        setup_signals_for_fetch(control);
                         current <= FETCH;
                     end if;
             end case;
