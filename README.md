@@ -1,7 +1,7 @@
 psd
 ===
 
-Contém os códigos e relatórios referentes aos projetos desenvolvidos na 
+Códigos e relatórios referentes aos projetos desenvolvidos na 
 disciplina de Prática em Sistemas Digitais.
 
 Os projetos podem ser "compilados" (no jargão VHDL, analisados e elaborados)
