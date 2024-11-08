@@ -107,13 +107,17 @@ def main():
                     op = op | 0b11
 
                     code.append(op)
-                    # XXX: this might have to be changed later
-                    code.append(int(b, base=0))
+
+                    try:
+                        code.append(int(b, base=0))
+                    except:
+                        print_message(args.input.name, line_number, line, "Error: expected integer literal or register name", matches.span(4))
 
             # One operand
             case "not" | "jmp" | "jeq" | "jgr" | "in" | "out", a, None:
                 if instr in ("jmp", "jeq", "jgr"):
-                    code.append(INSTRUCTIONS[instr])
+                    # NOTE: 0x3 == REG_I
+                    code.append(INSTRUCTIONS[instr] | 0x3)
                     code.append(a)
                     
                     used_labels.append(a)

@@ -25,7 +25,8 @@ def main():
     code = FORMATS[args.format].deserialize(args.input.read())
 
     INAMES = { v: k for k, v in INSTRUCTIONS.items() }
-    RNAMES = { v: k for k, v in REGS.items() }
+    # NOTE: 0x3 == REG_I
+    RNAMES = { v: k for k, v in REGS.items() } | { 0x3: "i" }
 
     pc = 0
 
@@ -57,9 +58,7 @@ def main():
 
             # One operand, but takes immediate
             case "jmp" | "jeq" | "jgr":
-                print(f"{instruction} {hex(code[pc])}")
-
-                pc += 1
+                print(f"{instruction} {ops[1]}")
                 
             # Two operands
             case "and" | "or" | "add" | "sub" | "cmp" | "load" | "store" | "mov":

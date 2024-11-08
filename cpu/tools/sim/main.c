@@ -49,24 +49,27 @@ int main(int argc, char **argv)
     int opt;
 
     int dump_freq = -1;
+    int stop_after = -1;
 
     bool wait = true;
-    bool stop_sim = false;
+    bool stop_at_eof = false;
     bool dump_mem = false;
     bool interactive = true;
 
-    while ((opt = getopt(argc, argv, "hd:snMN")) != -1) {
+    while ((opt = getopt(argc, argv, "hd:k:snMN")) != -1) {
         switch (opt) {
             case 'h':
             case '?':
                 fprintf(stderr,
-                    "Usage: %s [ -h | -d N | -s | -n | -N ] BIN\n"
-                    "    -h         Shows this help menu\n"
-                    "    -d N       Dumps simulation state every N instructions\n"
-                    "    -s         Stops the simulation when EOF is reached\n"
-                    "    -n         Disables waiting on the `wait` instruction\n"
-                    "    -M         Dumps memory when exiting\n"
-                    "    -N         Non-interactive mode, disables printing of prompts\n"
+                    "Usage: %s [ -h | [ -d | -k ] N | -s | -n | -M | -N ] BIN\n"
+                    "    -h       Shows this help menu\n"
+                    "    -d N     Dumps simulation state every N instructions\n"
+                    "    -k N     Stops the simulation after N instructions have been "
+                    "executed\n"
+                    "    -s       Stops the simulation when EOF is reached\n"
+                    "    -n       Disables waiting on the `wait` instruction\n"
+                    "    -M       Dumps memory when exiting\n"
+                    "    -N       Non-interactive mode, disables printing of prompts\n"
                     "\n"
                     "    BIN        A binary file containing executable machine code\n",
                     argv[0]);
@@ -83,8 +86,19 @@ int main(int argc, char **argv)
 
                 break;
             }
+            case 'k': {
+                char *end = NULL;
+                stop_after = strtoull(optarg, &end, 10);
+
+                if (*end != '\0') {
+                    fprintf(stderr, "%s: invalid argument for -k\n", argv[0]);
+                    return 1;
+                }
+
+                break;
+            }
             case 's':
-                stop_sim = true;
+                stop_at_eof = true;
                 break;
             case 'n':
                 wait = false;
@@ -144,47 +158,54 @@ int main(int argc, char **argv)
         switch (ir) {
             case OP_AND:
                 regs[REG_R] = regs[rs >> 2] & regs[rs & 0x3];
+                zero = !regs[REG_R];
+
                 break;
             case OP_OR:
                 regs[REG_R] = regs[rs >> 2] | regs[rs & 0x3];
+                zero = !regs[REG_R];
+
                 break;
             case OP_NOT:
                 regs[REG_R] = ~regs[rs >> 2];
+                zero = !regs[REG_R];
+
                 break;
             case OP_ADD:
                 regs[REG_R] = add_with_flags( //
                     regs[rs >> 2], regs[rs & 0x3], &carry, &overflow);
+
+                zero = !regs[REG_R];
+                sign = (regs[REG_R] & 0x80) == 0x80;
+
                 break;
             case OP_SUB:
                 regs[REG_R] = add_with_flags(
                     regs[rs >> 2], ~regs[rs & 0x3] + 1, &carry, &overflow);
+
+                zero = !regs[REG_R];
+                sign = (regs[REG_R] & 0x80) == 0x80;
+
                 break;
             case OP_CMP:
                 regs[REG_I] = add_with_flags(
                     regs[rs >> 2], ~regs[rs & 0x3] + 1, &carry, &overflow);
 
-                if (regs[REG_I] == 0)
-                    zero = 1;
-
-                if ((regs[REG_I] & 0x80) == 0x80)
-                    sign = 1;
+                zero = !regs[REG_I];
+                sign = (regs[REG_I] & 0x80) == 0x80;
 
                 break;
             case OP_JMP:
-                pc = memory[pc];
+                pc = regs[rs & 0x3];
                 break;
             case OP_JEQ:
                 if (zero)
-                    pc = memory[pc];
-                else
-                    pc++;
+                    pc = regs[rs & 0x3];
 
                 break;
             case OP_JGR:
                 if (sign)
-                    pc = memory[pc];
-                else
-                    pc++;
+                    pc = regs[rs & 0x3];
 
                 break;
             case OP_LOAD:
@@ -271,7 +292,10 @@ int main(int argc, char **argv)
 
         ic++;
 
-        if (stop_sim && pc == (n_read % 256))
+        if (stop_at_eof && pc == (n_read % 256))
+            break;
+
+        if (stop_after == ic)
             break;
     }
 
