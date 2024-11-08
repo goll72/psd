@@ -8,10 +8,12 @@ NVC = nvc
 
 WORK = work/nvc
 
+WAVE = vcd
+
 DEFNVCFLAGS = --work=work:$(WORK) $(NVCFLAGS)
 NVCANAL = --psl
 NVCELAB = -j
-NVCRUN = --wave=$(TOPLEVEL).vcd --format=vcd --dump-arrays
+NVCRUN = --wave=$(TOPLEVEL).$(WAVE) --format=$(WAVE)
 
 OUT = $(patsubst %.vhdl,$(WORK)/%.link,$(SRC))
 
