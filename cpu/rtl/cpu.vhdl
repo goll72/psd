@@ -1,6 +1,7 @@
 library ieee;
 
 use ieee.std_logic_1164.all;
+use ieee.std_logic_misc.all;
 use ieee.numeric_std.all;
 
 library work;
@@ -30,8 +31,9 @@ architecture structural of cpu is
 
     signal ir : std_logic_vector(IR_RANGE);
     signal rs : std_logic_vector(RS_RANGE);
-    
+
     signal zero, sign, carry, overflow : std_logic;
+    signal zero_in, sign_in, carry_in, overflow_in : std_logic;
 
     signal reg_file_data_sel : std_logic_vector(CPU_N_REG_BITS - 1 downto 0);
     signal reg_file_data_in : std_logic_vector(CPU_N_BITS - 1 downto 0);
@@ -81,6 +83,22 @@ begin
             q => rs
         );
 
+    z_reg : entity work.reg(behavioral)
+        generic map (1)
+        port map (clk, rst, control(CTL_ALU_TO_REG), input(0) => zero_in, q(0) => zero);
+
+    s_reg : entity work.reg(behavioral)
+        generic map (1)
+        port map (clk, rst, control(CTL_UPDATE_SCO), input(0) => sign_in, q(0) => sign);
+
+    c_reg : entity work.reg(behavioral)
+        generic map (1)
+        port map (clk, rst, control(CTL_UPDATE_SCO), input(0) => carry_in, q(0) => carry);
+
+    o_reg : entity work.reg(behavioral)
+        generic map (1)
+        port map (clk, rst, control(CTL_UPDATE_SCO), input(0) => overflow_in, q(0) => overflow);
+
     regs : entity work.reg_file(rtl)
         port map (
             clk => not clk,
@@ -88,6 +106,7 @@ begin
 
             a_sel => rs(RS_A_SEL_RANGE),
             b_sel => rs(RS_B_SEL_RANGE),
+
             data_sel => reg_file_data_sel,
             data_in => reg_file_data_in,
 
@@ -121,8 +140,8 @@ begin
             b => b,
             q => alu_out,
 
-            carry => carry,
-            overflow => overflow
+            carry => carry_in,
+            overflow => overflow_in
         );
 
     reg_file_data_in <= alu_out when control(CTL_ALU_TO_REG) = '1' else 
@@ -133,6 +152,9 @@ begin
     pc_in <= next_pc when control(CTL_INCREMENT_PC) = '1' else
              b when control(CTL_REG_B_TO_PC) = '1' else
              (others => 'Z');
+
+    zero_in <= not(or_reduce(alu_out));
+    sign_in <= alu_out(alu_out'high);
 
     addr_bus <= b when control(CTL_REG_B_TO_ADDR) = '1' else
                 pc when control(CTL_PC_TO_ADDR) = '1' else
@@ -147,14 +169,4 @@ begin
 
     io_in_enable <= control(CTL_IO_IN_EN);
     io_out_enable <= control(CTL_IO_OUT_EN);
-
-    reset : process(rst) is
-    begin
-        if rst = '1' then
-            zero <= '0';
-            sign <= '0';
-            carry <= '0';
-            overflow <= '0';
-        end if;
-    end process;
 end architecture;

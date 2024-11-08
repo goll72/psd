@@ -44,7 +44,7 @@ begin
         -- these signals. We could just drive the signals out of the process but I think this is more readable.
         adder_in <= (others => '0');
         adder_c_in <= '0';
-        
+
         case op is
             when OP_AND =>
                 q <= a and b;
@@ -57,7 +57,7 @@ begin
                 adder_c_in <= '0';
                 
                 q <= adder_out;
-            when OP_SUB =>
+            when OP_SUB | OP_CMP =>
                 adder_in <= not b;
                 adder_c_in <= '1';
 

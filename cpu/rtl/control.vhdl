@@ -41,6 +41,7 @@ architecture behavioral of control is
             signal reg_data_sel : out std_logic_vector(CPU_N_REG_BITS - 1 downto 0)
         ) is
     begin
+        -- XXX: implementation_detail
         -- Instructions that use the ALU, result must be stored in R
         if ir(3) = '0' and (ir(2) /= '1' or ir(1) /= '1') then
             control(CTL_ALU_TO_REG) <= '1';
@@ -48,6 +49,12 @@ architecture behavioral of control is
         end if;
 
         case ir is
+            when OP_ADD | OP_SUB =>
+                control(CTL_UPDATE_SCO) <= '1';
+            -- CMP is the only exception, we don't want to store the result in R
+            when OP_CMP =>
+                control(CTL_UPDATE_SCO) <= '1';
+                reg_data_sel <= REG_I;
             when OP_JMP =>
                 control(CTL_REG_B_TO_PC) <= '1';
             when OP_JEQ =>
@@ -109,7 +116,7 @@ begin
 
                     current <= STORE;
                 when STORE =>
-                    if rs(0) = '1' and rs(1) = '1' then
+                    if rs(RS_A_SEL_RANGE) = REG_I then
                         setup_signals_for_fetch(control);
                         current <= FETCH_IMM;
                     else

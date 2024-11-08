@@ -36,7 +36,13 @@ package attrs is
 
         CTL_REG_A_TO_DATA,
         CTL_REG_B_TO_ADDR,
-        CTL_REG_B_TO_REG
+        CTL_REG_B_TO_REG,
+
+        -- ~~Santa Cruz Operation~~ (sign, carry, overflow flag registers)
+        --
+        -- NOTE: the zero flag register is always updated
+        -- when an operation that uses the ALU is performed
+        CTL_UPDATE_SCO
     );
 
     type control_t is array (control_value_t) of std_logic;
