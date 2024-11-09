@@ -20,6 +20,8 @@
 !**/*.in
 !**/*.mk
 
+!**/*.tex
+
 !/LICENSE
 
 # From scripts/bootstrap.bat

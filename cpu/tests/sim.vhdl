@@ -126,7 +126,7 @@ begin
                 data_bus <= io_data;
             end if;
 
-            -- I/O out request -- write to output file
+            -- I/O out request --- write to output file
             if io_out_enable = '1' then
                 io_data := data_bus;
 

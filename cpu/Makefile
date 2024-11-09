@@ -48,6 +48,9 @@ ifneq ($(TEST_SIM_ABORT_ON_ERROR),)
 	$(call if-not-exists,"$@",exit 1)
 endif
 
+%.pdf: %.tex
+	tectonic $?
+
 .PRECIOUS: %.sim.dump %.out %.hdl.dump %.hdl.out
 
 TEST_SIM_FILES = $(foreach demo,$(DEMOS),demos/$(demo).bin) \

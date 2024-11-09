@@ -1,0 +1,54 @@
+\documentclass[a4paper,12pt]{report}
+
+\usepackage{float}
+
+\usepackage[brazilian]{babel}
+\usepackage[T1]{fontenc}
+
+\usepackage{tikz}
+\usetikzlibrary{automata,positioning,arrows}
+
+\usepackage[siunitx]{circuitikz}
+
+\ctikzset{logic ports=ieee}
+
+\title{Relatório --- CPU}
+\date{\today}
+
+\begin{document}
+
+\maketitle
+
+\begin{figure}[H]
+\begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]
+	\node[state, minimum size=2cm, initial] (reset) {RESET};
+	\node[state, minimum size=2cm, right=of reset] (fetch) {FETCH};
+	\node[state, minimum size=2cm, right=of fetch] (store) {STORE};
+	
+	\node[state, minimum size=2cm, above right=of store] (execute) {\footnotesize EXECUTE};
+	\node[state, minimum size=2cm, right=of execute] (poll) {POLL};
+	
+	\node[state, minimum size=2cm, below right=of store] (fetch_imm) {\small \shortstack{FETCH\\IMM}};
+	\node[state, minimum size=2cm, right=of fetch_imm] (store_imm) {\small \shortstack{STORE\\IMM}};
+
+	\draw[->] (reset) edge (fetch)
+	          (fetch) edge (store)
+	          (store) edge[bend left] (execute)
+	          (store) edge[bend right] (fetch_imm)
+	          (fetch_imm) edge (store_imm)
+	          (store_imm) edge[bend right] (execute)
+	          (execute) edge (poll)
+	          (poll) edge[out=120,in=60,looseness=3] (poll)
+	          (execute) edge[out=90,in=90,out looseness=1,in looseness=2] (fetch)
+	          (poll) edge[out=315,in=270,distance=10cm] (fetch.south);
+\end{tikzpicture}
+\end{figure}
+
+\begin{figure}[H]
+\begin{circuitikz}
+	\ctikzset{multipoles/dipchip/width=2}
+	\draw (0,0) node[dipchip,num pins=10,external pins width=0,hide numbers,no topmark] (u1) {CPU};
+\end{circuitikz}
+\end{figure}
+
+\end{document}
