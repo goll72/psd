@@ -71,16 +71,14 @@ Os seguintes alvos podem ser executados:
 Alguns alvos adicionais, que se referem diretamente a arquivos, podem ser usados:
 
  - `%.bin`: usa o assembler para gerar um arquivo `.bin` e um arquivo `.mif` 
- a partir do arquivo que possui o mesmo prefixo do alvo, porém com a extensão `.s`.
- 
+ a partir do arquivo que possui o mesmo prefixo do alvo, porém com a extensão `.s`.  
  Exemplo: `make demos/add.bin` irá montar o arquivo `demos/add.s`, gerando
  `demos/add.bin` e `demos/add.mif`.
 
  - `%.mif`: idem.
 
  - `%.ok`: roda apenas o teste da testbench `tests/sim.vhdl` correspondente ao arquivo
- com o mesmo prefixo do alvo, porém com a extensão `.in`.
-
+ com o mesmo prefixo do alvo, porém com a extensão `.in`.  
  Exemplo: `make demos/add.dir/0.ok` irá rodar o teste que consiste em rodar o simulador
  C com a memória inicializada por `demos/add.bin`, entradas dadas em `demos/add.dir/0.in`,
  salvar as saídas em `demos/add.dir/0.out` e salvar um dump do estado do simulador em
@@ -98,7 +96,7 @@ que os programas de cada ambiente estejam disponíveis no caminho de busca
  - `modelsim`: `vcom`, `vsim`, `vlib`
  - `quartus`: `quartus_sh`, `quartus_pgm`
 
-> [!INFO]
+> [!NOTE]
 > No Windows, esses programas terão a extensão `.exe`.
 
 Os makefiles foram feitos para funcionar nos PCs do lab 6-305/6, usando o local
