@@ -116,17 +116,18 @@ begin
 
                     current <= STORE;
                 when STORE =>
-                    if rs(RS_A_SEL_RANGE) = REG_I then
+                    if rs(RS_A_SEL_RANGE) = REG_I or rs(RS_B_SEL_RANGE) = REG_I then
                         setup_signals_for_fetch(control);
+
+                        control(CTL_DATA_TO_REG) <= '1';
+                        reg_data_sel <= REG_I;
+
                         current <= FETCH_IMM;
                     else
                         setup_signals_for_execute(control, reg_data_sel);
                         current <= EXECUTE;
                     end if;
                 when FETCH_IMM =>
-                    control(CTL_DATA_TO_REG) <= '1';
-                    reg_data_sel <= REG_I;
-
                     control(CTL_INCREMENT_PC) <= '1';
 
                     current <= STORE_IMM;

@@ -104,6 +104,7 @@ def main():
 
                     code.append(op)
                 else:
+                    # NOTE: 0b11 == REG_I
                     op = op | 0b11
 
                     code.append(op)
@@ -116,8 +117,7 @@ def main():
             # One operand
             case "not" | "jmp" | "jeq" | "jgr" | "in" | "out", a, None:
                 if instr in ("jmp", "jeq", "jgr"):
-                    # NOTE: 0x3 == REG_I
-                    code.append(INSTRUCTIONS[instr] | 0x3)
+                    code.append(INSTRUCTIONS[instr] | 0b11)
                     code.append(a)
                     
                     used_labels.append(a)

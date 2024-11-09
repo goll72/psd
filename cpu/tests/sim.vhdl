@@ -130,13 +130,13 @@ begin
 
             -- PC changed, dump register contents
             if pc /= last_pc and fsm_cur_state = FETCH then
-                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, carry, sign, overflow);
+                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, sign, carry, overflow);
 
                 last_pc := pc;
             end if;
 
             if ir = OP_WAIT then
-                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, carry, sign, overflow);
+                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, sign, carry, overflow);
 
                 for i in 0 to 15 loop
                     for j in 0 to 15 loop

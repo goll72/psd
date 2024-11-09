@@ -53,14 +53,17 @@ begin
     read_or_write : process(clk, read, write, addr, data) is
         variable addr_index : integer;
     begin
-        addr_index := to_integer(unsigned(addr));
-        
+        -- NOTE: we need to set `addr_index' inside the `if' guards, otherwise simulation
+        -- tools would complain about a metavalue ('Z') being converted to '0'. We can't
+        -- use the RHS directly as expressions may not be allowed in array slices.
         if rising_edge(clk) then    
             if write = '1' then
+                addr_index := to_integer(unsigned(addr));
                 mem(addr_index) <= data;
             end if;
             
             if read = '1' then
+                addr_index := to_integer(unsigned(addr));
                 data <= mem(addr_index);
             else
                 data <= (others => 'Z');

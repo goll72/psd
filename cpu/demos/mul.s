@@ -9,7 +9,7 @@ loop_start:
         cmp a, 0
         jeq loop_end
         load r, 0xfe
-        add r, a
+        add r, b
         store r, 0xfe
         sub a, 1       ; r <- a - 1
         mov a, r       ; a <- r
@@ -17,3 +17,5 @@ loop_start:
 loop_end:
         load r, 0xfe
         out r
+
+        wait

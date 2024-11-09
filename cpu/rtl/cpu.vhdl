@@ -110,7 +110,7 @@ begin
             data_sel => reg_file_data_sel,
             data_in => reg_file_data_in,
 
-            write => control(CTL_ALU_TO_REG) or control(CTL_DATA_TO_REG),
+            write => control(CTL_ALU_TO_REG) or control(CTL_DATA_TO_REG) or control(CTL_REG_B_TO_REG),
         
             out_a => a,
             out_b => b
