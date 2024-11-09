@@ -17,8 +17,8 @@ testados no Windows ou no GNU/Linux.
  - MinGW (para compilar o simulador para Windows no GNU/Linux)
 
 Você já deve saber como instalar essas dependências no GNU/Linux. No Windows, para
-não perder tempo, você pode usar o script `./scripts/bootstrap.bat` disponibilizado
-nesse repositório para instalar o GNU make do ezwinports e o Python do projeto cosmos
+não perder tempo, você pode usar o script `bootstrap.bat` disponibilizado nesse
+repositório para instalar o GNU make do ezwinports e o Python do projeto cosmos
 (cosmopolitan libc).
 
 #### Simulador
