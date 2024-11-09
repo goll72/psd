@@ -49,8 +49,10 @@ endif
 
 .PRECIOUS: %.sim.dump %.out %.hdl.dump %.hdl.out
 
-test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
-	  $(patsubst %.in,%.ok,$(DEMO_IN_FILES))
+TEST_SIM_FILES = $(foreach demo,$(DEMOS),demos/$(demo).bin) \
+                 $(patsubst %.in,%.ok,$(DEMO_IN_FILES))
+
+test: $(TEST_SIM_FILES)
 
 DEMO_GEN_EXT = .ok .sim.dump .out .hdl.dump .hdl.out
 
