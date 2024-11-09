@@ -33,7 +33,7 @@ Um executável do simulador para Windows é disponibilizado como um release no G
 Para baixá-lo:
 
 ```sh
-cd ./tools/sim && make sim.exe
+make -C tools/sim sim.exe
 ```
 
 Caso queira compilar o simulador para Windows no GNU/Linux, use o mesmo comando acima.
@@ -42,7 +42,7 @@ Caso queira compilar o simulador para Windows no Windows, rode o comando de comp
 Para compilar o simulador no GNU/Linux, use:
 
 ```sh
-cd ./tools/sim && make sim
+make -C tools/sim sim
 ```
 
 ### Alvos e variáveis de compilação
