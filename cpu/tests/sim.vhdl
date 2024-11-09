@@ -110,7 +110,13 @@ begin
         while true loop
             wait until rising_edge(clk);
 
+            int <= '0';
             data_bus <= (others => 'Z');
+
+            -- Stop waiting immediately
+            if fsm_cur_state = POLL then
+                int <= '1';
+            end if;
 
             -- I/O in request --- read from input file
             if io_in_enable = '1' then
@@ -135,7 +141,7 @@ begin
                 last_pc := pc;
             end if;
 
-            if ir = OP_WAIT then
+            if ir = OP_NOP then
                 dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, sign, carry, overflow);
 
                 for i in 0 to 15 loop

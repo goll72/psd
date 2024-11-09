@@ -19,3 +19,4 @@ loop_end:
         out r
 
         wait
+        nop

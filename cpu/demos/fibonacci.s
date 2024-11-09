@@ -42,3 +42,4 @@ print_loop:
         jmp print_loop
 halt:
         wait
+        nop
