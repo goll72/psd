@@ -24,3 +24,10 @@ $(WORK):
 
 $(WORK)/_lib.qdb: $(SRC) | $(WORK)
 	$(VCOM) $(DEFVFLAGS) $(firstword $?) $(call up-from,$(firstword $?),$(SRC))
+
+defaults::
+	@$(call echo,  VCOM = $(value VCOM))
+	@$(call echo,  VSIM = $(value VSIM))
+	@$(call echo,  VLIB = $(value VLIB))
+	@$(call echo,  WORK = $(value WORK))
+	@$(call echo,  DEFVFLAGS = $(value DEFVFLAGS))

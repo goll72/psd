@@ -50,7 +50,7 @@ $(WORK)/_index: $(OUT)
 $(WORK)/%.link: %.vhdl
 	-@$(MKDIR) "$(dir $@)"
 	
-	@$(TRUNCATE) "$(WORK)/WORK.$(call toupper,$(notdir $*))"
+	@$(call truncate,"$(WORK)/WORK.$(call toupper,$(notdir $*))")
 	@$(call link,"$(WORK)/WORK.$(call toupper,$(notdir $*))","$@")
 
 	@$(call touch,"$?")
@@ -58,3 +58,12 @@ $(WORK)/%.link: %.vhdl
 	$(NVC) $(DEFNVCFLAGS) -a $? $(NVCANAL)
 	
 	@$(call touch,"$@")
+
+defaults::
+	@$(call echo,  NVC = $(value NVC))
+	@$(call echo,  WORK = $(value WORK))
+	@$(call echo,  WAVE = $(value WAVE))
+	@$(call echo,  DEFNVCFLAGS = $(value DEFNVCFLAGS))
+	@$(call echo,  NVCANAL = $(value NVCANAL))
+	@$(call echo,  NVCELAB = $(value NVCELAB))
+	@$(call echo,  NVCRUN = $(value NVCRUN))

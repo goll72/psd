@@ -40,9 +40,12 @@ DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 %.ok: %.sim.dump %.out
 	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.demo.out -gDEMO_DUMP=../../$*.demo.dump" run
-	$(call touch,"$@")
-	git diff --no-index $*.out $*.demo.out || $(RM) "$@"
-	git diff --no-index $*.sim.dump $*.demo.dump || $(RM) "$@"
+	$(call truncate,"$@")
+	git diff --no-index $*.out $*.demo.out || (cd $(dir $@) && $(RM) "$(notdir $@)")
+	git diff --no-index $*.sim.dump $*.demo.dump || (cd $(dir $@) && $(RM) "$(notdir $@)")
+ifneq ($(TEST_SIM_ABORT_ON_ERROR),)
+	$(call if-not-exists,"$@",exit 1)
+endif
 
 .PRECIOUS: %.sim.dump %.demo.dump %.out %.demo.out
 
@@ -52,10 +55,13 @@ test: $(foreach demo,$(DEMOS),demos/$(demo).bin) \
 DEMO_GEN_EXT = .sim.dump .out .demo.dump .demo.out
 DEMO_GEN_FILES = $(foreach suff,$(DEMO_GEN_EXT),demos/$(demo).dir/*$(suff))
 
+defaults::
+	@$(call echo,  TEST_SIM_ABORT_ON_ERROR = $(value TEST_SIM_ABORT_ON_ERROR))
+
 ifeq ($(OS),Windows_NT)
 clean::
 	-cd demos && $(RM) *.bin *.mif
-	-@for /F "usebackq delims=" %A in (`dir /b/s *.sim.dump *.out *.demo.dump *.demo.out *.ok`) do del %A
+	-for /F "usebackq delims=" %%A in (`dir /b/s *.sim.dump *.out *.demo.dump *.demo.out *.ok`) do del %%A
 else
 clean::
 	-cd demos && $(RM) *.bin *.mif

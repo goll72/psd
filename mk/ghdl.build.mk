@@ -18,3 +18,8 @@ $(WORK):
 $(WORK)/work-obj08.cf: $(SRC) | $(WORK)
 	$(GHDL) analyze $(DEFGHDLFLAGS) --workdir=$(WORK) -fpsl $(firstword $?) $(call up-from,$(firstword $?),$(SRC))
 	$(call touch,"$@")
+
+defaults::
+	@$(call echo,  GHDL = $(value GHDL))
+	@$(call echo,  WORK = $(value WORK))
+	@$(call echo,  DEFGHDLFLAGS = $(value DEFGHDLFLAGS))

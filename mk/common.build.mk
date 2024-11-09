@@ -24,7 +24,7 @@ index-of = $(if $(filter $1,$2),$(words $(call up-to,$1,$2)))
 up-from = $(strip $(wordlist $(or $(call index-of,$1,$(-never-matching) $(-never-matching) $2),2147483647),2147483647,$2))
 
 
-PROJECT_ROOT := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))/..
+PROJECT_ROOT := $(dir $(realpath $(lastword $(MAKEFILE_LIST))))..
 
 ifeq ($(OS),Windows_NT)
 	ifeq ($(wildcard $(PROJECT_ROOT)\bin),)
@@ -36,11 +36,16 @@ ifeq ($(OS),Windows_NT)
 	RM = del
 	RMTREE = rd /s /q
 	MKDIR = md
-	TRUNCATE = copy /b nul 
+
+	echo = echo.$(1)
+
+	if-exists = if exist $(1) $(2)
+	if-not-exists = if not exist $(1) $(2)
+	truncate = copy /b nul $(subst /,\,$(1))
 	copy = copy $(subst /,\,$(1)) $(subst /,\,$(2))
 	link = mklink /H $(2) $(1)
 	toupper = $(1)
-	touch = copy /b $(1) +,,
+	touch = copy /b $(subst /,\,$(1)) +,,
 	curl = powershell -Command "curl $(1) -o $(2)"
 	unzip = powershell -Command "Expand-Archive -Path $(1) -DestinationPath $(2)"
 
@@ -51,7 +56,12 @@ else
 	RM = rm -f
 	RMTREE = rm -rf
 	MKDIR = mkdir -p
-	TRUNCATE = truncate -s 0
+
+	echo = echo '$(1)'
+
+	if-exists = [ -f $(1) ] && $(2)
+	if-not-exists = [ -f $(1) ] || $(2) 
+	truncate = truncate -s 0 $(1)
 	copy = cp $(1) $(2)
 	link = ln -srf $(1) $(2)
 	toupper = $(shell echo $(1) | tr '[:lower:]' '[:upper:]')
@@ -59,3 +69,6 @@ else
 	curl = curl -L $(1) -o $(2)
 	unzip = unzip $(1) -d $(2)
 endif
+
+defaults::
+	@$(call echo,  PYTHON = $(PYTHON))
