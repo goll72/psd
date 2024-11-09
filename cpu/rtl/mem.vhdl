@@ -97,7 +97,6 @@ end architecture;
 --             q_a => tmp
 --         );
 --
---     -- This process doesn't need to be clocked (the memory has a clock signal)
 --     read_or_write : process(read, write, data) is
 --     begin
 --         if write = '1' then

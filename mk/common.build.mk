@@ -72,3 +72,5 @@ endif
 
 defaults::
 	@$(call echo,  PYTHON = $(PYTHON))
+
+.DEFAULT_GOAL = all
