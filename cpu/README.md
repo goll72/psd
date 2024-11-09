@@ -21,6 +21,12 @@ não perder tempo, você pode usar o script `bootstrap.bat` disponibilizado ness
 repositório para instalar o GNU make do ezwinports e o Python do projeto cosmos
 (cosmopolitan libc).
 
+> [!NOTE]
+> No Windows, o Python instalado em `C:\windows\py.exe` será usado, se existir.
+> Certifique-se de que a versão do Python usada é 3.10 ou superior. Se necessário,
+> especifique o caminho para o executável do intepretador Python manualmente usando
+> a variável `PYTHON` ou use o script `bootstrap.bat`.
+
 #### Simulador
 
 Um executável do simulador para Windows é disponibilizado como um release no GitHub. 
@@ -41,7 +47,7 @@ cd ./tools/sim && make sim
 
 ### Alvos e variáveis de compilação
 
-As seguintes variáveis podem ser passadas ao executar o comando `make`:
+As seguintes variáveis podem ser passadas como argumento ao executar o comando `make`:
 
  - `ENV`: (obrigatório) determina o ambiente usado para compilação/síntese/teste.
  Possíveis valores: `ghdl`, `nvc`, `modelsim`, `quartus`
@@ -59,19 +65,41 @@ Os seguintes alvos podem ser executados:
  (assumindo que há apenas uma placa conectada).
  - `test`: roda os testbenches disponibilizados em `tests/`. Obviamente,
  apenas os ambientes de simulação são suportados.
- - `clean`: remove os aretefatos de compilação/síntese/teste.
+ - `clean`: remove os artefatos de compilação/síntese/teste.
  - `defaults`: imprime os valores de algumas variáveis que podem ser úteis.
+
+Alguns alvos adicionais, que se referem diretamente a arquivos, podem ser usados:
+
+ - `%.bin`: usa o assembler para gerar um arquivo `.bin` e um arquivo `.mif` 
+ a partir do arquivo que possui o mesmo prefixo do alvo, porém com a extensão `.s`.
+ 
+ Exemplo: `make demos/add.bin` irá montar o arquivo `demos/add.s`, gerando
+ `demos/add.bin` e `demos/add.mif`.
+
+ - `%.mif`: idem.
+
+ - `%.ok`: roda apenas o teste da testbench `tests/sim.vhdl` correspondente ao arquivo
+ com o mesmo prefixo do alvo, porém com a extensão `.in`.
+
+ Exemplo: `make demos/add.dir/0.ok` irá rodar o teste que consiste em rodar o simulador
+ C com a memória inicializada por `demos/add.bin`, entradas dadas em `demos/add.dir/0.in`,
+ salvar as saídas em `demos/add.dir/0.out` e salvar um dump do estado do simulador em
+ `demos/add.dir/0.sim.dump`, e então rodar o testbench `tests/sim.vhdl` com as mesmas
+ entradas e, por fim, comparar as saídas e o dump do estado (registradores e memória).
 
 ## Notas
 
 Para que seja possível usar os makefiles para compilar o projeto, é necessário
-que as ferramentas de cada ambiente estejam disponíveis no caminho de busca 
+que os programas de cada ambiente estejam disponíveis no caminho de busca 
 (variável de ambiente `PATH`). Essas ferramentas são:
 
  - `ghdl`: `ghdl`/`ghdl-gcc`/`ghdl-llvm`/`ghdl-mcode`
  - `nvc`: `nvc`
  - `modelsim`: `vcom`, `vsim`, `vlib`
  - `quartus`: `quartus_sh`, `quartus_pgm`
+
+> [!INFO]
+> No Windows, esses programas terão a extensão `.exe`.
 
 Os makefiles foram feitos para funcionar nos PCs do lab 6-305/6, usando o local
 de instalação padrão do Quartus e do Modelsim. Em outros contextos, pode ser
@@ -85,13 +113,13 @@ set PATH=%PATH%;...
 
 No Windows, powershell:
 
-```
-$env:Path += ...
+```powershell
+$env:Path += ';...'
 ```
 
-No GNU/Linux, bash:
+No GNU/Linux, bash/sh:
 
-```
+```sh
 PATH=$PATH:...
 ```
 

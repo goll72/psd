@@ -35,7 +35,8 @@ DEMOS = add mul fibonacci
 
 DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
-%.sim.dump %.out: %.in $(SIM)
+%.sim.dump %.out: %.in $(SIM) all
+	$(MAKE) $(patsubst %.dir/,%,$(dir $<)).bin
 	$(SIM) -s -n -d 1 -M -N $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
 
 %.ok: %.sim.dump %.out
