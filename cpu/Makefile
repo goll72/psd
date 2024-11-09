@@ -41,8 +41,8 @@ DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 %.ok: %.sim.dump %.out
 	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.hdl.out -gDEMO_DUMP=../../$*.hdl.dump" run
 	$(call truncate,"$@")
-	git diff --no-index $*.out $*.hdl.out || (cd $(dir $@) && $(RM) "$(notdir $@)")
-	git diff --no-index $*.sim.dump $*.hdl.dump || (cd $(dir $@) && $(RM) "$(notdir $@)")
+	git diff -U30 --no-index $*.out $*.hdl.out || (cd $(dir $@) && $(RM) "$(notdir $@)")
+	git diff -U30 --no-index $*.sim.dump $*.hdl.dump || (cd $(dir $@) && $(RM) "$(notdir $@)")
 ifneq ($(TEST_SIM_ABORT_ON_ERROR),)
 	$(call if-not-exists,"$@",exit 1)
 endif
