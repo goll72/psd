@@ -8,7 +8,7 @@ library work;
 entity hex is
    	port (
         valid : in std_logic;
-        
+
         x :  in std_logic_vector(3 downto 0);
         q : out std_logic_vector(0 to 6)
     );

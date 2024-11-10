@@ -25,20 +25,20 @@ architecture rtl of board is
     signal mem_enable, mem_read, mem_write : std_logic;
 
     signal addr_bus, data_bus : std_logic_vector(CPU_N_BITS - 1 downto 0);
-    
+
     -- `int' corresponds to a push button on the board (active low).
     --
     -- The board that we're using (DE0-CV) has debounce circuitry
     -- for the push buttons, so we don't have to worry about that.
     --
-    -- However, if we just sent the `int' signal to the CPU, a 
+    -- However, if we just sent the `int' signal to the CPU, a
     -- single button press could lead to multiple `wait'
     -- instructions being skipped.
     --
     -- To solve that, an FSM will take that signal and output 1
     -- on a change from 1 to 0, and 0 for anything else.
     type int_fsm_state_t is (ONE, ZERO, TRAILING_ZEROS);
-    
+
     signal int_pulse : std_logic;
     signal int_state : int_fsm_state_t;
 begin
@@ -49,11 +49,11 @@ begin
 
         io_in_enable => io_in_enable,
         io_out_enable => io_out_enable,
-        
+
         mem_enable => mem_enable,
         mem_read => mem_read,
         mem_write => mem_write,
-        
+
         addr_bus => addr_bus,
         data_bus => data_bus
     );
@@ -98,7 +98,7 @@ begin
     begin
         if rising_edge(clk) then
             data_bus <= (others => 'Z');
-            
+
             if io_in_enable = '1' then
                 data_bus <= input;
             end if;
