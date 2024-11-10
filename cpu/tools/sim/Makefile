@@ -1,4 +1,4 @@
-ENV=_
+ENV = _
 
 include ../../../mk/common.build.mk
 
@@ -15,7 +15,7 @@ all: $(OUT)
 include ./defs.mk
 
 ifeq ($(OS),Windows_NT)
-sim.exe:
+sim.exe: $(SIMDEPS)
 	$(call curl,https://github.com/goll72/psd/releases/download/sim/sim.exe,$(SIMROOT)/sim.exe)
 else
 $(OUT): $(SIMDEPS)
