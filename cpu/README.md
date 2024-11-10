@@ -4,6 +4,15 @@ cpu
 Uma CPU de 8 bits descrita em VHDL, aplicando os conceitos de máquina de estados
 abordados em Sistemas Digitais. Projeto final de Prática em Sistemas Digitais. 
 
+## Estrutura
+
+ - `demos`: programas em assembly (`.s`) demonstrando o funcionamento da CPU,
+ além de casos de teste (entradas, `.in`) para cada programa para realizar testes
+ usando a testbench `tests/sim.vhdl`.
+ - `rtl`: código VHDL descrevendo a CPU e componentes auxiliares.
+ - `tools`: ferramentas para facilitar o desenvolvimento e teste da CPU.
+ - `tests`: testbenches.
+
 ## Compilação
 
 O projeto em si e utilitários auxiliares podem ser compilados, executados e 
@@ -84,6 +93,42 @@ Alguns alvos adicionais, que se referem diretamente a arquivos, podem ser usados
  salvar as saídas em `demos/add.dir/0.out` e salvar um dump do estado do simulador em
  `demos/add.dir/0.sim.dump`, e então rodar o testbench `tests/sim.vhdl` com as mesmas
  entradas e, por fim, comparar as saídas e o dump do estado (registradores e memória).
+
+Por exemplo, `make ENV=nvc TEST_SIM_ABORT_ON_ERROR=1 test` irá preparar todos os arquivos
+necessários e rodar os casos de teste que ainda não foram rodados ou que não passaram na
+última vez que foram rodados, usando o simulador de VHDL `nvc` e abortando a execução caso
+algum caso de teste da testbench `tests/sim.vhdl` falhe.
+
+> [!IMPORTANT]
+> Devido à forma que os makefiles são estruturados, é necessário passar a variável `ENV`
+> ao rodar qualquer comando, mesmo aqueles que não tenham relação alguma com VHDL. Para
+> esses comandos, qualquer valor dentre os valores permitidos pode ser usado. O valor
+> `common` também pode ser usado nesses casos, se você preferir.
+
+## Programando a placa FPGA
+
+Normalmente (para os outros projetos nesse repositório) basta rodar `make ENV=quartus run`
+para realizar a síntese e programar a placa FPGA, usando o Quartus. No entanto, para esse
+projeto, há a possibilidade de escolha entre vários arquivos `.mif` para inicializar a
+memória. Essa escolha pode (e deve) ser feita usando a variável `MIF_FILE`. Por exemplo:
+
+```sh
+make ENV=quartus MIF_FILE=demos/fibonacci.mif run
+```
+
+Desde que haja um arquivo `.s` correspondente, o comando acima irá montar esse arquivo e
+gerar o arquivo `.mif`, caso ainda não exista ou esteja desatualizado, para então proceder
+com a síntese e a programação da placa FPGA.
+
+> [!NOTE]
+> O makefile irá copiar o arquivo `.mif` especificado para um outro arquivo com nome
+> `current.mif`, e irá criar um arquivo `current.mif.d`. Caso você ainda prefira compilar 
+> o projeto e programar a placa FPGA manualmente, pela interface gráfica do Quartus, basta 
+> criar o arquivo `current.mif` (o arquivo `current.mif.d` é usado internamente no
+> makefile apenas para rastreamento de dependências).
+
+Uma vez que a variável `MIF_FILE` foi especificada, pode ser omitida em execuções 
+subsequentes do `make run` para usar o mesmo arquivo `.mif`.
 
 ## Notas
 

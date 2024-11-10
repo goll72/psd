@@ -28,12 +28,11 @@ PATH := $(PATH):$(SIMROOT)
 $(SIM): $(SIMDEPS)
 	$(MAKE) -C $(SIMROOT)
 
+%.pdf: %.tex
+	tectonic $?
+
 %.bin %.mif: %.s
 	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?
-
-DEMOS = add mul fibonacci
-
-DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 %.sim.dump %.out: %.in $(SIM) all
 	$(MAKE) $(patsubst %.dir/,%,$(dir $<)).bin
@@ -48,10 +47,29 @@ ifneq ($(TEST_SIM_ABORT_ON_ERROR),)
 	$(call if-not-exists,"$@",exit 1)
 endif
 
-%.pdf: %.tex
-	tectonic $?
+-include current.mif.d
+current.mif: current.mif.d
+
+current.mif:
+	$(if $<,:,$(error MIF_FILE wasn't specified))
+	$(call copy,$<,current.mif)
+
+ifeq ($(ENV),quartus)
+ifneq ($(_REC),)
+$(SOF_FILE): current.mif
+else:
+$(SOF_FILE):
+ifneq ($(MIF_FILE),)
+	$(file > current.mif.d,current.mif: $(MIF_FILE))
+endif
+	$(MAKE) _REC=1 $(SOF_FILE)
+endif
+endif
 
 .PRECIOUS: %.sim.dump %.out %.hdl.dump %.hdl.out
+
+DEMOS = add mul fibonacci
+DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 TEST_SIM_FILES = $(foreach demo,$(DEMOS),demos/$(demo).bin) \
                  $(patsubst %.in,%.ok,$(DEMO_IN_FILES))
@@ -63,12 +81,12 @@ DEMO_GEN_EXT = .ok .sim.dump .out .hdl.dump .hdl.out
 defaults::
 	@$(call echo,  TEST_SIM_ABORT_ON_ERROR = $(value TEST_SIM_ABORT_ON_ERROR))
 
-ifeq ($(OS),Windows_NT)
 clean::
+	-$(RM) report.pdf
+	-$(RM) current.mif current.mif.d
 	-cd demos && $(RM) *.bin *.mif
+ifeq ($(OS),Windows_NT)
 	-for /F "usebackq delims=" %%A in (`dir /b/s $(patsubst %,*%,$(DEMO_GEN_EXT))`) do del %%A
 else
-clean::
-	-cd demos && $(RM) *.bin *.mif
 	-$(RM) $(patsubst %,demos/*/*%,$(DEMO_GEN_EXT))
 endif

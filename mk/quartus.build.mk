@@ -4,10 +4,12 @@ endif
 
 QUARTUS_PROJECT = $(patsubst %.qpf,%,$(wildcard *.qpf))
 
-all: output_files/$(QUARTUS_PROJECT).sof
+SOF_FILE = output_files/$(QUARTUS_PROJECT).sof
 
-run: output_files/$(QUARTUS_PROJECT).sof
-	quartus_pgm -m jtag -o "p;output_files/$(QUARTUS_PROJECT).sof"
+all: $(SOF_FILE)
+
+run: $(SOF_FILE)
+	quartus_pgm -m jtag -o "p;$(SOF_FILE)"
 
 clean::
 	-$(RMTREE) db incremental_db output_files
@@ -17,5 +19,5 @@ netlist:
 	quartus_npp $(QUARTUS_PROJECT) --netlist_type=sgate
 	qnui $(QUARTUS_PROJECT)
 
-output_files/$(QUARTUS_PROJECT).sof: $(SRC) $(QUARTUS_PROJECT).qpf $(QUARTUS_PROJECT).qsf
+$(SOF_FILE): $(SRC) $(QUARTUS_PROJECT).qpf $(QUARTUS_PROJECT).qsf
 	quartus_sh --flow compile $(QUARTUS_PROJECT)
