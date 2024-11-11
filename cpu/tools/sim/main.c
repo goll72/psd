@@ -144,7 +144,7 @@ int main(int argc, char **argv)
     uint8_t zero = 0, sign = 0, carry = 0, overflow = 0;
 
     /* Instruction Counter */
-    int ic = 0;
+    uint32_t ic = 0;
 
     while (true) {
         uint8_t instruction = memory[pc++];
@@ -280,7 +280,9 @@ int main(int argc, char **argv)
             PR(stderr, zero, 1, S(stderr, "\t"));
             PR(stderr, sign, 1, S(stderr, "\t"));
             PR(stderr, carry, 1, S(stderr, "\t"));
-            PR(stderr, overflow, 1, S(stderr, "\n"));
+            PR(stderr, overflow, 1, S(stderr, "\t"));
+
+            fprintf(stderr, "ic %08x\n", ic);
 
             for (int i = 0; i < REG_MAX; i++) {
                 fprintf(stderr, "%s ", REG_NAMES[i]);

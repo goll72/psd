@@ -14,6 +14,7 @@ package util is
     function to_lower(str: string) return string;
 
     procedure dump_regs(file f : text; variable l : inout line; regs : reg_file_t;
+                        ic : integer;
                         pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
                         ir : std_logic_vector(IR_RANGE);
                         rs : std_logic_vector(RS_RANGE);
@@ -36,12 +37,13 @@ package body util is
     end function;
 
     procedure dump_regs(file f : text; variable l : inout line; regs : reg_file_t;
+                        ic : integer;
                         pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
                         ir : std_logic_vector(IR_RANGE);
                         rs : std_logic_vector(RS_RANGE);
                         zero, sign, carry, overflow : std_logic) is
     begin
-        write(l, "pc " & to_string(pc) & HT & "ir " & to_string(ir) & HT & "rs " & to_string(rs) & HT & "zero " & to_string(zero) & HT & "sign " & to_string(sign) & HT & "carry " & to_string(carry) & HT & "overflow " & to_string(overflow));
+        write(l, "pc " & to_string(pc) & HT & "ir " & to_string(ir) & HT & "rs " & to_string(rs) & HT & "zero " & to_string(zero) & HT & "sign " & to_string(sign) & HT & "carry " & to_string(carry) & HT & "overflow " & to_string(overflow) & HT & "ic " & to_lower(to_hstring(to_unsigned(ic, 32))));
         writeline(f, l);
 
         write(l, "a  " & to_string(regs(to_integer(unsigned(REG_A)))));

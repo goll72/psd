@@ -78,6 +78,7 @@ begin
         variable text_buf : line;
         variable io_data : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
+        variable ic : integer;
         variable last_pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
         alias pc is << signal cpu.pc : std_logic_vector(CPU_N_BITS - 1 downto 0) >>;
@@ -105,7 +106,8 @@ begin
 
         rst <= '0';
 
-        last_pc := pc; 
+        ic := 0;
+        last_pc := pc;
 
         while true loop
             wait until rising_edge(clk);
@@ -136,13 +138,14 @@ begin
 
             -- PC changed, dump register contents
             if pc /= last_pc and fsm_cur_state = FETCH then
-                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, sign, carry, overflow);
+                dump_regs(dump_file, text_buf, regs, ic, pc, ir, rs, zero, sign, carry, overflow);
 
                 last_pc := pc;
+                ic := ic + 1;
             end if;
 
             if ir = OP_NOP then
-                dump_regs(dump_file, text_buf, regs, pc, ir, rs, zero, sign, carry, overflow);
+                dump_regs(dump_file, text_buf, regs, ic, pc, ir, rs, zero, sign, carry, overflow);
 
                 for i in 0 to 15 loop
                     for j in 0 to 15 loop
