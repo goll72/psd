@@ -37,6 +37,9 @@ architecture behavioral of sim is
     signal mem_enable, mem_read, mem_write : std_logic;
 
     signal addr_bus, data_bus : std_logic_vector(CPU_N_BITS - 1 downto 0);
+
+    -- instruction cycle counter
+    signal ic : integer;
 begin
     clk <= not clk after CLK_PERIOD / 2;
 
@@ -78,7 +81,6 @@ begin
         variable text_buf : line;
         variable io_data : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
-        variable ic : integer;
         variable last_pc : std_logic_vector(CPU_N_BITS - 1 downto 0);
 
         alias pc is << signal cpu.pc : std_logic_vector(CPU_N_BITS - 1 downto 0) >>;
@@ -106,7 +108,7 @@ begin
 
         rst <= '0';
 
-        ic := 0;
+        ic <= 0;
         last_pc := pc;
 
         while true loop
@@ -141,7 +143,7 @@ begin
                 dump_regs(dump_file, text_buf, regs, ic, pc, ir, rs, zero, sign, carry, overflow);
 
                 last_pc := pc;
-                ic := ic + 1;
+                ic <= ic + 1;
             end if;
 
             if ir = OP_NOP then
