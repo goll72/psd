@@ -9,11 +9,12 @@
 !*.qpf
 !*.qsf
 !*.sdc
-!README.md
 !**/Makefile
 !*.build.mk
 !scripts/*.bat
 !scripts/*.sh
+
+!*.md
 
 !**/*.py
 !**/*.[csh]
