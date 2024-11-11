@@ -3,11 +3,11 @@
 
 #include <stdint.h>
 
-static uint8_t add_with_flags(uint8_t a, uint8_t b, uint8_t *carry, uint8_t *overflow)
+static uint8_t add_with_flags(uint8_t a, uint8_t b, uint8_t carry_in, uint8_t *carry, uint8_t *overflow)
 {
     uint8_t c = 0, p = 1;
     uint8_t result;
-    uint8_t carry_out, carry_in = 0;
+    uint8_t carry_out;
 
     for (int i = 0; i < 8; i++) {
         result = (a & 1) ^ (b & 1) ^ carry_in;

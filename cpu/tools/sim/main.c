@@ -173,7 +173,7 @@ int main(int argc, char **argv)
                 break;
             case OP_ADD:
                 regs[REG_R] = add_with_flags( //
-                    regs[rs >> 2], regs[rs & 0x3], &carry, &overflow);
+                    regs[rs >> 2], regs[rs & 0x3], 0, &carry, &overflow);
 
                 zero = !regs[REG_R];
                 sign = (regs[REG_R] & 0x80) == 0x80;
@@ -181,7 +181,7 @@ int main(int argc, char **argv)
                 break;
             case OP_SUB:
                 regs[REG_R] = add_with_flags(
-                    regs[rs >> 2], ~regs[rs & 0x3] + 1, &carry, &overflow);
+                    regs[rs >> 2], ~regs[rs & 0x3], 1, &carry, &overflow);
 
                 zero = !regs[REG_R];
                 sign = (regs[REG_R] & 0x80) == 0x80;
@@ -189,7 +189,7 @@ int main(int argc, char **argv)
                 break;
             case OP_CMP:
                 regs[REG_I] = add_with_flags(
-                    regs[rs >> 2], ~regs[rs & 0x3] + 1, &carry, &overflow);
+                    regs[rs >> 2], ~regs[rs & 0x3], 1, &carry, &overflow);
 
                 zero = !regs[REG_I];
                 sign = (regs[REG_I] & 0x80) == 0x80;
