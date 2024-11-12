@@ -1,14 +1,3 @@
-; mem[0xff] vai guardar o endereço da posição atual na sequência
-
-; um comando str/data cairia bem aqui...
-mov r, 0xfe
-store r, 0xff
-
-mov r, 0
-store r, 0xfe
-mov r, 1
-store r, 0xfd
-
 fib_loop:
         load r, 0xff
 
@@ -43,3 +32,8 @@ print_loop:
 halt:
         wait
         nop
+
+# mem[0xff] vai guardar o endereço da posição atual na sequência
+byte 0xff, 0xfe
+byte 0xfe, 0
+byte 0xfd, 1

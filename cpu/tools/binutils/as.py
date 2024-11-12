@@ -13,6 +13,9 @@ from asm import *
 from util import FORMATS
 
 
+MEM_DEFAULT = 0x0
+
+
 def print_message(filename: str, line_number: int, line: str, message: str, span: tuple[int, int] | None = None):
     print(f"{filename}:{line_number + 1}: {message}", file=sys.stderr)
 
@@ -56,8 +59,9 @@ def main():
     used_labels = []
 
     code = []
+    data = {}
     
-    pattern = re.compile(r"^\s*(?:([a-zA-Z_][a-zA-Z0-9_]*):)?(?:\s*(\w+)(?:\s+(\w+)(?:,\s*(\w+|\d+))?)?)?(?:\s*;.*)?\s*$")
+    pattern = re.compile(r"^\s*(?:([a-zA-Z_][a-zA-Z0-9_]*):)?(?:\s*(\w+)(?:\s+(\w+)(?:,\s*(\w+|\d+))?)?)?(?:\s*;|#.*)?\s*$")
     
     for line_number, line in enumerate(args.input):
         # XXX: can we assume case-insensitive code?
@@ -127,7 +131,15 @@ def main():
             case "not" | "jmp" | "jeq" | "jgr" | "in" | "out", a, b:
                 print_message(args.input.name, line_number, line, "Error: extraneous operand for instruction that takes one operand", matches.span(4))
                 sys.exit(2)
-                
+
+            case "byte", a, b:
+                try:
+                    address = int(a, base=0)
+                    value = int(b, base=0)
+
+                    data[address] = value
+                except:
+                    print_message()
             case _:
                 print_message(args.input.name, line_number, line, f"Error: Invalid instruction {instr}", matches.span(1))
                 sys.exit(2)
@@ -140,6 +152,17 @@ def main():
     for index, value in enumerate(code):
         if type(value) == str:
             code[index] = resolved_labels[value]
+
+    # Adds stuff from the "data section", if there is any
+    if data:
+        orig_code_len = len(code)
+        code.extend([MEM_DEFAULT] * (256 - len(code)))
+
+        for address, value in data.items():
+            if address < orig_code_len:
+                print_message(args.input.name, -1, "", f"Overwriting code with data")
+            
+            code[address] = value
 
     for format in args.format:
         output = f"{args.input.name[:-2]}.{format}"
