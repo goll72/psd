@@ -52,7 +52,7 @@ int main(int argc, char **argv)
     int stop_after = -1;
 
     bool wait = true;
-    bool stop_at_eof = false;
+    bool stop_at_nop = false;
     bool dump_mem = false;
     bool interactive = true;
 
@@ -66,7 +66,7 @@ int main(int argc, char **argv)
                     "    -d N     Dumps simulation state every N instructions\n"
                     "    -k N     Stops the simulation after N instructions have been "
                     "executed\n"
-                    "    -s       Stops the simulation when EOF is reached\n"
+                    "    -s       Stops the simulation when a `nop` is reached\n"
                     "    -n       Disables waiting on the `wait` instruction\n"
                     "    -M       Dumps memory when exiting\n"
                     "    -N       Non-interactive mode, disables printing of prompts\n"
@@ -98,7 +98,7 @@ int main(int argc, char **argv)
                 break;
             }
             case 's':
-                stop_at_eof = true;
+                stop_at_nop = true;
                 break;
             case 'n':
                 wait = false;
@@ -294,7 +294,7 @@ int main(int argc, char **argv)
 
         ic++;
 
-        if (stop_at_eof && pc == (n_read % 256))
+        if (stop_at_nop && ir == OP_NOP)
             break;
 
         if (stop_after == ic)
