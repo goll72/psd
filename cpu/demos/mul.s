@@ -5,7 +5,7 @@ wait
 in b
 
 mov r, 0
-store r, 0xfe ; 2º valor da multiplicação
+store r, 0xfe # 2º valor da multiplicação
 
 loop_start:
         cmp a, 0
@@ -13,8 +13,8 @@ loop_start:
         load r, 0xfe
         add r, b
         store r, 0xfe
-        sub a, 1       ; r <- a - 1
-        mov a, r       ; a <- r
+        sub a, 1       # r <- a - 1
+        mov a, r       # a <- r
         jmp loop_start
 loop_end:
         load r, 0xfe

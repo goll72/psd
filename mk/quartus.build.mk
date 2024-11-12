@@ -19,5 +19,5 @@ netlist:
 	quartus_npp $(QUARTUS_PROJECT) --netlist_type=sgate
 	qnui $(QUARTUS_PROJECT)
 
-$(SOF_FILE): $(SRC) $(QUARTUS_PROJECT).qpf $(QUARTUS_PROJECT).qsf
+$(SOF_FILE): $(SOF_FILE_DEPS) $(SRC) $(QUARTUS_PROJECT).qpf $(QUARTUS_PROJECT).qsf
 	quartus_sh --flow compile $(QUARTUS_PROJECT)

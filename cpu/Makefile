@@ -8,6 +8,8 @@ SRC = rtl/attrs.vhdl rtl/asm.vhdl rtl/util.vhdl \
       rtl/cpu.vhdl \
       tests/sim.vhdl $(TESTS)
 
+SOF_FILE_DEPS = current.mif
+
 include ../mk/common.build.mk
 include ../mk/$(ENV).build.mk
 
@@ -29,7 +31,7 @@ $(SIM): $(SIMDEPS)
 	$(MAKE) -C $(SIMROOT)
 
 %.pdf: %.tex
-	tectonic $?
+	tectonic --keep-intermediates $?
 
 %.bin %.mif: %.s
 	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?
@@ -55,9 +57,7 @@ current.mif:
 	$(call copy,$<,current.mif)
 
 ifeq ($(ENV),quartus)
-ifneq ($(_REC),)
-$(SOF_FILE): current.mif
-else
+ifeq ($(_REC),)
 $(SOF_FILE):
 ifneq ($(MIF_FILE),)
 	$(file > current.mif.d,current.mif: $(MIF_FILE))
@@ -82,7 +82,7 @@ defaults::
 	@$(call echo,  TEST_SIM_ABORT_ON_ERROR = $(value TEST_SIM_ABORT_ON_ERROR))
 
 clean::
-	-$(RM) report.pdf
+	-$(RM) report.pdf report.aux
 	-$(RM) current.mif current.mif.d
 	-cd demos && $(RM) *.bin *.mif
 ifeq ($(OS),Windows_NT)

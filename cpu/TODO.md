@@ -4,7 +4,8 @@
  - [x] Corrigir semântica do `sub`/`cmp` no VHDL e em C
  - [x] I/O: usar um registrador para guardar o output
  - [x] Adicionar um comando "byte" ao assembler (adaptar fibonacci.s)
- - [ ] Corrigir target current.mif no makefile
+ - [x] Corrigir target current.mif no makefile
+ - [ ] Adicionar conteúdo da memória em hexadecimal no objdump.py
  - [ ] Adicionar uma especificação da CPU no repositório
  - [ ] Adicionar documentação da sintaxe do assembly suportada
  - [ ] Adicionar demos, por exemplo:

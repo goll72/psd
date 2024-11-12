@@ -61,7 +61,7 @@ def main():
     code = []
     data = {}
     
-    pattern = re.compile(r"^\s*(?:([a-zA-Z_][a-zA-Z0-9_]*):)?(?:\s*(\w+)(?:\s+(\w+)(?:,\s*(\w+|\d+))?)?)?(?:\s*;|#.*)?\s*$")
+    pattern = re.compile(r"^\s*(?:([a-zA-Z_][a-zA-Z0-9_]*):)?(?:\s*(\w+)(?:\s+(\w+)(?:,\s*(\w+|\d+))?)?)?(?:\s*(?:;|#).*)?\s*$")
     
     for line_number, line in enumerate(args.input):
         # XXX: can we assume case-insensitive code?
@@ -139,7 +139,8 @@ def main():
 
                     data[address] = value
                 except:
-                    print_message()
+                    print_message(args.input.name, line_number, line, "Error: invalid argument(s) for byte: expected address and value as integer literals")
+
             case _:
                 print_message(args.input.name, line_number, line, f"Error: Invalid instruction {instr}", matches.span(1))
                 sys.exit(2)
