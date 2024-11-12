@@ -52,6 +52,8 @@ begin
                     q <= "0110000";
                 when 16#F# =>
                     q <= "0111000";
+                when others =>
+                    q <= "1111110";
     		end case;
         else
             q <= "1111110";

@@ -79,7 +79,7 @@ end architecture;
 -- use altera_mf.altera_mf_components.all;
 --
 -- architecture rtl of mem is
---     signal tmp : std_logic_vector(MEM_WORD_BITS - 1 downto 0);
+--     signal q : std_logic_vector(MEM_WORD_BITS - 1 downto 0);
 -- begin
 --     ram : altsyncram
 --         generic map (
@@ -92,24 +92,12 @@ end architecture;
 --         port map (
 --             address_a => addr,
 --             clock0 => clk,
---             data_a => tmp,
+--             data_a => data,
 --             wren_a => write,
---             q_a => tmp
+--             q_a => q
 --         );
 --
---     read_or_write : process(read, write, data) is
---     begin
---         if write = '1' then
---             tmp <= data;
---         else
---             tmp <= (others => 'Z');
---         end if;
---
---         if read = '1' then
---             data <= tmp;
---         else
---             data <= (others => 'Z');
---         end if;
---     end process;
+--     data <= q when read = '1' else
+--             (others => 'Z');
 -- end architecture;
 -- synthesis read_comments_as_hdl off

@@ -57,7 +57,7 @@ current.mif:
 ifeq ($(ENV),quartus)
 ifneq ($(_REC),)
 $(SOF_FILE): current.mif
-else:
+else
 $(SOF_FILE):
 ifneq ($(MIF_FILE),)
 	$(file > current.mif.d,current.mif: $(MIF_FILE))

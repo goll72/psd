@@ -56,4 +56,6 @@ package attrs is
 
     subtype RS_A_SEL_RANGE is natural range 3 downto 2;
     subtype RS_B_SEL_RANGE is natural range 1 downto 0;
+
+    type hex_display_byte_t is array (1 downto 0) of std_logic_vector(0 to 6);
 end package;

@@ -28,9 +28,9 @@ class MifFormatHandler(FormatHandler):
                     break
 
             if index == next - 1:
-                output.append(f"[{index:x}]: {data[index]:x}")
+                output.append(f"{index:x}: {data[index]:02x};")
             else:
-                output.append(f"[{index:x}..{next - 1:x}]: {data[index]:x}")
+                output.append(f"[{index:x}..{next - 1:x}]: {data[index]:02x};")
 
             index = next
         

@@ -1,5 +1,7 @@
+wait
 in a
 store a, 0xff
+wait
 in b
 
 mov r, 0
