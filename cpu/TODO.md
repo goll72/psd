@@ -3,7 +3,7 @@
  - [x] Testar o código do I/O e altsyncram (data_bus, 'Z')
  - [x] Corrigir semântica do `sub`/`cmp` no VHDL e em C
  - [x] I/O: usar um registrador para guardar o output
- - [ ] Adicionar um comando "byte" ao assembler (adaptar fibonacci.s)
+ - [x] Adicionar um comando "byte" ao assembler (adaptar fibonacci.s)
  - [ ] Adicionar uma especificação da CPU no repositório
  - [ ] Adicionar documentação da sintaxe do assembly suportada
  - [ ] Adicionar demos, por exemplo:
