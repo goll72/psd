@@ -31,7 +31,7 @@ $(SIM): $(SIMDEPS)
 	$(MAKE) -C $(SIMROOT)
 
 %.pdf: %.tex
-	tectonic --keep-intermediates $?
+	tectonic --keep-logs --keep-intermediates $?
 
 %.bin %.mif: %.s
 	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?
@@ -82,7 +82,7 @@ defaults::
 	@$(call echo,  TEST_SIM_ABORT_ON_ERROR = $(value TEST_SIM_ABORT_ON_ERROR))
 
 clean::
-	-$(RM) report.pdf report.aux
+	-$(RM) *.pdf *.aux *.log
 	-$(RM) current.mif current.mif.d
 	-cd demos && $(RM) *.bin *.mif
 ifeq ($(OS),Windows_NT)
