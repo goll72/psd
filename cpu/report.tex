@@ -6,7 +6,7 @@
 \usepackage[T1]{fontenc}
 
 \usepackage{tikz}
-\usetikzlibrary{automata,positioning,arrows}
+\usetikzlibrary{automata,positioning,arrows,shapes.geometric}
 
 \usepackage[siunitx]{circuitikz}
 
@@ -45,9 +45,24 @@
 \end{figure}
 
 \begin{figure}[H]
-\begin{circuitikz}
-	\ctikzset{multipoles/dipchip/width=2}
-	\draw (0,0) node[dipchip,num pins=10,external pins width=0,hide numbers,no topmark] (u1) {CPU};
+\begin{circuitikz}[
+	>=Triangle,
+	square/.style={regular polygon,regular polygon sides=4},
+	abstractic/.style={square,thick,draw,minimum size=2.5cm}
+]
+
+	\draw (3,4) node[abstractic] (io) {I/O};
+	\draw (0,0) node[abstractic] (cpu) {CPU};
+	\draw (6,0) node[abstractic] (mem) {MEM};
+
+	\draw[<->,thick] ([yshift=1em]cpu.east) -- ([yshift=1em]mem.west);
+	\draw[->,thick] ([yshift=-1em]cpu.east) -- ([yshift=-1em]mem.west);
+
+	\path (cpu) -- (mem) node[midway] (mid) {};
+	
+	\draw[->,thick] ([yshift=1em]mid.center) to[short,*-] (io.south);
+
+	\draw[scale=0.8,thick,transform shape] ([yshift=1.25em]cpu.east) ++ (0.2,0) to[multiwire=8] ([yshift=1.25em]mid.center) {};
 \end{circuitikz}
 \end{figure}
 
