@@ -31,7 +31,7 @@ $(SIM): $(SIMDEPS)
 	$(MAKE) -C $(SIMROOT)
 
 %.pdf: %.tex
-	tectonic --keep-logs --keep-intermediates $?
+	tectonic -b https://goll.cc/texlive2024/bundle.ttb --keep-logs --keep-intermediates $?
 
 %.bin %.mif: %.s
 	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?

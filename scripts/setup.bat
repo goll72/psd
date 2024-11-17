@@ -1,5 +1,5 @@
 :: Development environment setup script (for when they factory reset the lab PCs once again)
-:: Installs Windows Terminal, GNU make, helix and vhdl_ls
+:: Installs Windows Terminal, GNU make, helix, vhdl_ls, tectonic and texlab
 
 @echo Run from CMD^!^!
 
@@ -24,6 +24,24 @@ if not exist ".\vhdl_ls\" (
 	move "vhdl_ls-x86_64-pc-windows-msvc" "vhdl_ls"
 )
 
+if not exist ".\tectonic" (
+	curl -L -o tectonic.zip "https://artprodcus3.artifacts.visualstudio.com/Ab81c2d37-2dcb-497c-85e6-0a9e4631c88b/c771df00-c615-4a8b-b6ac-bb8713354b46/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL3RlY3RvbmljLXR5cGVzZXR0aW5nL3Byb2plY3RJZC9jNzcxZGYwMC1jNjE1LTRhOGItYjZhYy1iYjg3MTMzNTRiNDYvYnVpbGRJZC8xNTQ5L2FydGlmYWN0TmFtZS9iaW5hcnkteDg2XzY0LXBjLXdpbmRvd3MtbXN2Yw2/content?format=zip"
+	tar -xf "tectonic.zip"
+	tar -xf "tectonic-0.15.0+20241114-x86_64-pc-windows-msvc.zip"
+	del "tectonic.zip"
+	del "tectonic-0.15.0+20241114-x86_64-pc-windows-msvc.zip"
+	md tectonic
+	move "tectonic.exe" "tectonic"
+)
+
+if not exist ".\texlab" (
+	curl -L -o texlab.zip "https://github.com/latex-lsp/texlab/releases/download/v5.21.0/texlab-x86_64-windows.zip"
+	tar -xf texlab.zip
+	del texlab.zip
+	md texlab
+	move "texlab.exe" "texlab"
+)
+
 md %HOME%\Documents\WindowsPowerShell
 
 > %HOME%\Documents\WindowsPowerShell\Microsoft.PowerShell_profile.ps1 (
@@ -37,7 +55,7 @@ md %HOME%\Documents\WindowsPowerShell
 	@echo.    return $paths;
 	@echo.}
 	@echo.
-	@echo.${env:PATH} += ";${env:HOME}\Documents\helix\;${env:HOME}\Documents\vhdl_ls\bin\";
+	@echo.${env:PATH} += ";${env:HOME}\Documents\helix\;${env:HOME}\Documents\vhdl_ls\bin\;${env:HOME}\Documents\tectonic\;${env:HOME}\Documents\texlab\";
 )
 
 %LOCALAPPDATA%\Microsoft\WindowsApps\wt.exe --version
@@ -62,4 +80,12 @@ md %APPDATA%\helix
 	@echo.name = "vhdl"
 	@echo.language-servers = ["vhdl_ls"]
 	@echo.indent = { tab-width = 4, unit = "    " }
+	@echo.
+	@echo.[language-server.texlab]
+	@echo.command = "texlab"
+	@echo.config = { texlab = { build = { executable = "tectonic", args = ["-b", "https://goll.cc/texlive2024/bundle.ttb", "--keep-logs", "--keep-intermediates", "%f"], "onSave" = true } } }
+	@echo.
+	@echo.[[language]]
+	@echo.name = "latex"
+	@echo.language-servers = ["texlab"]
 )

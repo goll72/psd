@@ -31,7 +31,7 @@
 	\node[state, minimum size=2cm, below right=of store] (fetch_imm) {\small \shortstack{FETCH\\IMM}};
 	\node[state, minimum size=2cm, right=of fetch_imm] (store_imm) {\small \shortstack{STORE\\IMM}};
 
-	\draw[->] (reset) edge (fetch)
+	\draw[->,thick] (reset) edge (fetch)
 	          (fetch) edge (store)
 	          (store) edge[bend left] (execute)
 	          (store) edge[bend right] (fetch_imm)
@@ -62,7 +62,27 @@
 	
 	\draw[->,thick] ([yshift=1em]mid.center) to[short,*-] (io.south);
 
-	\draw[scale=0.8,thick,transform shape] ([yshift=1.25em]cpu.east) ++ (0.2,0) to[multiwire=8] ([yshift=1.25em]mid.center) {};
+	\draw[scale=0.8,thick,transform shape] ([yshift=1.25em]cpu.east) ++ (0.2,0) to[multiwire=8] ([yshift=1.25em]mid.center);
+\end{circuitikz}
+\end{figure}
+
+\begin{figure}[H]
+\begin{circuitikz}[
+	>=Triangle,
+	ic/.style={dipchip,external pins width=0}
+]
+	\tikzset{reg_file/.style={
+		muxdemux,
+		muxdemux def={Lh=7.5,Rh=7.5,w=7,NL=5,NT=0,NB=0,NR=2},
+		muxdemux label={L1=D,L2=SEL,L3=$\textrm{SEL}_A$,L4=$\textrm{SEL}_B$,L5=$\textrm{WR}_{EN}$,R1=A,R2=B},
+		circuitikz/muxdemux/inner label font={},
+		circuitikz/muxdemux/outer label font={},
+		circuitikz/muxdemux/clock wedge size=0.5,
+		circuitikz/muxdemux/inner label xsep=8pt,
+		circuitikz/muxdemux/inner label ysep=8pt
+	}}
+	
+	\draw node[reg_file] (regs) {};
 \end{circuitikz}
 \end{figure}
 
