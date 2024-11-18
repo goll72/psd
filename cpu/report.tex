@@ -6,7 +6,7 @@
 \usepackage[T1]{fontenc}
 
 \usepackage{tikz}
-\usetikzlibrary{automata,positioning,arrows,shapes.geometric}
+\usetikzlibrary{automata,positioning,arrows,shapes}
 
 \usepackage[siunitx]{circuitikz}
 
@@ -81,8 +81,31 @@
 		circuitikz/muxdemux/inner label xsep=8pt,
 		circuitikz/muxdemux/inner label ysep=8pt
 	}}
+
+	\tikzset{alu/.style={
+		muxdemux,
+		muxdemux def={Lh=6.5,Rh=3,NL=2,NR=1,NB=1,w=3,inset w=0.75,inset Lh=1,inset Rh=0}
+	}}
+
+	\tikzset{reg/.style={
+		flipflop,
+		flipflop def={t1=D,t3=$\textrm{WR}_{EN}$,t6=Q},
+		minimum size=2cm
+	}}
+
+	\coordinate (alu_xpos) at (7,0);
+	\draw (3,3) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
 	
-	\draw node[reg_file] (regs) {};
+	\draw (regs.rpin 1 -| alu_xpos) node[alu,anchor=lpin 1] (alu) {};
+
+	\draw (regs.rpin 1) edge (alu.lpin 1)
+	      (regs.rpin 2) edge (alu.lpin 2);
+
+	\draw (6,9) node[buffer port,scale=0.8] {};
+	\draw (9,9) node[reg,label={[label distance=8pt]south:PC}] (pc) {};
+
+	\coordinate (alu_out_xpos) at (12,0);
+	\draw (alu.east -| alu_out_xpos) node[signal,draw,signal to=west] {\footnotesize ALU\_OUT};
 \end{circuitikz}
 \end{figure}
 
