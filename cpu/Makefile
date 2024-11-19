@@ -49,6 +49,9 @@ ifneq ($(TEST_SIM_ABORT_ON_ERROR),)
 	$(call if-not-exists,"$@",exit 1)
 endif
 
+current.mif.d:
+	$(file > current.mif.d,current.mif: $(MIF_FILE))
+
 -include current.mif.d
 current.mif: current.mif.d
 
@@ -58,9 +61,12 @@ current.mif:
 
 ifeq ($(ENV),quartus)
 ifeq ($(_REC),)
+.PHONY: $(SOF_FILE)
+
 $(SOF_FILE):
 ifneq ($(MIF_FILE),)
-	$(file > current.mif.d,current.mif: $(MIF_FILE))
+	$(RM) current.mif
+	$(RM) current.mif.d
 endif
 	$(MAKE) _REC=1 $(SOF_FILE)
 endif
@@ -68,7 +74,7 @@ endif
 
 .PRECIOUS: %.sim.dump %.out %.hdl.dump %.hdl.out
 
-DEMOS = add mul fibonacci
+DEMOS = add mul fibonacci xor prime
 DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 TEST_SIM_FILES = $(foreach demo,$(DEMOS),demos/$(demo).bin) \
