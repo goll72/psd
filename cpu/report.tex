@@ -69,17 +69,30 @@
 \begin{figure}[H]
 \begin{circuitikz}[
 	>=Triangle,
-	ic/.style={dipchip,external pins width=0}
+	ic/.style={dipchip,external pins width=0},
+	scale=0.6,
+	transform shape
 ]
-	\tikzset{reg_file/.style={
+	\tikzset{ic/.style={
 		muxdemux,
-		muxdemux def={Lh=7.5,Rh=7.5,w=7,NL=5,NT=0,NB=0,NR=2},
-		muxdemux label={L1=D,L2=SEL,L3=$\textrm{SEL}_A$,L4=$\textrm{SEL}_B$,L5=$\textrm{WR}_{EN}$,R1=A,R2=B},
 		circuitikz/muxdemux/inner label font={},
 		circuitikz/muxdemux/outer label font={},
 		circuitikz/muxdemux/clock wedge size=0.5,
 		circuitikz/muxdemux/inner label xsep=8pt,
-		circuitikz/muxdemux/inner label ysep=8pt
+		circuitikz/muxdemux/inner label ysep=6pt
+	}}
+
+	\tikzset{control_unit/.style={
+		ic,
+		muxdemux def={Lh=6.5,Rh=6.5,w=6.5,NL=5,NB=2,NR=1},
+		draw only left pins={1,3,4},
+		muxdemux label={L1=INT,L3=IR,L4=RS,B1=Z,B2=S,R1=CTL}
+	}}
+	
+	\tikzset{reg_file/.style={
+		ic,
+		muxdemux def={Lh=7.5,Rh=7.5,w=7,NL=5,NT=0,NB=0,NR=2},
+		muxdemux label={L1=D,L2=SEL,L3=$\textrm{SEL}_A$,L4=$\textrm{SEL}_B$,L5=$\textrm{WR}_{EN}$,R1=A,R2=B},
 	}}
 
 	\tikzset{alu/.style={
@@ -89,9 +102,12 @@
 
 	\tikzset{reg/.style={
 		flipflop,
-		flipflop def={t1=D,t3=$\textrm{WR}_{EN}$,t6=Q},
-		minimum size=2cm
+		flipflop def={t1=D,t3=$\textrm{WR}_{EN}$,t6=Q}
 	}}
+
+	
+
+	\draw (3,9) node[control_unit] {};
 
 	\coordinate (alu_xpos) at (7,0);
 	\draw (3,3) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
