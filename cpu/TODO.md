@@ -5,10 +5,11 @@
  - [x] I/O: usar um registrador para guardar o output
  - [x] Adicionar um comando "byte" ao assembler (adaptar fibonacci.s)
  - [x] Corrigir target current.mif no makefile
+ - [ ] Mencionar escolha feita para a instrução JGR no relatório
  - [ ] Adicionar conteúdo da memória em hexadecimal no objdump.py
  - [ ] Adicionar uma especificação da CPU no repositório
  - [ ] Adicionar documentação da sintaxe do assembly suportada
- - [ ] Adicionar demos, por exemplo:
+ - [x] Adicionar demos, por exemplo:
    * prime.s (verificar se um número é primo usando o método ingênuo)
    * xor.s (emular xor usando and, or e not)
  - [ ] PSL e testbenches para `jmp` e afins?

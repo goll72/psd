@@ -6,7 +6,7 @@
 \usepackage[T1]{fontenc}
 
 \usepackage{tikz}
-\usetikzlibrary{automata,positioning,arrows,shapes}
+\usetikzlibrary{calc,automata,positioning,arrows,shapes}
 
 \usepackage[siunitx]{circuitikz}
 
@@ -105,23 +105,51 @@
 		flipflop def={t1=D,t3=$\textrm{WR}_{EN}$,t6=Q}
 	}}
 
-	
+	\draw (2,18) node[signal,draw,signal to=east,anchor=east] (int) {\footnotesize INT};
+	\draw (2,17) node[signal,draw,signal to=east,anchor=east] (data_bus) {\footnotesize DATA\_BUS};
+	\draw (21,-1.5) node[signal,draw,signal to=west] (addr_bus) {\footnotesize ADDR\_BUS};
 
-	\draw (3,9) node[control_unit] {};
+	\draw (4, 14) node[adder] (pc_adder) {};
 
-	\coordinate (alu_xpos) at (7,0);
-	\draw (3,3) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
+	\draw (10,10) node[control_unit] {};
+
+	\coordinate (alu_xpos) at (11,0);
+	\draw (7,3) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
 	
 	\draw (regs.rpin 1 -| alu_xpos) node[alu,anchor=lpin 1] (alu) {};
 
 	\draw (regs.rpin 1) edge (alu.lpin 1)
 	      (regs.rpin 2) edge (alu.lpin 2);
 
-	\draw (6,9) node[buffer port,scale=0.8] {};
-	\draw (9,9) node[reg,label={[label distance=8pt]south:PC}] (pc) {};
+	\draw (1,10) node[reg,label={[label distance=6pt]south:PC}] (pc) {};
+	\draw (1,6) node[reg,label={[label distance=6pt]south:IR}] (ir) {};
+	\draw (1,2) node[reg,label={[label distance=6pt]south:RS}] (rs) {};
 
-	\coordinate (alu_out_xpos) at (12,0);
-	\draw (alu.east -| alu_out_xpos) node[signal,draw,signal to=west] {\footnotesize ALU\_OUT};
+	\draw (20,14) node[reg,label={[label distance=6pt]south:Z}] (z) {};
+	\draw (20,10) node[reg,label={[label distance=6pt]south:S}] (s) {};
+	\draw (20,6) node[reg,label={[label distance=6pt]south:C}] (c) {};
+	\draw (20,2) node[reg,label={[label distance=6pt]south:O}] (o) {};
+
+	\coordinate (alu_out_xpos) at (16,0);
+
+	\draw (pc.pin 6) -- (pc.pin 6 -| pc_adder.south);
+	\draw[->] (pc_adder.south |- pc.pin 6) -- (pc_adder.south); 
+
+	\node at ([yshift=4em]pc_adder.north) {1};
+	\draw[->] ([yshift=3em]pc_adder.north) -- (pc_adder.north);
+
+	\coordinate (pc_adder_out_xpos) at (-1.5, 14);
+
+	\draw (pc_adder.west) -- (pc_adder.west -| pc_adder_out_xpos);
+	\draw ($(pc_adder.west -| pc_adder_out_xpos)!0.5!(pc_adder_out_xpos |- pc.pin 1)$) 
+	      node[buffer port,scale=0.8,anchor=center,rotate=270] (next_pc_tristate) {};
+
+	\draw (pc_adder.west -| pc_adder_out_xpos) -- (next_pc_tristate.in 1);
+	\draw (next_pc_tristate.out) -- (pc_adder_out_xpos |- pc.pin 1);
+	\draw (pc_adder_out_xpos |- pc.pin 1) to[short,*-] (pc.pin 1);
+
+	\draw (next_pc_tristate.up) -- ($(next_pc_tristate.up) + (0.3,0)$);
+	\node[signal,draw,signal to=west,anchor=west] at ($(next_pc_tristate.up) + (0.3,0)$) {\footnotesize CTL\_INCREMENT\_PC};
 \end{circuitikz}
 \end{figure}
 
