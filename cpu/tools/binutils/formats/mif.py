@@ -8,7 +8,7 @@ class MifFormatHandler(FormatHandler):
         self.attrs_content_re = re.compile(r"(.*)CONTENT\s*BEGIN(.*)END", re.I | re.S)
 
         self.attr_re = re.compile(r"(\w+)\s*=\s*(\w+)", re.I | re.S)
-        self.content_re = re.compile(r"\s*\[([0-9a-f]+)(?:\.\.([0-9a-f]+))?\]\s*:\s*([0-9a-f]+)", re.I)
+        self.content_re = re.compile(r"\s*\[?([0-9a-f]+)(?:\.\.([0-9a-f]+))?\]?\s*:\s*([0-9a-f]+)", re.I)
         
     def serialize(self, data: list[int]) -> bytes:
         output = []
