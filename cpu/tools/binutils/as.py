@@ -64,20 +64,19 @@ def main():
     pattern = re.compile(r"^\s*(?:([a-zA-Z_][a-zA-Z0-9_]*):)?(?:\s*(\w+)(?:\s+(\w+)(?:,\s*(\w+|\d+))?)?)?(?:\s*(?:;|#).*)?\s*$")
     
     for line_number, line in enumerate(args.input):
-        # XXX: can we assume case-insensitive code?
         line = line.lower()
 
         matches = re.search(pattern, line)
 
         if matches is None:
-            print_message(args.input.name, line_number, line, "Syntax error", (0, len(line) - 1))
+            print_message(args.input.name, line_number, line, "syntax error", (0, len(line) - 1))
             sys.exit(2)
 
         label, instr, a, b = matches.groups()
 
         if label is not None:
             if label in resolved_labels:
-                print_message(args.input.name, line_number, line, f"Warning: label {label} has already been used", matches.span(1))
+                print_message(args.input.name, line_number, line, f"warning: label {label} has already been used", matches.span(1))
 
             # NOTE: len(code) == pc
             resolved_labels[label] = len(code)
@@ -92,15 +91,19 @@ def main():
                 code.append(INSTRUCTIONS[instr])
 
             case "wait" | "nop", a, b:
-                print_message(args.input.name, line_number, line, "Error: extraneous operand(s) for instruction that takes no operands", (matches.span(3)[0], matches.span(4)[1]))
+                print_message(args.input.name, line_number, line, "error: extraneous operand(s) for instruction that takes no operands", (matches.span(3)[0], matches.span(4)[1]))
                 sys.exit(2)
 
             # Two operands
             case "and" | "or" | "add" | "sub" | "cmp" | "load" | "store" | "mov", a, None:
-                print_message(args.input.name, line_number, line, "Error: missing operand for instruction that takes two operands", (len(line) - 1, len(line)))
+                print_message(args.input.name, line_number, line, "error: missing operand for instruction that takes two operands", (len(line) - 1, len(line)))
                 sys.exit(2)
 
             case "and" | "or" | "add" | "sub" | "cmp" | "load" | "store" | "mov", a, b:
+                if a not in REGS:
+                    print_message(args.input.name, line_number, line, "error: expected register name", matches.span(3))
+                    sys.exit(2)
+
                 op = INSTRUCTIONS[instr] | (REGS[a] << 2)
 
                 if b in REGS:
@@ -116,7 +119,8 @@ def main():
                     try:
                         code.append(int(b, base=0))
                     except:
-                        print_message(args.input.name, line_number, line, "Error: expected integer literal or register name", matches.span(4))
+                        print_message(args.input.name, line_number, line, "error: expected integer literal or register name", matches.span(4))
+                        sys.exit(2)
 
             # One operand
             case "not" | "jmp" | "jeq" | "jgr" | "in" | "out", a, None:
@@ -126,12 +130,17 @@ def main():
                     
                     used_labels.append(a)
                 else:
-                    code.append(INSTRUCTIONS[instr] | (REGS[a] << 2))
+                    try:
+                        code.append(INSTRUCTIONS[instr] | (REGS[a] << 2))
+                    except:
+                        print_message(args.input.name, line_number, line, "error: expected register name", matches.span(3))
+                        sys.exit(2)
               
             case "not" | "jmp" | "jeq" | "jgr" | "in" | "out", a, b:
-                print_message(args.input.name, line_number, line, "Error: extraneous operand for instruction that takes one operand", matches.span(4))
+                print_message(args.input.name, line_number, line, "error: extraneous operand for instruction that takes one operand", matches.span(4))
                 sys.exit(2)
 
+            # NOTE: `byte` isn't an instruction but the same syntax for instructions is used
             case "byte", a, b:
                 try:
                     address = int(a, base=0)
@@ -139,15 +148,16 @@ def main():
 
                     data[address] = value
                 except:
-                    print_message(args.input.name, line_number, line, "Error: invalid argument(s) for byte: expected address and value as integer literals")
+                    print_message(args.input.name, line_number, line, "error: invalid argument(s) for byte: expected address and value as integer literals")
+                    sys.exit(2)
 
             case _:
-                print_message(args.input.name, line_number, line, f"Error: Invalid instruction {instr}", matches.span(1))
+                print_message(args.input.name, line_number, line, f"error: invalid instruction {instr}", matches.span(1))
                 sys.exit(2)
 
     for label in used_labels:
         if label not in resolved_labels:
-            print_message(args.input.name, -1, "", f"Jump target {label} has not been defined")
+            print_message(args.input.name, -1, "", f"error: jump target {label} has not been defined")
             sys.exit(2)
 
     for index, value in enumerate(code):
@@ -161,7 +171,8 @@ def main():
 
         for address, value in data.items():
             if address < orig_code_len:
-                print_message(args.input.name, -1, "", f"Overwriting code with data")
+                print_message(args.input.name, -1, "", f"warning: overwriting code with data at address 0x{address:x}")
+                print_message(args.input.name, -1, "", f"note: code extends up to address 0x{orig_code_len - 1:x}")
             
             code[address] = value
 

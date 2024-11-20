@@ -128,7 +128,7 @@ int main(int argc, char **argv)
 
     size_t n_read = fread(memory, 1, sizeof memory, fp);
 
-    if (n_read > 256) {
+    if (n_read == 256 && fgetc(fp) != EOF) {
         fprintf(stderr, "%s: file `%s' is larger than 256 bytes\n", argv[0], filename);
         return 1;
     }

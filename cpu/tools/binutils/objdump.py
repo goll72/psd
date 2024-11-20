@@ -34,17 +34,19 @@ def main():
         ir = code[pc] & 0b11110000
         rs = code[pc] & 0b1111
 
-        print(f"  0x{pc:02x}/{pc:08b}  ", end="")
+        print(f"  0x{pc:02x}/{pc:08b}   {code[pc]:02x} ", end="")
         
         pc += 1
 
         instruction = INAMES[ir]
 
         if (rs & 0b11) == 0b11:
+            print(f"{code[pc]:02x}   ", end="")
             ops = RNAMES[rs >> 2], hex(code[pc]) 
 
             pc += 1
         else:
+            print(5 * " ", end="")
             ops = RNAMES[rs >> 2], RNAMES[rs & 0b11]
 
         match instruction:
@@ -65,5 +67,6 @@ def main():
                 print(f"{instruction} {ops[0]}, {ops[1]}")
 
         print("\n" * args.spaces, end="")
+
 if __name__ == "__main__":
     main()

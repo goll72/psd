@@ -6,7 +6,7 @@
  - [x] Adicionar um comando "byte" ao assembler (adaptar fibonacci.s)
  - [x] Corrigir target current.mif no makefile
  - [ ] Mencionar escolha feita para a instrução JGR no relatório
- - [ ] Adicionar conteúdo da memória em hexadecimal no objdump.py
+ - [x] Adicionar conteúdo da memória em hexadecimal no objdump.py
  - [ ] Adicionar uma especificação da CPU no repositório
  - [ ] Adicionar documentação da sintaxe do assembly suportada
  - [x] Adicionar demos, por exemplo:
