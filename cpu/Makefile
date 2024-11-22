@@ -49,6 +49,7 @@ ifneq ($(TEST_SIM_ABORT_ON_ERROR),)
 	$(call if-not-exists,"$@",exit 1)
 endif
 
+ifeq ($(ENV),quartus)
 current.mif.d:
 	$(file > current.mif.d,current.mif: $(MIF_FILE))
 
@@ -59,7 +60,6 @@ current.mif:
 	$(if $<,:,$(error MIF_FILE wasn't specified))
 	$(call copy,$<,current.mif)
 
-ifeq ($(ENV),quartus)
 ifeq ($(_REC),)
 .PHONY: $(SOF_FILE)
 
