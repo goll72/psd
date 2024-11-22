@@ -173,6 +173,10 @@ def main():
             if address < orig_code_len:
                 print_message(args.input.name, -1, "", f"warning: overwriting code with data at address 0x{address:x}")
                 print_message(args.input.name, -1, "", f"note: code extends up to address 0x{orig_code_len - 1:x}")
+
+            if address >= 256:
+                print_message(args.input.name, -1, "", f"error: address 0x{address:02x} outside of permissible range: 0x0 - 0xff")
+                sys.exit(2)
             
             code[address] = value
 
