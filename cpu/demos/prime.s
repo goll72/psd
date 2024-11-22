@@ -21,7 +21,7 @@ mov b, 3
 
 prime_check_loop:
         # Restaura r para verificarmos se r é divisível por b
-        # b vai variar de 3 a n - 1
+        # b vai variar de 3 a n - 2
         mov r, a
 
         # Se o número de entrada n for tratado como negativo em complemento
@@ -51,10 +51,10 @@ divide_sub_loop:
         # Devemos continuar no loop
         jmp divide_sub_loop
 end_divide_sub_loop:
-        add b, 1
+        add b, 2
         mov b, r
 
-        # Já verificamos se n é divisível por n - 1 (acabamos de incrementar b)
+        # Já verificamos se n é divisível por n - 2 (acabamos de incrementar b)
         cmp b, a
 
         jeq end_prime
