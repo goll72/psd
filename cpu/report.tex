@@ -103,7 +103,7 @@
 	\tikzset{alu/.style={
 		ic,
 		muxdemux def={Lh=6.5,Rh=3,NL=2,NR=1,NT=1,NB=2,w=3,inset w=0.75,inset Lh=1,inset Rh=0},
-		muxdemux label={T1=OP,B1=O,B2=C}
+		muxdemux label={B1=O,B2=C}
 	}}
 
 	\tikzset{reg/.style={
@@ -202,7 +202,7 @@
 	\draw ($(reg_b_addr_tristate.up) + (0.75,0)$) node[signal,draw,signal to=west,anchor=west] {\footnotesize CTL\_REG\_B\_TO\_ADDR};
 
 	% register file b output to pc
-	\coordinate (reg_b_pc_out) at ($(reg_b_addr_out)!0.8!(reg_b_addr_out |- reg_b_addr_tristate.in 1)$);
+	\coordinate (reg_b_pc_out) at ($(reg_b_addr_out)!0.85!(reg_b_addr_out |- reg_b_addr_tristate.in 1)$);
 
 	\draw ($(reg_b_pc_out)!0.8!(pc_adder_out_xpos |- reg_b_pc_out)$)
 	      node[buffer port,scale=0.8,rotate=180] (reg_b_pc_tristate) {};
@@ -216,6 +216,23 @@
 	\draw (reg_b_pc_tristate.out) -- (reg_b_pc_tristate.out -| pc_adder_out_xpos) -- (pc_adder_out_xpos |- pc.pin 1);
 
 	% register file b output to register file data in
+
+	% zsco enable inputs
+	\draw ($(z.pin 3) + (-0.5,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize CTL\_ALU\_TO\_REG};
+	\draw ($(z.pin 3) + (-0.5,0)$) -- (z.pin 3);
+
+	\draw ($(s.pin 3) + (left_offset_near)$) -- (s.pin 3)
+          ($(c.pin 3) + (left_offset_near)$) -- (c.pin 3)
+          ($(o.pin 3) + (left_offset_near)$) -- (o.pin 3);
+
+	\draw ($(s.pin 3) + (left_offset_near)$)
+			  to[conn, -*] ($(c.pin 3) + (left_offset_near)$)
+			  to[conn, -*] ($(o.pin 3) + (left_offset_near)$);
+
+	\coordinate (update_sco_wire_pos) at ($(o.pin 3) + (left_offset_near)$);
+	\coordinate (update_sco_signal_pos) at (update_sco_wire_pos |- reg_b_pc_out);
+
+	\draw (update_sco_wire_pos) -- (update_sco_signal_pos) -- ($(update_sco_signal_pos) + (-0.75,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize CTL\_UPDATE\_SCO};
 
 	% carry, overflow register outputs
 	\draw (c.pin 6) -- ($(c.pin 6) + (0.5,0)$) node[plain crossing,scale=1.2,rotate=45] {};
