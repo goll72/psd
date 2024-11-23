@@ -1,25 +1,12 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <stdint.h>
-#include <signal.h>
 #include <stdbool.h>
 
 #include "asm.h"
 #include "bitop.h"
 
 #include "getopt.h"
-
-static volatile sig_atomic_t interrupt = 0;
-
-static void handle_sigint(int signo)
-{
-    (void)signo;
-
-    if (interrupt == 1)
-        _Exit(0);
-
-    interrupt = 1;
-}
 
 static void print_bin(FILE *f, int value, int n_bits)
 {
@@ -49,27 +36,26 @@ int main(int argc, char **argv)
     int opt;
 
     int dump_freq = -1;
-    int stop_after = -1;
+    int32_t stop_after = -1;
 
-    bool wait = true;
     bool stop_at_nop = false;
     bool dump_mem = false;
     bool interactive = true;
 
-    while ((opt = getopt(argc, argv, "hd:k:snMN")) != -1) {
+    while ((opt = getopt(argc, argv, "hd:k:smn")) != -1) {
         switch (opt) {
             case 'h':
             case '?':
                 fprintf(stderr,
-                    "Usage: %s [ -h | [ -d | -k ] N | -s | -n | -M | -N ] BIN\n"
+                    "Usage: %s [ -h | [ -d | -k ] N | -s | -m | -n ] BIN\n"
                     "    -h       Shows this help menu\n"
                     "    -d N     Dumps simulation state every N instructions\n"
                     "    -k N     Stops the simulation after N instructions have been "
                     "executed\n"
                     "    -s       Stops the simulation when a `nop` is reached\n"
-                    "    -n       Disables waiting on the `wait` instruction\n"
-                    "    -M       Dumps memory when exiting\n"
-                    "    -N       Non-interactive mode, disables printing of prompts\n"
+                    "    -m       Dumps memory when exiting\n"
+                    "    -n       Non-interactive mode, disables printing of prompts\n"
+                    "             as well as waiting on the `wait` instruction\n"
                     "\n"
                     "    BIN        A binary file containing executable machine code\n",
                     argv[0]);
@@ -100,13 +86,10 @@ int main(int argc, char **argv)
             case 's':
                 stop_at_nop = true;
                 break;
-            case 'n':
-                wait = false;
-                break;
-            case 'M':
+            case 'm':
                 dump_mem = true;
                 break;
-            case 'N':
+            case 'n':
                 interactive = false;
         }
     }
@@ -133,9 +116,6 @@ int main(int argc, char **argv)
         return 1;
     }
 
-    if (wait)
-        signal(SIGINT, handle_sigint);
-
     uint8_t pc = 0;
 
     uint8_t regs[REG_MAX] = { 0 };
@@ -144,7 +124,7 @@ int main(int argc, char **argv)
     uint8_t zero = 0, sign = 0, carry = 0, overflow = 0;
 
     /* Instruction Counter */
-    uint32_t ic = 0;
+    int32_t ic = 0;
 
     while (true) {
         uint8_t instruction = memory[pc++];
@@ -254,18 +234,16 @@ int main(int argc, char **argv)
 
                 break;
             case OP_WAIT:
-                if (wait) {
-                    interrupt = 0;
+                if (interactive) {
+                    fprintf(stdout, " @ ");
+                    fflush(stdout);
 
-                    if (interactive) {
-                        fprintf(stdout, " @ ");
-                        fflush(stdout);
-                    }
+                    while (!feof(stdin))
+                        fgetc(stdin);
 
-                    while (!interrupt)
-                        ;
+                    clearerr(stdin);
 
-                    interrupt = 0;
+                    fprintf(stdout, "\n");
                 }
 
                 break;

@@ -38,7 +38,7 @@ $(SIM): $(SIMDEPS)
 
 %.sim.dump %.out: %.in $(SIM) all
 	$(MAKE) $(patsubst %.dir/,%,$(dir $<)).bin
-	$(SIM) -s -n -d 1 -M -N $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
+	$(SIM) -d 1 -s -n -m $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
 
 %.ok: %.sim.dump %.out
 	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.hdl.out -gDEMO_DUMP=../../$*.hdl.dump" run
