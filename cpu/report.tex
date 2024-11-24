@@ -10,6 +10,8 @@
 
 \usepackage[siunitx]{circuitikz}
 
+\usepackage[margin=2cm,bottom=3cm]{geometry}
+
 \ctikzset{logic ports=ieee}
 
 \title{Relatório --- CPU}
@@ -97,7 +99,8 @@
 	\tikzset{reg_file/.style={
 		ic,
 		muxdemux def={Lh=7.5,Rh=7.5,w=7,NL=5,NT=0,NB=0,NR=2},
-		muxdemux label={L1=D,L2=SEL,L3=$\textrm{SEL}_A$,L4=$\textrm{SEL}_B$,L5=$\textrm{WR}_{EN}$,R1=A,R2=B},
+		draw only left pins={1,2,4,5},
+		muxdemux label={L1=D,L2=SEL,L4=$\textrm{SEL}_A$,L5=$\textrm{SEL}_B$,R1=A,R2=B},
 	}}
 
 	\tikzset{alu/.style={
@@ -108,6 +111,11 @@
 
 	\tikzset{reg/.style={
 		flipflop,
+		flipflop def={t1=D,t6=Q}
+	}}
+
+	\tikzset{reg_wren/.style={
+		reg,
 		flipflop def={t1=D,t3=$\textrm{WR}_{EN}$,t6=Q}
 	}}
 
@@ -117,14 +125,14 @@
 	% signals
 	\draw (2,18) node[signal,draw,signal to=east,anchor=east] (int) {\footnotesize INT};
 	\draw (2,17) node[signal,draw,signal to=east,anchor=east] (data_bus) {\footnotesize DATA\_BUS};
-	\draw (21,-5) node[signal,draw,signal to=west] (addr_bus) {\footnotesize ADDR\_BUS};
+	\draw (21,-6) node[signal,draw,signal to=west] (addr_bus) {\footnotesize ADDR\_BUS};
 
 	% control unit and register file
 	\draw (4, 14) node[adder] (pc_adder) {};
 	\draw (10,10) node[control_unit] (cu) {};
-	\draw (8,1) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
+	\draw (8,0) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
 
-	\coordinate (alu_xpos) at ($(regs.center) + (4,0)$);
+	\coordinate (alu_xpos) at ($(regs.center) + (5,0)$);
 	\draw (regs.rpin 1 -| alu_xpos) node[alu,anchor=lpin 1] (alu) {};
 
 	% register connections
@@ -132,19 +140,19 @@
 	      (regs.rpin 2) edge (alu.lpin 2);
 
 	% registers
-	\coordinate (pc_ir_rs_start) at (1,10);
+	\coordinate (pc_ir_rs_start) at (0,10);
 	\coordinate (reg_offset) at (0,-4);
 
 	\draw (pc_ir_rs_start) node[reg,label={[label distance=6pt]south:PC}] (pc) {};
-	\draw ($(pc_ir_rs_start) + 1*(reg_offset)$) node[reg,label={[label distance=6pt]south:IR}] (ir) {};
-	\draw ($(pc_ir_rs_start) + 2*(reg_offset)$) node[reg,label={[label distance=6pt]south:RS}] (rs) {};
-
+	\draw ($(pc_ir_rs_start) + 1*(reg_offset)$) node[reg_wren,label={[label distance=6pt]south:IR}] (ir) {};
+	\draw ($(pc_ir_rs_start) + 2*(reg_offset)$) node[reg_wren,label={[label distance=6pt]south:RS}] (rs) {};
+	
 	\coordinate (zsco_start) at (21,14);
 
-	\draw (zsco_start) node[reg,label={[label distance=6pt]south:Z}] (z) {};
-	\draw ($(zsco_start) + 1*(reg_offset)$) node[reg,label={[label distance=6pt]south:S}] (s) {};
-	\draw ($(zsco_start) + 2*(reg_offset)$) node[reg,label={[label distance=6pt]south:C}] (c) {};
-	\draw ($(zsco_start) + 3*(reg_offset)$) node[reg,label={[label distance=6pt]south:O}] (o) {};
+	\draw (zsco_start) node[reg_wren,label={[label distance=6pt]south:Z}] (z) {};
+	\draw ($(zsco_start) + 1*(reg_offset)$) node[reg_wren,label={[label distance=6pt]south:S}] (s) {};
+	\draw ($(zsco_start) + 2*(reg_offset)$) node[reg_wren,label={[label distance=6pt]south:C}] (c) {};
+	\draw ($(zsco_start) + 3*(reg_offset)$) node[reg_wren,label={[label distance=6pt]south:O}] (o) {};
 
 	% pc adder connections
 	\coordinate (pc_adder_out_xpos) at ($(pc.center) + (-2.5,0)$);
@@ -174,8 +182,6 @@
 	\coordinate (cu_ir_offset) at ($(cu.lpin 4) + (left_offset_near)$);
 	\draw (cu.lpin 4) -- (cu_ir_offset) to[conn,-*] (cu_ir_offset |- ir.pin 6);
 
-	% rs connections
-
 	% pc output connections
 	\draw (pc.pin 6 -| pc_adder.south) to[conn,*-] (pc_adder.south |- addr_bus);
 
@@ -191,7 +197,7 @@
 	      node[signal,draw,signal to=east,anchor=east] {\footnotesize CTL\_PC\_TO\_ADDR};
 
 	% register file b output to addr
-	\coordinate (reg_b_addr_out) at ($(regs.rpin 2)!0.7!(alu.lpin 2)$);
+	\coordinate (reg_b_addr_out) at ($(regs.rpin 2)!0.75!(alu.lpin 2)$);
 
 	\draw ($(reg_b_addr_out)!0.8!(reg_b_addr_out |- addr_bus)$) node[buffer port,scale=0.8,rotate=270] (reg_b_addr_tristate) {};
 
@@ -215,28 +221,137 @@
 	\draw (reg_b_pc_out) to[conn,*-] (reg_b_pc_tristate.in 1);
 	\draw (reg_b_pc_tristate.out) -- (reg_b_pc_tristate.out -| pc_adder_out_xpos) -- (pc_adder_out_xpos |- pc.pin 1);
 
+	% data bus to register file data in
+	\coordinate (data_bus_reg_wire_xpos) at ($(pc_adder) + (1,0)$);
+	\coordinate (data_bus_reg_tristate_pos) at ($(data_bus_reg_wire_xpos |- ir.pin 6)!0.5!(regs.lpin 1 -| data_bus_reg_wire_xpos)$);
+	
+	\draw (data_bus_reg_tristate_pos) node[buffer port,scale=0.8,rotate=270] (data_bus_reg_tristate) {};
+	\draw (data_bus.east) -- (data_bus.east -| data_bus_reg_wire_xpos) -- (data_bus_reg_tristate.in 1);
+
+	\coordinate (reg_file_data_in_short) at (data_bus_reg_tristate.out |- regs.lpin 1);
+
+	\draw (data_bus_reg_tristate.out) to[conn,-*] (reg_file_data_in_short) -- (regs.lpin 1);
+
+	\draw (data_bus_reg_tristate.up) -- ($(data_bus_reg_tristate.up) + (0.3,0)$) 
+	      node[signal,draw,signal to=west,anchor=west] {\footnotesize CTL\_DATA\_TO\_REG};
+
+	% alu coordinates
+	\coordinate (alu_reg_out_pos) at ($(alu.rpin 1) + (0.5,0)$);
+	\coordinate (alu_reg_out_turn_ypos) at ($(alu_reg_out_pos)!0.65!(alu_reg_out_pos |- data_bus_reg_tristate)$);
+
+	% register file a output coordinates
+	\coordinate (reg_a_data_out) at ($(regs.rpin 1)!0.25!(alu.lpin 1)$);
+	\coordinate (reg_a_data_out_turn_ypos) at ($(reg_a_data_out)!0.8!(reg_a_data_out |- ir.pin 6)$);
+
+	% alu to sz
+	\draw ($(z.pin 1) + (-2,0)$) node[nor port,circuitikz/ieeestd ports/pin length=0] (nor_alu_out_z) {};
+	\draw (alu_reg_out_turn_ypos) to[conn,*-] (alu_reg_out_turn_ypos |- nor_alu_out_z.body left) -- (nor_alu_out_z.body left);
+	\draw (nor_alu_out_z.bout) -- (z.pin 1);
+
+	\draw (alu_reg_out_pos |- s.pin 1) to[conn,*-] (s.pin 1);
+
+	% register file a output to data bus
+	\draw ($(reg_a_data_out)!0.65!(reg_a_data_out |- ir.pin 6)$) node[buffer port,rotate=90,scale=0.8] (reg_a_data_tristate) {};
+	\draw (reg_a_data_tristate.out) -- (reg_a_data_out_turn_ypos) to[conn,-*] (reg_a_data_out_turn_ypos -| data_bus_reg_wire_xpos); 
+
+	\draw ($(reg_a_data_tristate) + (1,0)$) node[signal,draw,signal to=west,anchor=west,fill=white] (reg_a_data_signal) {\footnotesize CTL\_REG\_A\_TO\_DATA};
+	\draw (reg_a_data_tristate.down) -- (reg_a_data_signal.west);
+
+	\draw (reg_a_data_out) to[conn,*-] (reg_a_data_tristate.in 1);
+
 	% register file b output to register file data in
+	\coordinate (reg_b_reg_out_xpos) at ($(reg_b_pc_out)!0.7!(pc_adder_out_xpos |- reg_b_pc_out)$);
+
+	\draw ($(reg_b_reg_out_xpos) + (0,1.5)$) node[buffer port,rotate=90,scale=0.8] (reg_b_reg_tristate) {};
+	\draw (reg_b_reg_out_xpos) to[conn,*-] (reg_b_reg_tristate.in 1);
+	\draw (reg_b_reg_tristate.out) -- (reg_b_reg_tristate.out |- reg_file_data_in_short) -- (reg_file_data_in_short);
+
+	\draw ($(reg_b_reg_tristate) + (-1,0)$) node[signal,draw,signal to=east,anchor=east,fill=white] (reg_b_reg_signal) {\footnotesize CTL\_REG\_B\_TO\_REG};
+	\draw (reg_b_reg_tristate.up) -- (reg_b_reg_signal);
+
+	% alu output to register file data in
+	\draw ($(alu_reg_out_turn_ypos)!0.3!(alu_reg_out_turn_ypos -| data_bus_reg_wire_xpos)$) node[buffer port,scale=0.8,rotate=180] (alu_reg_tristate) {};
+	
+	\draw (alu.rpin 1) -- (alu_reg_out_pos) -- (alu_reg_out_turn_ypos) -- (alu_reg_tristate.in 1);
+	\draw (alu_reg_tristate.out) to[conn,-*] (alu_reg_out_turn_ypos -| data_bus_reg_wire_xpos);
+
+	\draw ($(alu_reg_tristate) + (0.5,1)$) node[signal,draw,signal to=west,anchor=west,fill=white] (alu_reg_signal) {\footnotesize CTL\_ALU\_TO\_REG};
+
+	\draw (alu_reg_tristate.down) -- (alu_reg_tristate.down |- alu_reg_signal) -- (alu_reg_signal.west);
 
 	% zsco enable inputs
-	\draw ($(z.pin 3) + (-0.5,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize CTL\_ALU\_TO\_REG};
+	\draw ($(z.pin 3) + (-0.5,0)$) node[signal,draw,signal to=east,anchor=east,fill=white] {\footnotesize CTL\_ALU\_TO\_REG};
 	\draw ($(z.pin 3) + (-0.5,0)$) -- (z.pin 3);
 
 	\draw ($(s.pin 3) + (left_offset_near)$) -- (s.pin 3)
-          ($(c.pin 3) + (left_offset_near)$) -- (c.pin 3)
-          ($(o.pin 3) + (left_offset_near)$) -- (o.pin 3);
+	  ($(c.pin 3) + (left_offset_near)$) -- (c.pin 3)
+	  ($(o.pin 3) + (left_offset_near)$) -- (o.pin 3);
 
 	\draw ($(s.pin 3) + (left_offset_near)$)
-			  to[conn, -*] ($(c.pin 3) + (left_offset_near)$)
-			  to[conn, -*] ($(o.pin 3) + (left_offset_near)$);
+	                 to[conn, -*] ($(c.pin 3) + (left_offset_near)$)
+	                 to[conn, -*] ($(o.pin 3) + (left_offset_near)$);
 
 	\coordinate (update_sco_wire_pos) at ($(o.pin 3) + (left_offset_near)$);
 	\coordinate (update_sco_signal_pos) at (update_sco_wire_pos |- reg_b_pc_out);
 
-	\draw (update_sco_wire_pos) -- (update_sco_signal_pos) -- ($(update_sco_signal_pos) + (-0.75,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize CTL\_UPDATE\_SCO};
+    \draw (update_sco_wire_pos) -- (update_sco_signal_pos) -- ($(update_sco_signal_pos) + (-0.75,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize CTL\_UPDATE\_SCO};
+
+	% alu to co
+	\coordinate (alu_c_ypos) at ($(alu.bpin 2) + (0,-0.5)$);
+	\coordinate (alu_c_xpos) at ($(update_sco_wire_pos) + (-1,0)$);
+	\coordinate (alu_c_origin) at (alu_c_ypos -| alu_c_xpos);
+	
+	\draw (alu.bpin 2) -- (alu_c_ypos) -- (alu_c_origin) -- (alu_c_origin |- c.pin 1) -- (c.pin 1);
+
+	\coordinate (alu_o_ypos) at ($(alu.bpin 1) + (0,-0.5)$);
+	\coordinate (alu_o_xpos) at ($(update_sco_wire_pos) + (-0.5,0)$);
+	\coordinate (alu_o_origin) at (alu_o_ypos -| alu_o_xpos);
+	
+	\draw (alu.bpin 1) -- (alu_o_ypos) -- (alu_o_origin) -- (alu_o_origin |- o.pin 1) -- (o.pin 1);
+	
+	% zs to control unit
+	\coordinate (z_turn_ypos) at ($(z.pin 6) + (0.5,1)$);
+	\coordinate (s_turn_ypos) at ($(z_turn_ypos) + (0,0.5)$);
+	
+	\coordinate (z_xpos) at ($(z.pin 6) + (0.5,0)$);
+	\coordinate (s_xpos) at ($(s.pin 6) + (1,0)$);
+	
+	\draw (z.pin 6) -- (z_xpos) -- (z_xpos |- z_turn_ypos) -- (z_turn_ypos -| cu.tpin 2) -- (cu.tpin 2);
+	\draw (s.pin 6) -- (s_xpos) -- (s_xpos |- s_turn_ypos) -- (s_turn_ypos -| cu.tpin 1) -- (cu.tpin 1);
 
 	% carry, overflow register outputs
 	\draw (c.pin 6) -- ($(c.pin 6) + (0.5,0)$) node[plain crossing,scale=1.2,rotate=45] {};
 	\draw (o.pin 6) -- ($(o.pin 6) + (0.5,0)$) node[plain crossing,scale=1.2,rotate=45] {};
+
+	% "control" signal
+	\draw (cu.rpin 3) -- ($(cu.rpin 3) + (0.5,0)$) node[signal,draw,signal to=west,anchor=west] {\footnotesize CTL};
+	\draw (cu.rpin 5) -- ($(cu.rpin 5) + (0.5,0)$) node[signal,draw,signal to=west,anchor=west] {\footnotesize SEL};
+
+	% rs connections
+	\coordinate (rs_short) at ([xshift=4.5em]rs.pin 6);
+	\draw (rs.pin 6) to[conn,-*] (rs_short);
+
+	\draw (rs_short) -- (rs_short |- cu.lpin 5) -- (cu.lpin 5);
+	\draw (rs_short) -- (rs_short |- regs.lpin 4) to[conn,-*] (regs.lpin 4 -| data_bus_reg_wire_xpos);
+
+	\draw (regs.lpin 4 -| data_bus_reg_wire_xpos) -- (regs.lpin 4);
+	\draw (regs.lpin 4 -| data_bus_reg_wire_xpos) -- (data_bus_reg_wire_xpos |- regs.lpin 5) -- (regs.lpin 5);
+
+
+	% data bus to ir
+	\coordinate (data_bus_ir_short) at ($(data_bus.east) + (0.75,0)$);
+	\coordinate (data_bus_ir_turn) at ($(pc_adder) + (0,1)$);
+	\coordinate (data_bus_ir_2nd_turn) at ($(pc_adder_out_xpos) + (-1,0)$);
+	
+	\draw (data_bus_ir_short) to[conn,*-] (data_bus_ir_short |- data_bus_ir_turn) -- (data_bus_ir_turn -| data_bus_ir_2nd_turn) to[conn,-*] (data_bus_ir_2nd_turn |- ir.pin 1) -- (data_bus_ir_2nd_turn |- rs.pin 1);
+	\draw (data_bus_ir_2nd_turn |- ir.pin 1) -- (ir.pin 1);
+	\draw (data_bus_ir_2nd_turn |- rs.pin 1) -- (rs.pin 1);
+
+	\draw ($(ir.pin 3) + (-0.5,0)$) node[signal,draw,signal to=east,anchor=east,fill=white] {\footnotesize CTL\_DATA\_TO\_IR} -- (ir.pin 3);
+	\draw ($(rs.pin 3) + (-0.5,0)$) node[signal,draw,signal to=east,anchor=east,fill=white] {\footnotesize CTL\_DATA\_TO\_IR} -- (rs.pin 3);
+
+	% register file "sel" signal
+	\draw ($(regs.lpin 2) + (-0.35,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize SEL} -- (regs.lpin 2);
 \end{circuitikz}
 \end{figure}
 
