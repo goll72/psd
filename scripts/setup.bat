@@ -83,7 +83,7 @@ md %APPDATA%\helix
 	@echo.
 	@echo.[language-server.texlab]
 	@echo.command = "texlab"
-	@echo.config = { texlab = { build = { executable = "tectonic", args = ["-b", "https://goll.cc/texlive2024/bundle.ttb", "--keep-logs", "--keep-intermediates", "%f"], "onSave" = true } } }
+	@echo.config = { texlab = { build = { executable = "tectonic", args = ["-b", "https://goll.cc/texlive2024/bundle.ttb", "--keep-logs", "--keep-intermediates", "%%f"], "onSave" = true } } }
 	@echo.
 	@echo.[[language]]
 	@echo.name = "latex"
