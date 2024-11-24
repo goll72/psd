@@ -16,7 +16,7 @@ Os dumps do estado da simulação são realizados pela stream
 
 A instrução `wait` é implementada usando a condição EOF da stream
 `stdin`. Essa condição pode ser habilitada no Windows ao pressionar
-Ctrl+Z ou, no Linux, ao pressional Ctrl+D, assumindo que `stdin`
+Ctrl+Z ou, no Linux, ao pressionar Ctrl+D, assumindo que `stdin`
 se refere a um terminal (o simulador está sendo usado interativamente).
 Para uso não interativo, a opção `-n` desabilita a impressão de prompts
 e procede imediatamente ao executar a instrução `wait`.
