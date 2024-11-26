@@ -49,8 +49,32 @@ tratados como valores com sinal ou sem sinal.
 
 \section*{Instruções}
 
-\begin{itemize}
+A \textit{CPU} implementada apresenta instruções de tamanho variável, de 8 ou 16 
+\textit{bits}. O primeiro \textit{byte} é fixo, apresentando o seguinte formato:
 
+\[
+	oooo\ aa\ bb, \quad \textrm{\textit{o}: opcode}, \; \textrm{\textit{a}: registrador}, \; \textrm{\textit{b}: registrador}
+\]
+
+Caso $a$ ou $b$ se refiram ao registrador imediato, o próximo \textit{byte} na 
+memória será lido e guardado nesse registrador antes de executar a instrução. Note que,
+nos itens a seguir, $a$ e $b$ se referem aos registradores referidos na instrução, 
+não ao registrador \textit{A} ou \textit{B}.
+
+\begin{itemize}
+	\item LOAD: carrega um valor da memória para o registrador $a$ no endereço dado pelo registrador $b$
+	\item STORE: armazena o valor do registrador $a$ no endereço de memória dado pelo registrador $b$
+	\item MOV: sobrescreve o registrador $a$ com o valor atual o registrador $b$
+	\item IN: realiza uma requisição de entrada para a unidade de I/O, lê o valor de entrada e armazena no registrador $a$
+	\item OUT: realiza uma requisição de saída para a unidade de I/O, escreve o valor dado pelo registrador $a$
+	\item WAIT: espera até que o sinal \textit{INT} seja habilitado.
+
+	Para a implementação da instrução \textit{WAIT} na placa \textit{FPGA}, foi usada uma \textit{FSM} para detectar
+	sequências de ``uns'' no sinal \textit{INT} e transformá-las em um pulso com duração de um único ciclo
+	de \textit{clock}, a fim de permitir que um usuário pressione o botão correspondente e tenha a garantia de que 
+	apenas uma instrução \textit{WAIT} será processada durante esse período.
+
+	\item NOP: nenhuma operação é realizada
 \end{itemize}
 
 \section*{Componentes externos}
