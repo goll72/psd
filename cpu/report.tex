@@ -4,6 +4,7 @@
 
 \usepackage[brazilian]{babel}
 \usepackage[T1]{fontenc}
+\usepackage[indent=20pt]{parskip}
 
 \usepackage{tikz}
 \usetikzlibrary{calc,automata,positioning,arrows,shapes}
@@ -21,7 +22,63 @@
 
 \maketitle
 
+\section*{Introdução}
+
+A \textit{Central Processing Unit} (\textit{CPU}) é um componente essencial
+na arquitetura atual de computadores. Na forma mais comumente encontrada atualmente,
+consiste de um circuito sequencial digital composto por registradores, somadores
+e outros circuitos lógicos combinacionais e apresenta uma unidade de controle,
+que pode ser concebida como uma máquina de estados (\textit{FSM}), responsável 
+por enviar sinais de controle para sincronizar e arbitrar a operação de todos 
+os outros componentes.
+
+Nesse projeto, foi desenvolvida uma \textit{CPU} digital de 8 \textit{bits} (sendo
+esse o tamanho de uma palavra, dos registradores e dos barramentos de dados e endereços).
+A \textit{CPU} é capaz de realizar diversas operações lógicas e aritméticas 
+envolvendo valores armazenados nos registradores, mover valores entre registradores,
+carregar valores da memória para os registradores e vice-versa. Além disso, também é 
+capaz de realizar saltos condicionais e incondicionais. Visto que a largura do 
+barramento de endereço é 8 \textit{bits}, podemos endereçar apenas 256 \textit{bytes} 
+de memória. 
+
+Valores inteiros são representados em complemento de dois, permitindo
+representar valores com sinal entre -128 e 127 e valores sem sinal entre 0 e 255.
+Essa representação é extremamente simples e eficaz, uma vez que o resultado de
+uma operação de soma ou subtração é o mesmo independentemente dos operandos serem 
+tratados como valores com sinal ou sem sinal.
+
+\section*{Componentes externos}
+
+\subsection*{CPU}
+
+\subsection*{Unidade de I/O}
+
+\subsection*{Memória}
+
 \begin{figure}[H]
+\centering
+\begin{circuitikz}[
+	>=Triangle,
+	square/.style={regular polygon,regular polygon sides=4},
+	abstractic/.style={square,thick,draw,minimum size=2.5cm}
+]
+
+	\draw (3,4) node[abstractic] (io) {I/O};
+	\draw (0,0) node[abstractic] (cpu) {CPU};
+	\draw (6,0) node[abstractic] (mem) {MEM};
+
+	\draw[<->,thick] ([yshift=1em]cpu.east) -- ([yshift=1em]mem.west);
+	\draw[->,thick] ([yshift=-1em]cpu.east) -- ([yshift=-1em]mem.west);
+
+	\path (cpu) -- (mem) node[midway] (mid) {};
+
+	\draw[->,thick] ([yshift=1em]mid.center) to[short,*-] (io.south);
+
+	\draw[scale=0.8,thick,transform shape] ([yshift=1.25em]cpu.east) ++ (0.2,0) to[multiwire=8] ([yshift=1.25em]mid.center);
+\end{circuitikz}
+\end{figure}
+
+\hspace{16pt}
 \begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]
 	\node[state, minimum size=2cm, initial] (reset) {RESET};
 	\node[state, minimum size=2cm, right=of reset] (fetch) {FETCH};
@@ -44,31 +101,9 @@
 	          (execute) edge[out=90,in=90,out looseness=1,in looseness=2] (fetch)
 	          (poll) edge[out=315,in=270,distance=10cm] (fetch.south);
 \end{tikzpicture}
-\end{figure}
 
 \begin{figure}[H]
-\begin{circuitikz}[
-	>=Triangle,
-	square/.style={regular polygon,regular polygon sides=4},
-	abstractic/.style={square,thick,draw,minimum size=2.5cm}
-]
-
-	\draw (3,4) node[abstractic] (io) {I/O};
-	\draw (0,0) node[abstractic] (cpu) {CPU};
-	\draw (6,0) node[abstractic] (mem) {MEM};
-
-	\draw[<->,thick] ([yshift=1em]cpu.east) -- ([yshift=1em]mem.west);
-	\draw[->,thick] ([yshift=-1em]cpu.east) -- ([yshift=-1em]mem.west);
-
-	\path (cpu) -- (mem) node[midway] (mid) {};
-
-	\draw[->,thick] ([yshift=1em]mid.center) to[short,*-] (io.south);
-
-	\draw[scale=0.8,thick,transform shape] ([yshift=1.25em]cpu.east) ++ (0.2,0) to[multiwire=8] ([yshift=1.25em]mid.center);
-\end{circuitikz}
-\end{figure}
-
-\begin{figure}[H]
+\centering
 \begin{circuitikz}[
 	>=Triangle,
 	scale=0.6,
