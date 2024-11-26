@@ -62,6 +62,16 @@ nos itens a seguir, $a$ e $b$ se referem aos registradores referidos na instruç
 não ao registrador \textit{A} ou \textit{B}.
 
 \begin{itemize}
+	\item ADD: soma os valores guardados nos registradores informados na intrução, armazena o resultado no registradior R
+	\item SUB: subtrai o valor guardado no registrador $a$ com o valor guardado do registrador $b$ informados na instrução, armazena o resultado em R
+	\item OR: realiza a operação ``OU bit-a-bit'' dos valores guardados no registrador $a$ com o valor guardado do registrador $b$ informados na instrução, armazena o resultado em R
+	\item NOT: inverte os bits do valor guardado no registrador informado na instrução, amazena o resultado em R
+	\item AND: realiza operação ``E bit-a-bit'' entre o valor guardado no registrador $a$ com o valor guardado do registrador $b$ informados na instrução, armazena o resultado em R
+	\item CMP: compara o valor do registrador $a$ com o registrador $b$ informado na instrução, através da operação \textit{SUB}, porém não armazena em R. Por fim, atualiza as flags
+	\item JMP: salta para o endereço informado pelo registrador $b$
+	\item JEQ: salta para o endereço informado pelo registrador $b$, se a \textit{flag S} for igual a 1 
+	\item JGR: salta para o endereço informado pelo registrador $b$, se a \textit{flag Z} for igual a 1
+
 	\item LOAD: carrega um valor da memória para o registrador $a$ no endereço dado pelo registrador $b$
 	\item STORE: armazena o valor do registrador $a$ no endereço de memória dado pelo registrador $b$
 	\item MOV: sobrescreve o registrador $a$ com o valor atual o registrador $b$
@@ -74,7 +84,7 @@ não ao registrador \textit{A} ou \textit{B}.
 	de \textit{clock}, a fim de permitir que um usuário pressione o botão correspondente e tenha a garantia de que 
 	apenas uma instrução \textit{WAIT} será processada durante esse período.
 
-	\item NOP: nenhuma operação é realizada
+	\item NOP: nenhuma operação é realizada	
 \end{itemize}
 
 \section*{Componentes externos}
