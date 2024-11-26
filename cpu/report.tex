@@ -30,7 +30,7 @@ consiste de um circuito sequencial digital composto por registradores, somadores
 e outros circuitos lógicos combinacionais e apresenta uma unidade de controle,
 que pode ser concebida como uma máquina de estados (\textit{FSM}), responsável 
 por enviar sinais de controle para sincronizar e arbitrar a operação de todos 
-os outros componentes.
+os outros componentes, de acordo com as instruções a serem executadas.
 
 Nesse projeto, foi desenvolvida uma \textit{CPU} digital de 8 \textit{bits} (sendo
 esse o tamanho de uma palavra, dos registradores e dos barramentos de dados e endereços).
@@ -46,6 +46,8 @@ representar valores com sinal entre -128 e 127 e valores sem sinal entre 0 e 255
 Essa representação é extremamente simples e eficaz, uma vez que o resultado de
 uma operação de soma ou subtração é o mesmo independentemente dos operandos serem 
 tratados como valores com sinal ou sem sinal.
+
+\section*{Instruções}
 
 \section*{Componentes externos}
 
@@ -101,6 +103,8 @@ tratados como valores com sinal ou sem sinal.
 	          (execute) edge[out=90,in=90,out looseness=1,in looseness=2] (fetch)
 	          (poll) edge[out=315,in=270,distance=10cm] (fetch.south);
 \end{tikzpicture}
+
+\section*{Componentes internos}
 
 \begin{figure}[H]
 \centering
@@ -164,7 +168,7 @@ tratados como valores com sinal ou sem sinal.
 
 	% control unit and register file
 	\draw (4, 14) node[adder] (pc_adder) {};
-	\draw (10,10) node[control_unit] (cu) {};
+	\draw (10,10) node[control_unit,label={[label distance=8pt]south:CONTROL UNIT}] (cu) {};
 	\draw (8,0) node[reg_file,label={[label distance=8pt]south:REGISTER FILE}] (regs) {};
 
 	\coordinate (alu_xpos) at ($(regs.center) + (5,0)$);
@@ -372,7 +376,6 @@ tratados como valores com sinal ou sem sinal.
 	\draw (regs.lpin 4 -| data_bus_reg_wire_xpos) -- (regs.lpin 4);
 	\draw (regs.lpin 4 -| data_bus_reg_wire_xpos) -- (data_bus_reg_wire_xpos |- regs.lpin 5) -- (regs.lpin 5);
 
-
 	% data bus to ir
 	\coordinate (data_bus_ir_short) at ($(data_bus.east) + (0.75,0)$);
 	\coordinate (data_bus_ir_turn) at ($(pc_adder) + (0,1)$);
@@ -388,6 +391,82 @@ tratados como valores com sinal ou sem sinal.
 	% register file "sel" signal
 	\draw ($(regs.lpin 2) + (-0.35,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize SEL} -- (regs.lpin 2);
 \end{circuitikz}
+
+\caption{\label{fig:circuit} Diagrama do circuito da \textit{CPU}}
 \end{figure}
+
+Na figura \ref{fig:circuit}, é exibido um diagrama do circuito interno da \textit{CPU}.
+Para simplificar o diagrama, barramentos não são marcados como tal e o sinal
+$\textrm{WR}_{EN}$ do \textit{PC} e do banco de registradores não é exibido (esse sinal 
+corresponde ao \textit{OU} lógico de todos os sinais de controle que podem habilitar 
+caminhos que chegam na entrada \textit{D} desses registradores). Os sinais 
+\textit{CTL}, \textit{IR}, \textit{RS}, $\textrm{SEL}_A$ e $\textrm{SEL}_B$ são 
+barramentos de 15, 4, 4, 2 e 2 \textit{bits}, respectivamente. As entradas e saídas da
+Unidade Lógica e Aritmética (ULA) são barramentos de 8 \textit{bits}. Os registradores
+\textit{Z}, \textit{S}, \textit{C} e \textit{O} são registradores de 1 \textit{bit}.
+
+\subsection*{Unidade de Controle}
+
+A unidade de controle tem como entrada o sinal \textit{INT}, a instrução atual e as 
+\textit{flags} \textit{S} e \textit{Z}. As saídas são os sinais de controle e os sinais
+de seleção do registrador a ser sobrescrito no banco de registradores. Foi implementada
+usando uma máquina de estados de \textit{Mealy}.
+
+\subsubsection*{Sinais de controle}
+
+Os sinais de controle podem ser divididos em três tipos: os que agem como \textit{gate}
+para um outro sinal, como é o caso do sinal {\footnotesize CTL\_UPDATE\_SCO}, que permitirá
+que os registradores \textit{S}, \textit{C} e \textit{O} tenham seu conteúdo atualizado de
+acordo com as entradas atuais; os que são saídas da \textit{CPU} e, portanto, não são 
+exibidos no diagrama, como o {\footnotesize CTL\_MEM\_EN}, que habilita a memória, e os que 
+servem para habilitar ou desabilitar \textit{buffers tri-state}, que são uma forma simples
+e eficiente de ``juntar'' vários sinais e escolher qual sinal poderá passar em um 
+determinado momento (age como um \textit{switch} e é, de fato, comumente implementado 
+usando transistores).
+
+É interessante notar que, ao realizar a síntese do circuito para uma placa \textit{FPGA},
+todos os \textit{buffers tri-state} utilizados são convertidos em multiplexadores, uma vez 
+que a \textit{FPGA} é incapaz de representar esse tipo de tecnologia. Há uma exceção, no
+entanto, que é o \textit{buffer tri-state} habilitado pelo sinal 
+{\footnotesize CTL\_REG\_A\_TO\_DATA}, uma vez que se trata de saída em um barramento
+compartilhado por vários dispositivos (em particular, a unidade de memória).
+
+\subsection*{Banco de registradores}
+
+O banco de registradores coordena o acesso aos registradores de uso geral da \textit{CPU},
+que são 4: \textit{A}, \textit{B}, \textit{R} e \textit{I}. O registrador \textit{R} é o 
+registrador acumulador, ou seja, esse registrador é implicitamente usado como registrador de 
+destino em todas as instruções que produzem um valor que deve ser armazenado em algum registrador.
+
+Além disso, o registrador \textit{I} também é tratado especialmente, uma vez que é usado 
+para armazenar imediatos em instruções que especifiquem um operando imediato. Se trata 
+de um detalhe de implementação e, portanto, não pode ser acessado diretamente ao nível 
+do \textit{assembly}, embora possa ser, em tese, manipulado como qualquer outro registrador. 
+Sua inclusão simplifica o tratamento de endereços de registradores, uma vez que há 4 endereços 
+possíveis (mesmo se apenas 3 registradores fossem utilizados).
+
+O banco de registradores consiste de um decodificador n-para-$2^n$, que fornece o sinal 
+$\textrm{WR}_{EN}$ de cada registrador, garantindo que apenas um registrador poderá ser 
+sobrescrito para cada ciclo de \textit{clock}. Além disso, decodificadores também são usados
+para escolher quais registradores serão lidos a cada ciclo de \textit{clock}.
+
+O \textit{design} escolhido para o banco de registradores, inspirado no banco de registradores
+da arquitetura \textit{MIPS}, permite que dois registradores sejam lidos a cada ciclo de \textit{clock}.
+Dessa forma, as duas saídas do banco de registradores podem ser sempre ligadas à ULA para serem 
+processadas diretamente. Além disso, esse \textit{design} permite que apenas uma das saídas seja 
+reservada para se conectar ao barramento de dados e a outra seja reservada para se conectar ao 
+barramento de endereço.
+
+\subsection*{Unidade Lógica e Aritmética}
+
+A Unidade Lógica e Aritmética (ULA) é composta por um conjunto de circuitos combinacionais que
+implementam cada operação lógica e aritmética e, por fim, um multiplexador, para escolher a saída
+que deverá ser a saída da ULA. Em particular para a soma e subtração, o mesmo circuito somador 
+completo de 8 \textit{bits} é usado, apenas realizando o complemento de dois do segundo valor de
+entrada caso a operação seja subtração. 
+
+Vale mencionar, ainda, que a operação comparação foi implementada de forma idêntica à subtração. 
+A única diferença é a existência de uma lógica adicional na unidade de controle para evitar que 
+o registrador \textit{R} seja sobrescrito quando essa instrução for executada. 
 
 \end{document}
