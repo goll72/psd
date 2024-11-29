@@ -62,15 +62,17 @@ nos itens a seguir, $a$ e $b$ se referem aos registradores referidos na instruç
 não ao registrador \textit{A} ou \textit{B}.
 
 \begin{itemize}
-	\item ADD: soma os valores guardados nos registradores informados na intrução, armazena o resultado no registradior R
-	\item SUB: subtrai o valor guardado no registrador $a$ com o valor guardado do registrador $b$ informados na instrução, armazena o resultado em R
-	\item OR: realiza a operação ``OU bit-a-bit'' dos valores guardados no registrador $a$ com o valor guardado do registrador $b$ informados na instrução, armazena o resultado em R
-	\item NOT: inverte os bits do valor guardado no registrador informado na instrução, amazena o resultado em R
-	\item AND: realiza operação ``E bit-a-bit'' entre o valor guardado no registrador $a$ com o valor guardado do registrador $b$ informados na instrução, armazena o resultado em R
-	\item CMP: compara o valor do registrador $a$ com o registrador $b$ informado na instrução, através da operação \textit{SUB}, porém não armazena em R. Por fim, atualiza as flags
+	\item ADD: soma os valores guardados nos registradores informados na instrução, armazena o resultado no registrador \textit{R}
+	\item SUB: subtrai o valor guardado no registrador $a$ com o valor guardado do registrador $b$, armazena o resultado em \textit{R}
+	\item OR: realiza a operação ``OU bit-a-bit'' do valor guardados no registrador $a$ com o valor guardado do registrador $b$, armazena o resultado em \textit{R}
+	\item NOT: inverte os bits do valor guardado no registrador $a$, amazena o resultado em \textit{R}
+	\item AND: realiza operação ``E bit-a-bit'' entre o valor guardado no registrador $a$ com o valor guardado do registrador $b$, armazena o resultado em \textit{R}
+	\item CMP: compara o valor do registrador $a$ com o valor do registrador $b$, através da operação \textit{SUB}, porém não armazena em \textit{R}
 	\item JMP: salta para o endereço informado pelo registrador $b$
-	\item JEQ: salta para o endereço informado pelo registrador $b$, se a \textit{flag S} for igual a 1 
-	\item JGR: salta para o endereço informado pelo registrador $b$, se a \textit{flag Z} for igual a 1
+	\item JEQ: salta para o endereço informado pelo registrador $b$, se a \textit{flag Z} for igual a 1 
+	\item JGR: salta para o endereço informado pelo registrador $b$, se a \textit{flag S} for igual a 1.
+
+	\textit{Obs.\ JLT seria um nome mais coerente para essa instrução.}
 
 	\item LOAD: carrega um valor da memória para o registrador $a$ no endereço dado pelo registrador $b$
 	\item STORE: armazena o valor do registrador $a$ no endereço de memória dado pelo registrador $b$
@@ -91,9 +93,30 @@ não ao registrador \textit{A} ou \textit{B}.
 
 \subsection*{CPU}
 
+Como na figura \ref{fig:comp_ext}, tratamos a \textit{CPU} como um bloco lógico, possuindo dessa
+forma sinais de \textit{Inputs} e \textit{Output} de dados.  Temos dois barramantos de oito 
+bits, o barramento mais acima permite tanto a entrada quanto a saída de dados com a Unidade I/O, 
+além de permitir a comunicação de dados com o bloco \textit{MEM (Memory)}. O último
+barramento tem a função de passar o endereço de memória onde será lido ou escrito tal dado na memória.
+
 \subsection*{Unidade de I/O}
+Tal bloco possui a função de comunicação entre o usuário com a \textit{CPU}, logo, possui
+apenas um único barramento de oito bits, funcionado como \textit{Input} do usuário para a CPU
+quanto \textit{Output} da \textit{CPU} para o usuário. 
+
+Em nossa implementação a Unidade de I/O possui um registrador, que guarda o ultimo valor 
+recebido de \textit{Output} da \textit{CPU}. Enquanto não é enviado um novo valor e o sinal que 
+habilita a saída desse dado, tal valor guardado continuará sendo mostrado para o usuário. Outro
+detalhe de implementação é um bit em especifico guardado dentro da Unidade, que verifica se a saída 
+realmente é válida, enquanto o mesmo for zero, indica que até o momento não teve nenhuma saída do sistema,
+ se tornando 1, após a primeira saída.
 
 \subsection*{Memória}
+
+O Bloco de memória pode ser compreendido como uma matriz de 256 linhas por 8 colunas, na qual o
+endereço passado pelo barramento com a CPU seleciona uma dessas linhas, e sua saída é o valor
+guardado nas colunas dessa linha, que será disponivel no barramento superior com a \textit{CPU}
+na próxima borda de subida do \textit{clock}.
 
 \begin{figure}[H]
 \centering
@@ -116,9 +139,31 @@ não ao registrador \textit{A} ou \textit{B}.
 
 	\draw[scale=0.8,thick,transform shape] ([yshift=1.25em]cpu.east) ++ (0.2,0) to[multiwire=8] ([yshift=1.25em]mid.center);
 \end{circuitikz}
+
+\caption{\label{fig:comp_ext}Componentes externos}
 \end{figure}
 
-\hspace{16pt}
+\newpage
+
+\section*{FSM}
+
+A unidade de controle foi implementada usando uma \textit{FSM} do tipo \textit{Mealy}, cujo diagrama na forma de grafo
+direcionado é exibido na figura \ref{fig:fsm}. Para simplificar o diagrama, as arestas não indicam as condições nem as 
+saídas para cada transição, além de colapsar várias transições entre os mesmos estados em uma única aresta.
+
+Enquanto o sinal de \textit{reset} do circuito estiver acionado, estamos no primeiro estado da \textit{FSM}, \textit{RESET}.
+Em seguida, o estado \textit{FETCH} é atingido, neste momento é buscado o conteúdo no endereço de memória que se
+encontra no \textit{PC} (\textit{Progam Counter}). Depois temos o estado \textit{STORE}, em que o valor encontrado
+é guardado nos registradores \textit{IR} (\textit{Instruction Register}) e \textit{RS} (\textit{Register Select}),
+caso na instrução esteja indicado que é necessário o imediato, buscamos ele na memória durante o estado
+(\textit{FETCH IMM}) e depois é colocado no registrador durante o estado \textit{STORE IMM}. 
+Por fim executamos tal instrução. Caso a instrução não seja uma operação \textit{WAIT}, volta-se para o estado
+\textit{FETCH} novamente. senão entra-se no estado \textit{POLL}, na qual é aguardado até o sinal \textit{INT}
+ser acionado, voltando para o estado \textit{FETCH}.
+
+\begin{figure}[H]
+\advance\leftskip+1.8cm
+
 \begin{tikzpicture}[scale=0.8, every node/.style={transform shape}]
 	\node[state, minimum size=2cm, initial] (reset) {RESET};
 	\node[state, minimum size=2cm, right=of reset] (fetch) {FETCH};
@@ -141,6 +186,10 @@ não ao registrador \textit{A} ou \textit{B}.
 	          (execute) edge[out=90,in=90,out looseness=1,in looseness=2] (fetch)
 	          (poll) edge[out=315,in=270,distance=10cm] (fetch.south);
 \end{tikzpicture}
+
+\vspace{-92pt}
+\caption{\label{fig:fsm}Diagrama de estados}
+\end{figure}
 
 \section*{Componentes internos}
 
@@ -430,7 +479,7 @@ não ao registrador \textit{A} ou \textit{B}.
 	\draw ($(regs.lpin 2) + (-0.35,0)$) node[signal,draw,signal to=east,anchor=east] {\footnotesize SEL} -- (regs.lpin 2);
 \end{circuitikz}
 
-\caption{\label{fig:circuit} Diagrama do circuito da \textit{CPU}}
+\caption{\label{fig:circuit} Esquemática do circuito da \textit{CPU}}
 \end{figure}
 
 Na figura \ref{fig:circuit}, é exibido um diagrama do circuito interno da \textit{CPU}.
@@ -468,6 +517,37 @@ que a \textit{FPGA} é incapaz de representar esse tipo de tecnologia. Há uma e
 entanto, que é o \textit{buffer tri-state} habilitado pelo sinal 
 {\footnotesize CTL\_REG\_A\_TO\_DATA}, uma vez que se trata de saída em um barramento
 compartilhado por vários dispositivos (em particular, a unidade de memória).
+
+\subsubsection*{Clock}
+
+É importante notar que, na implementação da \textit{CPU}, o \textit{clock} da unidade de
+controle e do banco de registradores está invertido com relação ao \textit{clock} do resto
+do sistema (memória, I/O, PC, etc.). Ou ainda, equivalentemente, poderíamos dizer que esses
+componentes são disparados por borda de descida usando o mesmo sinal de \textit{clock}.
+
+Isso permite que um valor que foi buscado na memória seja obtido e possa ser utilizado 
+imediatamente, na próxima borda de subida. Caso tanto a unidade de controle quanto a memória
+fossem disparados pela mesma borda do mesmo sinal de \textit{clock}, ao buscar um valor 
+da memória, esse valor se tornaria disponível apenas na próxima borda do \textit{clock} e 
+só poderia ser utilizado (armazenado em um registrador) na borda de \textit{clock} subsequente, 
+desperdiçando um ciclo de \textit{clock}.
+
+\subsection*{Registradores de \textit{flags}}
+
+Há quatro registradores de \textit{flags}: \textit{Z}, \textit{S}, \textit{C} e \textit{O},
+embora apenas dois (\textit{Z} e \textit{S}) sejam utilizados.
+
+O registrador \textit{Z} guarda 1 caso o último resultado da ULA tenha sido zero (o que corresponde
+a igualdade quando a operação subtração é realizada). Já o registrador \textit{S} guarda o 
+\textit{bit} mais significativo do resultado da última operação aritmética (soma, subtração ou 
+comparação), que corresponde ao sinal quando o resultado é interpretado como um número com
+sinal.
+
+Os registradores \textit{C} e \textit{O} guardam, respectivamente, as condições de \textit{carry out}
+e \textit{overflow} geradas pelas operações de soma, subtração e comparação. A condição de 
+\textit{carry out} indica que o resultado da operação não pôde ser representado em 8 \textit{bits} 
+quando tratado como um valor sem sinal. Já a condição de \textit{overflow} indica que o resultado 
+da operação não pôde ser representado em 8 \textit{bits} quando tratado como um valor com sinal.
 
 \subsection*{Banco de registradores}
 

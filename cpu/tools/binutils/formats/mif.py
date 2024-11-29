@@ -82,10 +82,10 @@ class MifFormatHandler(FormatHandler):
                     
                 code[start] = value
             else:
+                end = int(end, base=bases[address_radix])
+                
                 if end > max:
                     max = end
-
-                end = int(end, base=bases[address_radix])
 
                 for i in range(start, end + 1):
                     code[i] = value

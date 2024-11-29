@@ -130,6 +130,20 @@ com a síntese e a programação da placa FPGA.
 Uma vez que a variável `MIF_FILE` foi especificada, pode ser omitida em execuções 
 subsequentes do `make run` para usar o mesmo arquivo `.mif`.
 
+## Usando o assembler
+
+Como já mencionado na seção sobre [alvos de compilação](#alvos-e-variáveis-de-compilação),
+arquivos em assembly (`.s`) podem ser compilados usando o comando `make ENV=common file.bin`
+(supondo que exista um arquivo assembly `file.s`). Também é possível invocar o assembler 
+manualmente rodando o programa `./tools/binutils/as.py` com algum interpretador Python.
+
+Para ler sobre a sintaxe suportada no assembly, [clique aqui](./tools/binutils/SYNTAX.md).
+
+## Funcionamento da CPU
+
+Para uma explicação mais detalhada do funcionamento, detalhes da implementação da CPU
+e instruções implementadas, confira [o relatório](report.tex).
+
 ## Notas
 
 Para que seja possível usar os makefiles para compilar o projeto, é necessário
