@@ -57,7 +57,9 @@ current.mif.d:
 current.mif: current.mif.d
 
 current.mif:
-	$(if $<,:,$(error MIF_FILE wasn't specified))
+ifneq ($(_REC),)
+	$(if $(filter current.mif.d,$<),$(error MIF_FILE wasn't specified),:)
+endif
 	$(call copy,$<,current.mif)
 
 ifeq ($(_REC),)
