@@ -27,11 +27,14 @@ if not exist ".\vhdl_ls\" (
 if not exist ".\tectonic" (
 	curl -L -o tectonic.zip "https://artprodcus3.artifacts.visualstudio.com/Ab81c2d37-2dcb-497c-85e6-0a9e4631c88b/c771df00-c615-4a8b-b6ac-bb8713354b46/_apis/artifact/cGlwZWxpbmVhcnRpZmFjdDovL3RlY3RvbmljLXR5cGVzZXR0aW5nL3Byb2plY3RJZC9jNzcxZGYwMC1jNjE1LTRhOGItYjZhYy1iYjg3MTMzNTRiNDYvYnVpbGRJZC8xNTQ5L2FydGlmYWN0TmFtZS9iaW5hcnkteDg2XzY0LXBjLXdpbmRvd3MtbXN2Yw2/content?format=zip"
 	tar -xf "tectonic.zip"
-	tar -xf "tectonic-0.15.0+20241114-x86_64-pc-windows-msvc.zip"
 	del "tectonic.zip"
+	cd "binary-x86_64-pc-windows-msvc"
+	tar -xf "tectonic-0.15.0+20241114-x86_64-pc-windows-msvc.zip"
 	del "tectonic-0.15.0+20241114-x86_64-pc-windows-msvc.zip"
-	md tectonic
-	move "tectonic.exe" "tectonic"
+	md "../tectonic"
+	move "tectonic.exe" "../tectonic"
+	cd ".."
+	rd "binary-x86_64-pc-windows-msvc"
 )
 
 if not exist ".\texlab" (
