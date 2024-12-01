@@ -36,12 +36,12 @@ $(SIM): $(SIMDEPS)
 %.bin %.mif: %.s
 	$(PYTHON) ./tools/binutils/as.py -f bin:mif $?
 
-%.sim.dump %.out: %.in $(SIM) all
+%.sim.dump %.out: %.in $(SIM)
 	$(MAKE) $(patsubst %.dir/,%,$(dir $<)).bin
 	$(SIM) -d 1 -s -n -m $(patsubst %.dir/,%,$(dir $<)).bin < $*.in > $*.out 2> $*.sim.dump
 
 %.ok: %.sim.dump %.out
-	$(MAKE) -C . TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.hdl.out -gDEMO_DUMP=../../$*.hdl.dump" run
+	$(MAKE) TOPLEVEL=sim GENERICS="-gDEMO_INIT_FILE=../../$(patsubst %.dir/,%,$(dir $<)).bin -gDEMO_IN=../../$*.in -gDEMO_OUT=../../$*.hdl.out -gDEMO_DUMP=../../$*.hdl.dump" run
 	$(call truncate,"$@")
 	git diff -U30 --no-index $*.out $*.hdl.out || (cd $(dir $@) && $(RM) "$(notdir $@)")
 	git diff -U30 --no-index $*.sim.dump $*.hdl.dump || (cd $(dir $@) && $(RM) "$(notdir $@)")
