@@ -76,7 +76,7 @@ endif
 
 .PRECIOUS: %.sim.dump %.out %.hdl.dump %.hdl.out
 
-DEMOS = add mul fibonacci xor prime
+DEMOS = add div mul fibonacci xor prime
 DEMO_IN_FILES = $(foreach demo,$(DEMOS),$(wildcard demos/$(demo).dir/*.in))
 
 TEST_SIM_FILES = $(foreach demo,$(DEMOS),demos/$(demo).bin) \
