@@ -52,3 +52,7 @@ Desenvolvido durante a aula de 01/10/2024.
 ### [fsm](./fsm)
 
 Desenvolvido durante as aulas de 08/10/2024 e 15/10/2024.
+
+### [cpu](./cpu)
+
+Projeto final.
