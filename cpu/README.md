@@ -107,6 +107,9 @@ algum caso de teste da testbench `tests/sim.vhdl` falhe.
 
 ## Programando a placa FPGA
 
+O projeto foi desenvolvido e testado na placa FPGA DE0-CV, portanto as atribuições de
+pinos no arquivo `.qsf` do projeto já estão configuradas para uso com essa placa.
+
 Normalmente (para os outros projetos nesse repositório) basta rodar `make ENV=quartus run`
 para realizar a síntese e programar a placa FPGA, usando o Quartus. No entanto, para esse
 projeto, há a possibilidade de escolha entre vários arquivos `.mif` para inicializar a
