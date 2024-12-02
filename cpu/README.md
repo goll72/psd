@@ -108,7 +108,12 @@ algum caso de teste da testbench `tests/sim.vhdl` falhe.
 ## Programando a placa FPGA
 
 O projeto foi desenvolvido e testado na placa FPGA DE0-CV, portanto as atribuições de
-pinos no arquivo `.qsf` do projeto já estão configuradas para uso com essa placa.
+pinos no arquivo `.qsf` do projeto já estão configuradas para uso com essa placa. O sinal 
+de reset da CPU corresponde ao botão KEY4/RESET_N/DEV_CLRN. O sinal `int` corresponde ao 
+botão KEY0. Os slide switches correspondem ao valor de entrada, sendo SW0 o LSB e SW7 o 
+MSB; os LEDs correpondem ao valor de saída, sendo LEDR0 o LSB e LEDR7 o MSB. Além disso, 
+as entradas e saídas também são exibidas nos displays de sete segmentos: HEX1 e HEX0
+exibem o valor de saída, enquanto HEX3 e HEX2 exibem o valor de entrada.
 
 Normalmente (para os outros projetos nesse repositório) basta rodar `make ENV=quartus run`
 para realizar a síntese e programar a placa FPGA, usando o Quartus. No entanto, para esse
